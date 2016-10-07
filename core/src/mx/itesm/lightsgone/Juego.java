@@ -5,9 +5,10 @@ import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.audio.Music;
 
 /**
- * Created by allanruiz, erick on 05/09/16. (3)
+ * Created by allanruiz on 05/09/16.
  */
 public class Juego extends Game {
+    public static Music audio;
     @Override
     public void create() {
         setScreen(new MenuPrincipal(this));

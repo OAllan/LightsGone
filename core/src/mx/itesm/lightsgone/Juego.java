@@ -5,7 +5,7 @@ import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.audio.Music;
 
 /**
- * Created by allanruiz on 05/09/16. (3)
+ * Created by allanruiz, erick on 05/09/16. (3)
  */
 public class Juego extends Game {
     @Override

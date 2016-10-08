@@ -7,6 +7,7 @@ import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.utils.Array;
 
 /**
@@ -16,14 +17,15 @@ public class Abner {
     private Sprite sprite;
     private boolean flag;
     private int transicion, cont = 8;
-    private float y = 135f, saltoMov = 15f;
+    private float y = 135f, saltoMov = 10f, gravedad = 10f;
     private Texture neutral, saltar1, saltar2, pResortera;
-    private float mov = 2f;
+    private float mov = 4f;
     private Estado estado;
     private Salto salto;
     private Animation caminar, atacar;
     private OrthographicCamera camara;
     private Array<Proyectil> proyectiles;
+    private Enemigo.Sopa sopa;
 
     private float timerAnimation, timerAnimationA;
 
@@ -170,7 +172,7 @@ public class Abner {
                 }
                 break;
             case BAJANDO:
-                sprite.setY(sprite.getY()-saltoMov);
+                sprite.setY(sprite.getY()-(saltoMov+gravedad));
                 if(sprite.getY()<= y){
                     estado = Estado.NEUTRAL;
                     sprite.setY(y);
@@ -183,6 +185,10 @@ public class Abner {
 
     public void setSalto(Salto salto) {
         this.salto = salto;
+    }
+
+    public float getX(){
+        return sprite.getX();
     }
 
     public boolean isAttacking() {

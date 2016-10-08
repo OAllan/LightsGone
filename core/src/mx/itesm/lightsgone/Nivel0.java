@@ -37,6 +37,8 @@ public class Nivel0 implements Screen, InputProcessor{
     private Boton botonSaltar, botonHabilidad, pausa;
     private float mov = 1f;
     private Array<Proyectil> proyectiles;
+    private Enemigo.Brocoli brocoli;
+    private Enemigo sopa;
     public Nivel0(Juego juego) {
         this.juego = juego;
         right = true;
@@ -74,6 +76,8 @@ public class Nivel0 implements Screen, InputProcessor{
         vida = new Texto("tipo.fnt", imgVida.getWidth(),690);
         cantVida = 99;
         abner = new Abner(neutral, correr1, correr2, salto1, salto2, resortera1, resortera2, resortera3, pResortera,camara);
+        brocoli = new Enemigo.Brocoli(1300, 100, abner);
+        sopa = new Enemigo.Sopa(400, 100, abner);
 
     }
 
@@ -173,6 +177,8 @@ public class Nivel0 implements Screen, InputProcessor{
         batch.setProjectionMatrix(camara.combined);
         batch.begin();
         fondo.draw(batch);
+        brocoli.draw(batch);
+        sopa.draw(batch);
         abner.draw(batch, right);
 
         for (int i=0;i<proyectiles.size;i++) {

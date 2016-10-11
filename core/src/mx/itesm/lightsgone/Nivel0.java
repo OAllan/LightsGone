@@ -5,11 +5,17 @@ import com.badlogic.gdx.Input;
 import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.assets.AssetManager;
+import com.badlogic.gdx.assets.loaders.resolvers.InternalFileHandleResolver;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.maps.tiled.TiledMap;
+import com.badlogic.gdx.maps.tiled.TiledMapRenderer;
+import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
+import com.badlogic.gdx.maps.tiled.TmxMapLoader;
+import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.viewport.StretchViewport;
@@ -40,6 +46,9 @@ public class Nivel0 implements Screen, InputProcessor{
     private Enemigo.Brocoli brocoli;
     private Enemigo sopa;
     private Array<Enemigo> enemigos;
+    private TiledMapRenderer renderer;
+    private TiledMap mapa;
+    private TiledMapTileLayer encima;
 
     public Nivel0(Juego juego) {
         this.juego = juego;
@@ -77,12 +86,17 @@ public class Nivel0 implements Screen, InputProcessor{
         imgVida.setPosition(0,780-imgVida.getHeight());
         vida = new Texto("tipo.fnt", imgVida.getWidth(),690);
         cantVida = 99;
-        abner = new Abner(neutral, correr1, correr2, salto1, salto2, resortera1, resortera2, resortera3, pResortera,camara);
+        renderer = new OrthogonalTiledMapRenderer(mapa, batch);
+        renderer.setView(camara);
+        abner = new Abner(neutral, correr1, correr2, salto1, salto2, resortera1, resortera2, resortera3, pResortera,camara, mapa);
         brocoli = new Enemigo.Brocoli(1300, 100, abner);
         sopa = new Enemigo.Sopa(400, 100, abner);
         enemigos = new Array<Enemigo>(30);
         enemigos.add(brocoli);
         enemigos.add(sopa);
+        encima = (TiledMapTileLayer)mapa.getLayers().get("CapaEncima");
+        mapa.getLayers().remove(mapa.getLayers().get("CapaEncima"));
+
 
     }
 
@@ -103,7 +117,9 @@ public class Nivel0 implements Screen, InputProcessor{
         assetManager.load("PResortera1.png", Texture.class);
         assetManager.load("PResortera2.png", Texture.class);
         assetManager.load("PResortera3.png", Texture.class);
-        assetManager.load("MunicionResortera.png",Texture.class);
+        assetManager.load("MunicionResortera.png", Texture.class);
+        assetManager.setLoader(TiledMap.class, new TmxMapLoader(new InternalFileHandleResolver()));
+        assetManager.load("CuartoAbner.tmx", TiledMap.class);
         assetManager.finishLoading();
         neutral = assetManager.get("PNeutral.png");
         salto1 = assetManager.get("PSalto1.png");
@@ -122,6 +138,7 @@ public class Nivel0 implements Screen, InputProcessor{
         resortera2 =  assetManager.get("PResortera2.png");
         resortera3 =  assetManager.get("PResortera3.png");
         pResortera = assetManager.get("MunicionResortera.png");
+        mapa = assetManager.get("CuartoAbner.tmx");
 
     }
 
@@ -177,17 +194,17 @@ public class Nivel0 implements Screen, InputProcessor{
         else if(!abner.isJumping()&& !abner.isAttacking())
             abner.setEstado(Abner.Estado.NEUTRAL);
 
-
+        renderer.setView(camara);
+        renderer.render();
         proyectiles = abner.getProyectiles();
         batch.setProjectionMatrix(camara.combined);
         batch.begin();
-        fondo.draw(batch);
-        for(int i=0;i<enemigos.size;i++) {
+        /*for(int i=0;i<enemigos.size;i++) {
             if (enemigos.get(i).muerte())
                 enemigos.removeIndex(i);
             else
                 enemigos.get(i).draw(batch);
-        }
+        }*/
 
         abner.draw(batch, right);
 
@@ -206,6 +223,11 @@ public class Nivel0 implements Screen, InputProcessor{
                 proyectiles.get(i).update();
             }
         }
+        batch.end();
+
+        batch.begin();
+        renderer.setView(camara);
+        renderer.renderTileLayer(encima);
         batch.end();
 
         batch.setProjectionMatrix(camaraHUD.combined);

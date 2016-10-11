@@ -3,6 +3,7 @@ package mx.itesm.lightsgone;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.math.Rectangle;
 
 /**
  * Created by allanruiz on 22/09/16.
@@ -44,6 +45,9 @@ public class Proyectil {
         proyectil.setY(y);
     }
 
+    public Rectangle getRectangle(){
+        return proyectil.getBoundingRectangle();
+    }
 
 
 }

@@ -148,6 +148,7 @@ public class Abner {
 
     public void neutral(boolean right) {
         sprite.setTexture(neutral);
+        sprite.setSize(neutral.getWidth(), neutral.getHeight());
         if (right&&sprite.isFlipX())
             sprite.flip(true, false);
     }

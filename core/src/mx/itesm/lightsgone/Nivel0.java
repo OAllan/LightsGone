@@ -39,6 +39,8 @@ public class Nivel0 implements Screen, InputProcessor{
     private Array<Proyectil> proyectiles;
     private Enemigo.Brocoli brocoli;
     private Enemigo sopa;
+    private Array<Enemigo> enemigos;
+
     public Nivel0(Juego juego) {
         this.juego = juego;
         right = true;
@@ -78,6 +80,9 @@ public class Nivel0 implements Screen, InputProcessor{
         abner = new Abner(neutral, correr1, correr2, salto1, salto2, resortera1, resortera2, resortera3, pResortera,camara);
         brocoli = new Enemigo.Brocoli(1300, 100, abner);
         sopa = new Enemigo.Sopa(400, 100, abner);
+        enemigos = new Array<Enemigo>(30);
+        enemigos.add(brocoli);
+        enemigos.add(sopa);
 
     }
 
@@ -177,11 +182,23 @@ public class Nivel0 implements Screen, InputProcessor{
         batch.setProjectionMatrix(camara.combined);
         batch.begin();
         fondo.draw(batch);
-        brocoli.draw(batch);
-        sopa.draw(batch);
+        for(int i=0;i<enemigos.size;i++) {
+            if (enemigos.get(i).muerte())
+                enemigos.removeIndex(i);
+            else
+                enemigos.get(i).draw(batch);
+        }
+
         abner.draw(batch, right);
 
-        for (int i=0;i<proyectiles.size;i++) {
+        loop: for (int i=0;i<proyectiles.size;i++) {
+            for (Enemigo e: enemigos)
+                if(e.colisiona(proyectiles.get(i))){
+                    e.setEstado(Enemigo.Estado.DANO);
+                    proyectiles.removeIndex(i);
+                    continue loop;
+                }
+
             if(proyectiles.get(i).out())
                 proyectiles.removeIndex(i);
             else{

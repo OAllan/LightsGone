@@ -27,16 +27,24 @@ public abstract class Enemigo  {
     public abstract void setEstado(Estado estado);
     public abstract void draw(SpriteBatch batch);
 
+    public boolean colisiona(Proyectil p){
+        return sprite.getBoundingRectangle().contains(p.getRectangle());
+    }
+
+    public abstract boolean muerte();
+
+
     public enum Estado{
         NEUTRAL,
-        ATAQUE
+        ATAQUE,
+        DANO
     }
 
     static class Sopa extends Enemigo{
         private static Texture neutral1, neutral2, neutral3, ataque1, ataque2;
         private Estado estado;
         private static Animation neutral, ataque;
-        private float timerA, timer;
+        private float timerA, timer, timerD;
         private Abner abner;
 
         static {
@@ -53,7 +61,7 @@ public abstract class Enemigo  {
 
 
         private static void cargarAnimacion() {
-            neutral = new Animation(0.2f, new TextureRegion(neutral1), new TextureRegion(neutral2), new TextureRegion(neutral3));
+            neutral = new Animation(0.1f, new TextureRegion(neutral1), new TextureRegion(neutral2), new TextureRegion(neutral3));
             ataque = new Animation(0.2f, new TextureRegion(ataque1), new TextureRegion(ataque2));
             neutral.setPlayMode(Animation.PlayMode.LOOP);
         }
@@ -72,6 +80,11 @@ public abstract class Enemigo  {
         public void draw(SpriteBatch batch) {
             sprite.draw(batch);
             actualizar();
+        }
+
+        @Override
+        public boolean muerte() {
+            return false;
         }
 
         private void actualizar() {
@@ -99,6 +112,12 @@ public abstract class Enemigo  {
                         timerA = 0;
                     }
                     break;
+                case DANO:
+                    timerD += Gdx.graphics.getDeltaTime();
+                    if(timerD>5){
+                        timerD = 0;
+                        estado = Estado.NEUTRAL;
+                    }
 
             }
         }
@@ -132,6 +151,7 @@ public abstract class Enemigo  {
         private final float velocidad = 2f;
         private float timer, timerA;
         private Abner abner;
+        private int vida;
 
         static {
             cargarTexturas();
@@ -152,6 +172,7 @@ public abstract class Enemigo  {
             right = true;
             timer = timerA=0;
             this.abner = abner;
+            vida = 3;
         }
 
         @Override
@@ -167,15 +188,22 @@ public abstract class Enemigo  {
         public void draw(SpriteBatch batch) {
             sprite.draw(batch);
             float distancia = sprite.getX()-abner.getX();
-            if(Math.abs(distancia)<=500){
-                if(distancia>0&&(!sprite.isFlipX()))
-                    estado = Estado.ATAQUE;
-                else if(distancia<0&&sprite.isFlipX())
-                    estado = Estado.ATAQUE;
+            if(estado!= Estado.DANO){
+                if(Math.abs(distancia)<=500){
+                    if(distancia>0&&(!sprite.isFlipX()))
+                        estado = Estado.ATAQUE;
+                    else if(distancia<0&&sprite.isFlipX())
+                        estado = Estado.ATAQUE;
+                }
+                else
+                    estado = Estado.NEUTRAL;
             }
-            else
-                estado = Estado.NEUTRAL;
             actualizar();
+        }
+
+        @Override
+        public boolean muerte() {
+            return vida <=0;
         }
 
         private void actualizar() {
@@ -222,6 +250,10 @@ public abstract class Enemigo  {
                         }
                     }
                     break;
+                case DANO:
+                    Gdx.app.log("Vida", vida+"");
+                    vida -= 1;
+                    estado = Estado.NEUTRAL;
             }
         }
 

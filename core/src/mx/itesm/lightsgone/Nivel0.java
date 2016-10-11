@@ -96,8 +96,6 @@ public class Nivel0 implements Screen, InputProcessor{
         enemigos.add(sopa);
         encima = (TiledMapTileLayer)mapa.getLayers().get("CapaEncima");
         mapa.getLayers().remove(mapa.getLayers().get("CapaEncima"));
-
-
     }
 
     private void cargarTexturas() {

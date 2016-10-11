@@ -49,6 +49,7 @@ public class Nivel0 implements Screen, InputProcessor{
     private TiledMapRenderer renderer;
     private TiledMap mapa;
     private TiledMapTileLayer encima;
+    private TiledMapTileLayer malteada;
 
     public Nivel0(Juego juego) {
         this.juego = juego;
@@ -96,6 +97,7 @@ public class Nivel0 implements Screen, InputProcessor{
         enemigos.add(sopa);
         encima = (TiledMapTileLayer)mapa.getLayers().get("CapaEncima");
         mapa.getLayers().remove(mapa.getLayers().get("CapaEncima"));
+        malteada = (TiledMapTileLayer)mapa.getLayers().get("Malteada");
     }
 
     private void cargarTexturas() {
@@ -191,6 +193,11 @@ public class Nivel0 implements Screen, InputProcessor{
         }
         else if(!abner.isJumping()&& !abner.isAttacking())
             abner.setEstado(Abner.Estado.NEUTRAL);
+
+        if(abner.colisionMalteada()){
+            mapa.getLayers().remove(malteada);
+        }
+
 
         renderer.setView(camara);
         renderer.render();

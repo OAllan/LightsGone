@@ -34,6 +34,7 @@ public class Abner {
     private Array<TiledMapTileLayer> plataformas;
 
     private float timerAnimation, timerAnimationA;
+    private TiledMapTileLayer malteada;
 
     public Abner(Texture texture, Texture correr1, Texture correr2, Texture saltar1, Texture saltar2, Texture resortera1,
                  Texture resortera2, Texture resortera3, Texture pResortera,OrthographicCamera camara, TiledMap mapa){
@@ -66,6 +67,7 @@ public class Abner {
             plataformas.add((TiledMapTileLayer)mapa.getLayers().get(s));
         }
         pared = (TiledMapTileLayer)mapa.getLayers().get("ParedPuerta");
+        malteada = (TiledMapTileLayer)mapa.getLayers().get("Malteada");
     }
 
     public void draw(SpriteBatch batch, boolean right){
@@ -262,9 +264,12 @@ public class Abner {
 
     private boolean colisionX(float x, float y){
         Cell cell = pared.getCell((int)(x/pared.getTileWidth()), (int)(y/pared.getTileHeight()));
-        if(cell!= null)
-            return true;
-        return false;
+        return cell!=null;
+    }
+
+    public boolean colisionMalteada(){
+        Cell cell = malteada.getCell(((int)((sprite.getX()+sprite.getWidth())/malteada.getTileWidth())), (int)(sprite.getY()/malteada.getTileHeight()));
+        return cell!=null;
     }
 
     public void jump(){
@@ -344,7 +349,7 @@ public class Abner {
         ATAQUE,
         ATAQUECAMINANDO,
         ATAQUESALTANDO,
-        ATAQUESALTANDOAVANCE;
+        ATAQUESALTANDOAVANCE
     }
 
 

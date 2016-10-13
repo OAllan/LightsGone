@@ -322,6 +322,10 @@ public class Abner {
         return proyectiles;
     }
 
+    public float getY() {
+        return sprite.getY();
+    }
+
     public enum Salto{
         SUBIENDO,
         BAJANDO

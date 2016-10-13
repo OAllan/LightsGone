@@ -88,7 +88,6 @@ public class Nivel0 implements Screen, InputProcessor{
         renderer.setView(camara);
         abner = new Abner(neutral, correr1, correr2, salto1, salto2, resortera1, resortera2, resortera3, pResortera,camara, mapa);
         encima = (TiledMapTileLayer)mapa.getLayers().get("CapaEncima");
-        mapa.getLayers().remove(mapa.getLayers().get("CapaEncima"));
         malteada = (TiledMapTileLayer)mapa.getLayers().get("Malteada");
     }
 
@@ -181,7 +180,9 @@ public class Nivel0 implements Screen, InputProcessor{
             }
         }
         renderer.setView(camara);
-        renderer.renderTileLayer(encima);
+
+        if(abner.getY()>=480)
+            renderer.renderTileLayer(encima);
         batch.end();
 
         batch.setProjectionMatrix(camaraHUD.combined);

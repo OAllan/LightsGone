@@ -43,9 +43,6 @@ public class Nivel0 implements Screen, InputProcessor{
     private Boton botonSaltar, botonHabilidad, pausa;
     private float mov = 1f;
     private Array<Proyectil> proyectiles;
-    private Enemigo.Brocoli brocoli;
-    private Enemigo sopa;
-    private Array<Enemigo> enemigos;
     private TiledMapRenderer renderer;
     private TiledMap mapa;
     private TiledMapTileLayer encima;
@@ -90,11 +87,6 @@ public class Nivel0 implements Screen, InputProcessor{
         renderer = new OrthogonalTiledMapRenderer(mapa, batch);
         renderer.setView(camara);
         abner = new Abner(neutral, correr1, correr2, salto1, salto2, resortera1, resortera2, resortera3, pResortera,camara, mapa);
-        brocoli = new Enemigo.Brocoli(1300, 100, abner);
-        sopa = new Enemigo.Sopa(400, 100, abner);
-        enemigos = new Array<Enemigo>(30);
-        enemigos.add(brocoli);
-        enemigos.add(sopa);
         encima = (TiledMapTileLayer)mapa.getLayers().get("CapaEncima");
         mapa.getLayers().remove(mapa.getLayers().get("CapaEncima"));
         malteada = (TiledMapTileLayer)mapa.getLayers().get("Malteada");
@@ -147,52 +139,25 @@ public class Nivel0 implements Screen, InputProcessor{
         Gdx.gl.glClearColor(1, 1, 1, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
-        if(pad.getLeft().isPressed()&botonHabilidad.isPressed()&(!abner.isJumping())&!abner.isAttacking()){
-            right = false;
-            abner.setEstado(Abner.Estado.ATAQUECAMINANDO);
-        }
-        if(pad.getRight().isPressed()&botonHabilidad.isPressed()&(!abner.isJumping())&!abner.isAttacking()){
-            right = true;
-            abner.setEstado(Abner.Estado.ATAQUECAMINANDO);
-        }
-        else if(pad.getLeft().isPressed()&botonHabilidad.isPressed()&abner.isJumping()&!abner.isAttacking()){
-            right = false;
-            abner.setEstado(Abner.Estado.ATAQUESALTANDOAVANCE);
-        }
-        else if(pad.getRight().isPressed()&botonHabilidad.isPressed()&abner.isJumping()&!abner.isAttacking()){
-            right = true;
-            abner.setEstado(Abner.Estado.ATAQUESALTANDOAVANCE);
-        }
-        if(pad.getLeft().isPressed()&botonSaltar.isPressed()&(!abner.isJumping())&&!abner.isAttacking()){
-            right = false;
-            abner.setEstado(Abner.Estado.SALTANDOAVANCE);
+
+        if(botonSaltar.isPressed()) {
+            abner.setEstadoVertical(Abner.Vertical.ACTIVADO);
             abner.setSalto(Abner.Salto.SUBIENDO);
         }
-        else if(pad.getRight().isPressed()&botonSaltar.isPressed()&(!abner.isJumping())&&!abner.isAttacking()){
-            right = true;
-            abner.setEstado(Abner.Estado.SALTANDOAVANCE);
-            abner.setSalto(Abner.Salto.SUBIENDO);
+
+        if(botonHabilidad.isPressed()){
+            abner.setEstadoAtaque(Abner.Ataque.ACTIVADO);
         }
-        else if(pad.getRight().isPressed()&&(!abner.isJumping())&&!abner.isAttacking()) {
+
+        if(pad.getRight().isPressed()) {
             right = true;
-            abner.setEstado(Abner.Estado.CAMINANDO);
+            abner.setEstadoHorizontal(Abner.Horizontal.ACTIVADO);
         }
-        else if(pad.getLeft().isPressed()&&(!abner.isJumping())&&!abner.isAttacking()) {
+
+        else if(pad.getLeft().isPressed()) {
             right = false;
-            abner.setEstado(Abner.Estado.CAMINANDO);
+            abner.setEstadoHorizontal(Abner.Horizontal.ACTIVADO);
         }
-        else if(botonHabilidad.isPressed()&abner.isJumping()&!abner.isAttacking()){
-            abner.setEstado(Abner.Estado.ATAQUESALTANDO);
-        }
-        else if(botonHabilidad.isPressed()&(!abner.isJumping())&&!abner.isAttacking()) {
-            abner.setEstado(Abner.Estado.ATAQUE);
-        }
-        else if(botonSaltar.isPressed()&(!abner.isJumping())){
-            abner.setEstado(Abner.Estado.SALTANDO);
-            abner.setSalto(Abner.Salto.SUBIENDO);
-        }
-        else if(!abner.isJumping()&& !abner.isAttacking())
-            abner.setEstado(Abner.Estado.NEUTRAL);
 
         if(abner.colisionMalteada()){
             mapa.getLayers().remove(malteada);
@@ -204,23 +169,10 @@ public class Nivel0 implements Screen, InputProcessor{
         proyectiles = abner.getProyectiles();
         batch.setProjectionMatrix(camara.combined);
         batch.begin();
-        /*for(int i=0;i<enemigos.size;i++) {
-            if (enemigos.get(i).muerte())
-                enemigos.removeIndex(i);
-            else
-                enemigos.get(i).draw(batch);
-        }*/
 
         abner.draw(batch, right);
 
-        loop: for (int i=0;i<proyectiles.size;i++) {
-            for (Enemigo e: enemigos)
-                if(e.colisiona(proyectiles.get(i))){
-                    e.setEstado(Enemigo.Estado.DANO);
-                    proyectiles.removeIndex(i);
-                    continue loop;
-                }
-
+        for (int i=0;i<proyectiles.size;i++) {
             if(proyectiles.get(i).out())
                 proyectiles.removeIndex(i);
             else{
@@ -228,9 +180,6 @@ public class Nivel0 implements Screen, InputProcessor{
                 proyectiles.get(i).update();
             }
         }
-        batch.end();
-
-        batch.begin();
         renderer.setView(camara);
         renderer.renderTileLayer(encima);
         batch.end();
@@ -303,7 +252,7 @@ public class Nivel0 implements Screen, InputProcessor{
             pad.getLeft().setEstado(Boton.Estado.PRESIONADO);
         if(pad.getRight().contiene(x,y))
             pad.getRight().setEstado(Boton.Estado.PRESIONADO);
-        if(botonSaltar.contiene(x,y)&(!abner.isJumping()))
+        if(botonSaltar.contiene(x,y)&(!abner.isJumping())&(!abner.isAttacking()))
             botonSaltar.setEstado(Boton.Estado.PRESIONADO);
         if(botonHabilidad.contiene(x,y)&(!abner.isAttacking()))
             botonHabilidad.setEstado(Boton.Estado.PRESIONADO);
@@ -316,10 +265,14 @@ public class Nivel0 implements Screen, InputProcessor{
         camaraHUD.unproject(v);
         float x = v.x;
         float y = v.y;
-        if(pad.getLeft().contiene(x,y))
+        if(pad.getLeft().contiene(x,y)) {
             pad.getLeft().setEstado(Boton.Estado.NOPRESIONADO);
-        if(pad.getRight().contiene(x,y))
+            abner.setEstadoHorizontal(Abner.Horizontal.DESACTIVADO);
+        }
+        if(pad.getRight().contiene(x,y)) {
             pad.getRight().setEstado(Boton.Estado.NOPRESIONADO);
+            abner.setEstadoHorizontal(Abner.Horizontal.DESACTIVADO);
+        }
         return false;
     }
 
@@ -331,12 +284,16 @@ public class Nivel0 implements Screen, InputProcessor{
         float y = v.y;
         if(pad.getLeft().contiene(x,y))
             pad.getLeft().setEstado(Boton.Estado.PRESIONADO);
-        else
+        else{
             pad.getLeft().setEstado(Boton.Estado.NOPRESIONADO);
+            abner.setEstadoHorizontal(Abner.Horizontal.DESACTIVADO);
+        }
         if(pad.getRight().contiene(x,y))
             pad.getRight().setEstado(Boton.Estado.PRESIONADO);
-        else
+        else{
             pad.getRight().setEstado(Boton.Estado.NOPRESIONADO);
+            abner.setEstadoHorizontal(Abner.Horizontal.DESACTIVADO);
+        }
         return false;
     }
 

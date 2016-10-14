@@ -114,7 +114,7 @@ public class Mapa {
         for(TiledMapTileLayer capa: puertas){
             if(capa!=null){
                 TiledMapTileLayer.Cell cellDer = capa.getCell((int)(x/capa.getTileWidth()), (int)(y/capa.getTileHeight()));
-                TiledMapTileLayer.Cell cellIzq = capa.getCell((int)((x-250)/capa.getTileWidth()), (int)(y/capa.getTileHeight()));
+                TiledMapTileLayer.Cell cellIzq = capa.getCell((int)((x-125)/capa.getTileWidth()), (int)(y/capa.getTileHeight()));
                 if((cellDer != null||cellIzq!=null) && capa.getName().equals("PuertaCerrada"))
                     return 0;
                 if((cellDer != null||cellIzq!=null) && capa.getName().equals("PuertaIzquierda"))

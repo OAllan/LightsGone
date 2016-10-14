@@ -258,7 +258,7 @@ public class Abner {
     }
 
     public int cambioNivel() {
-        return mapa.colisionPuerta(sprite.getX()+sprite.getWidth() + mov, sprite.getY());
+        return mapa.colisionPuerta(sprite.getX()+3*(sprite.getWidth()/4) + mov, sprite.getY());
     }
 
     public void setInitialPosition(int i) {

@@ -46,6 +46,8 @@ public class Proyectil {
         proyectil.setY(y);
     }
 
+
+
     public Rectangle getRectangle(){
         return proyectil.getBoundingRectangle();
     }

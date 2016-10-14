@@ -35,8 +35,14 @@ public class Nivel0 implements Screen, InputProcessor{
     private Texture fondoTex, neutral, salto1, salto2, correr1, correr2, botonSalto, JLeft, JRight, JFondo, botonVida, habilidad, texPausa, resortera1, resortera2, resortera3, pResortera;
     private Fondo fondo;
     private Abner abner;
+    private Enemigo.Brocoli brocoli;
+    private Enemigo.Sopa sopa;
+    private Enemigo.Tostadora tosta;
+    private Enemigo.Mosca mosca;
+    private Enemigo.Mosca mosca1;
+    private Enemigo.Mosca mosca2;
+    private Enemigo.Fuego fuego;
     private Texto vida;
-    private int cantVida;
     private Pad pad;
     private Sprite imgVida;
     private boolean right;
@@ -83,10 +89,17 @@ public class Nivel0 implements Screen, InputProcessor{
         imgVida = new Sprite(botonVida);
         imgVida.setPosition(0,780-imgVida.getHeight());
         vida = new Texto("tipo.fnt", imgVida.getWidth(),690);
-        cantVida = 99;
+
         renderer = new OrthogonalTiledMapRenderer(mapa, batch);
         renderer.setView(camara);
         abner = new Abner(neutral, correr1, correr2, salto1, salto2, resortera1, resortera2, resortera3, pResortera,camara, mapa);
+        sopa=new Enemigo.Sopa(900,120,abner);
+        brocoli=new Enemigo.Brocoli(900,100,abner);
+        tosta=new Enemigo.Tostadora(1400,120,abner);
+        mosca=new Enemigo.Mosca(1400,150,abner);
+        mosca1=new Enemigo.Mosca(1500,150,abner);
+        mosca2=new Enemigo.Mosca(1600,150,abner);
+        fuego=new Enemigo.Fuego(1500,150,abner);
         encima = (TiledMapTileLayer)mapa.getLayers().get("CapaEncima");
         malteada = (TiledMapTileLayer)mapa.getLayers().get("Malteada");
     }
@@ -131,12 +144,16 @@ public class Nivel0 implements Screen, InputProcessor{
         pResortera = assetManager.get("MunicionResortera.png");
         mapa = assetManager.get("CuartoAbner.tmx");
 
+
     }
 
     @Override
     public void render(float delta) {
         Gdx.gl.glClearColor(1, 1, 1, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
+
+
+
 
 
         if(botonSaltar.isPressed()) {
@@ -185,6 +202,16 @@ public class Nivel0 implements Screen, InputProcessor{
             renderer.renderTileLayer(encima);
         batch.end();
 
+        batch.begin();
+        //brocoli.draw(batch);
+        //sopa.draw(batch);
+        //tosta.draw(batch);
+        //mosca.draw(batch);
+        //mosca1.draw(batch);
+        //mosca2.draw(batch);
+        //fuego.draw(batch);
+        batch.end();
+
         batch.setProjectionMatrix(camaraHUD.combined);
         batch.begin();
         botonSaltar.draw(batch);
@@ -192,10 +219,12 @@ public class Nivel0 implements Screen, InputProcessor{
         botonHabilidad.draw(batch);
         pausa.draw(batch);
         imgVida.draw(batch);
-        vida.mostrarMensaje(batch, "" + cantVida);
+        vida.mostrarMensaje(batch, "" + abner.getcantVida());
         batch.end();
 
     }
+
+
 
     @Override
     public void resize(int width, int height) {

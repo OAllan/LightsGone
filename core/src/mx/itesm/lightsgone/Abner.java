@@ -13,6 +13,8 @@ import com.badlogic.gdx.maps.tiled.TiledMapTileLayer.Cell;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.utils.Array;
 
+
+
 /**
  * Created by allanruiz on 19/09/16.
  */
@@ -24,6 +26,7 @@ public class Abner {
     private Texture neutral, saltar1, saltar2, pResortera;
     private float mov = 4f;
     private Salto salto;
+    private int cantVida;
     private Animation caminar, atacar;
     private OrthographicCamera camara;
     private Array<Proyectil> proyectiles;
@@ -62,6 +65,7 @@ public class Abner {
         estadoHorizontal = Horizontal.DESACTIVADO;
         estadoAtaque = Ataque.DESACTIVADO;
         estadoSalto = Vertical.DESACTIVADO;
+        cantVida = 99;
 
     }
 
@@ -232,6 +236,7 @@ public class Abner {
         sprite.setSize(neutral.getWidth(), neutral.getHeight());
         if (right&&sprite.isFlipX())
             sprite.flip(true, false);
+
     }
 
     public void setEstadoAtaque(Ataque estado) {
@@ -318,12 +323,25 @@ public class Abner {
         return (estadoAtaque == Ataque.ACTIVADO);
     }
 
+    public Rectangle getBoundingRectangle(){
+
+        return sprite.getBoundingRectangle();
+    }
+
     public Array<Proyectil> getProyectiles() {
         return proyectiles;
     }
 
     public float getY() {
         return sprite.getY();
+    }
+
+    public int getcantVida(){
+        return cantVida;
+    }
+
+    public void setCantVida(int vida){
+        cantVida=vida;
     }
 
     public enum Salto{
@@ -345,6 +363,8 @@ public class Abner {
         ACTIVADO,
         DESACTIVADO
     }
+
+
 
 
 }

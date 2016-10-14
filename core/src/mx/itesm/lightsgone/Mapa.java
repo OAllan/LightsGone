@@ -20,12 +20,21 @@ public class Mapa {
     private TiledMapRenderer renderer;
     private Array<TiledMapTileLayer> plataformaY, plataformaX,encima, items;
     private static AssetManager manager = new AssetManager();
-    private OrthographicCamera camara;
+    private static OrthographicCamera camara;
+    private Array<TiledMapTileLayer> puertas;
 
     public Mapa(String mapa, SpriteBatch batch, OrthographicCamera camara){
         this.mapa = cargarMapa(mapa);
-        this.camara = camara;
+        Mapa.camara = camara;
         renderer = new OrthogonalTiledMapRenderer(this.mapa, batch);
+        setPlataformaY("Plataformas2", "Plataformas", "PlataformaPiso");
+        setPlataformaX("ParedPuerta", "PlataformasNoCruzar");
+        setEncima("CapaEncima");
+        setItem("Malteada");
+        puertas = new Array<TiledMapTileLayer>(2);
+        puertas.add((TiledMapTileLayer) this.mapa.getLayers().get("PuertaDerecha"));
+        puertas.add((TiledMapTileLayer) this.mapa.getLayers().get("PuertaIzquierda"));
+
     }
 
     private TiledMap cargarMapa(String mapa) {
@@ -36,28 +45,28 @@ public class Mapa {
     }
 
 
-    public void setPlataformaY(String... capas){
+    private void setPlataformaY(String... capas){
         plataformaY = new Array<TiledMapTileLayer>(capas.length);
         for(String s: capas)
             plataformaY.add((TiledMapTileLayer)mapa.getLayers().get(s));
 
     }
 
-    public void setPlataformaX(String... capas){
+    private void setPlataformaX(String... capas){
         plataformaX = new Array<TiledMapTileLayer>(capas.length);
         for(String s: capas)
             plataformaX.add((TiledMapTileLayer)mapa.getLayers().get(s));
 
     }
 
-    public void setEncima(String... capas){
+    private void setEncima(String... capas){
         encima = new Array<TiledMapTileLayer>(capas.length);
         for(String s: capas){
             encima.add((TiledMapTileLayer)mapa.getLayers().get(s));
         }
     }
 
-    public void setItem(String... capas){
+    private void setItem(String... capas){
         items = new Array<TiledMapTileLayer>(capas.length);
         for(String s: capas){
             items.add((TiledMapTileLayer) mapa.getLayers().get(s));
@@ -74,8 +83,9 @@ public class Mapa {
 
     public boolean colision(float x, float y, Array<TiledMapTileLayer> capas){
         for(TiledMapTileLayer capa: capas){
-            TiledMapTileLayer.Cell cell = capa.getCell((int)(x/capa.getTileWidth()), (int)(y/capa.getTileHeight()));
-            if(cell != null) return true;
+            TiledMapTileLayer.Cell cell = capa.getCell((int) (x / capa.getTileWidth()), (int) (y / capa.getTileHeight()));
+            if (cell != null) return true;
+
         }
         return false;
     }
@@ -96,5 +106,27 @@ public class Mapa {
 
     public void remove(String layer){
         mapa.getLayers().remove(mapa.getLayers().get(layer));
+    }
+
+    public int colisionPuerta(float x, float y) {
+        for(TiledMapTileLayer capa: puertas){
+            TiledMapTileLayer.Cell cellDer = capa.getCell((int)(x/capa.getTileWidth()), (int)(y/capa.getTileHeight()));
+            TiledMapTileLayer.Cell cellIzq = capa.getCell((int)((x-250)/capa.getTileWidth()), (int)(y/capa.getTileHeight()));
+            if((cellDer != null||cellIzq!=null) && capa.getName().equals("PuertaIzquierda"))
+                return -1;
+            if((cellDer != null||cellIzq!=null) && capa.getName().equals("PuertaDerecha"))
+                return 1;
+        }
+        return 0;
+    }
+
+    public float getWidth(){
+        TiledMapTileLayer layer = (TiledMapTileLayer)mapa.getLayers().get(0);
+        return layer.getWidth()*layer.getTileWidth();
+    }
+
+    public float getHeight(){
+        TiledMapTileLayer layer = (TiledMapTileLayer)mapa.getLayers().get(0);
+        return layer.getHeight()*layer.getTileHeight();
     }
 }

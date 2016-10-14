@@ -17,11 +17,12 @@ import com.badlogic.gdx.utils.Array;
  * Created by allanruiz on 19/09/16.
  */
 public class Abner {
+    public static final int X = 530;
     private Sprite sprite;
     private int cont = 8;
     private float y = 135f, saltoMov = 8f, gravedad = 10f, alturaMax;
     private Texture neutral, saltar1, saltar2, pResortera;
-    private float mov = 4f;
+    private float mov = 7f;
     private Salto salto;
     private int cantVida;
     private Animation caminar, atacar;
@@ -44,7 +45,7 @@ public class Abner {
         this.atacar = new Animation(0.2f, new TextureRegion(resortera1),new TextureRegion(resortera2),new TextureRegion(resortera3));
         this.atacar.setPlayMode(Animation.PlayMode.NORMAL);
         sprite = new Sprite(neutral);
-        sprite.setPosition(530, y);
+        sprite.setPosition(X, y);
         timerAnimation = 0;
         timerAnimationA =0;
         salto = Salto.BAJANDO;
@@ -115,6 +116,7 @@ public class Abner {
         }
     }
 
+
     public void walk(boolean right){
 
         if (right){
@@ -124,7 +126,7 @@ public class Abner {
                         sprite.flip(true, false);
                     }
                     sprite.translate(mov, 0);
-                    if(sprite.getX()>530&&sprite.getX()<2100)
+                    if(limiteCamaraX())
                         camara.translate(mov,0);
                     else if(sprite.getX()<=530)
                         camara.position.x = 640;
@@ -142,7 +144,7 @@ public class Abner {
                         sprite.flip(true, false);
                     }
                     sprite.translate(-mov, 0);
-                    if(sprite.getX()>530&&sprite.getX()<2100)
+                    if(limiteCamaraX())
                         camara.translate(-mov,0);
                 }
                 else {
@@ -155,6 +157,10 @@ public class Abner {
         camara.update();
 
 
+    }
+
+    private boolean limiteCamaraX() {
+        return sprite.getX()>530&&sprite.getX()<mapa.getWidth()-750;
     }
 
     public void setEstadoAtaque(Ataque estado) {
@@ -200,7 +206,7 @@ public class Abner {
                     sprite.setY(sprite.getY() - (saltoMov + gravedad));
                     if(limiteCamara())
                         camara.translate(0,- (saltoMov + gravedad));
-                    else if(sprite.getY() <= y)
+                    else if(sprite.getY() <= y+100)
                         camara.position.y = 400;
 
                     camara.update();
@@ -219,7 +225,7 @@ public class Abner {
     }
 
     private boolean limiteCamara(){
-        return sprite.getY()<=480 && sprite.getY()>y;
+        return sprite.getY()<mapa.getHeight()-800 && sprite.getY()>y;
     }
 
     public boolean isAttacking() {
@@ -235,6 +241,10 @@ public class Abner {
         return proyectiles;
     }
 
+    public void setMapa(Mapa mapa){
+        this.mapa = mapa;
+    }
+
     public float getY() {
         return sprite.getY();
     }
@@ -245,6 +255,21 @@ public class Abner {
 
     public void setCantVida(int vida){
         cantVida=vida;
+    }
+
+    public int cambioNivel() {
+        return mapa.colisionPuerta(sprite.getX()+sprite.getWidth() + mov, sprite.getY());
+    }
+
+    public void setInitialPosition(int i) {
+        if(i>0) {
+            sprite.setPosition(250, y);
+            camara.position.set(640,400,0);
+        }
+        else if(i<0){
+            sprite.setPosition(mapa.getWidth()-450, y);
+            camara.position.set(640+(mapa.getWidth()-1280), 400,0);
+        }
     }
 
     public enum Salto{

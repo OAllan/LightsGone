@@ -18,8 +18,7 @@ import com.badlogic.gdx.utils.Array;
  */
 public class Abner {
     private Sprite sprite;
-    private boolean flag;
-    private int transicion, cont = 8;
+    private int cont = 8;
     private float y = 135f, saltoMov = 8f, gravedad = 10f, alturaMax;
     private Texture neutral, saltar1, saltar2, pResortera;
     private float mov = 4f;
@@ -27,19 +26,14 @@ public class Abner {
     private Animation caminar, atacar;
     private OrthographicCamera camara;
     private Array<Proyectil> proyectiles;
-    private Enemigo.Sopa sopa;
-    private TiledMap mapa;
-    private TiledMapTileLayer pared;
-    private Array<TiledMapTileLayer> plataformas;
-
+    private Mapa mapa;
     private float timerAnimation, timerAnimationA;
-    private TiledMapTileLayer malteada;
     private Ataque estadoAtaque;
     private Vertical estadoSalto;
     private Horizontal estadoHorizontal;
 
     public Abner(Texture texture, Texture correr1, Texture correr2, Texture saltar1, Texture saltar2, Texture resortera1,
-                 Texture resortera2, Texture resortera3, Texture pResortera,OrthographicCamera camara, TiledMap mapa){
+                 Texture resortera2, Texture resortera3, Texture pResortera,OrthographicCamera camara, Mapa mapa){
         this.neutral = texture;
         this.saltar1 = saltar1;
         this.saltar2 = saltar2;
@@ -54,26 +48,15 @@ public class Abner {
         timerAnimationA =0;
         salto = Salto.BAJANDO;
         this.camara = camara;
-        transicion = 0;
         this.proyectiles = new Array<Proyectil>(50);
         this.mapa =mapa;
         alturaMax = y + 270;
-        iniciarPlataformas();
         estadoHorizontal = Horizontal.DESACTIVADO;
         estadoAtaque = Ataque.DESACTIVADO;
         estadoSalto = Vertical.DESACTIVADO;
 
     }
 
-    private void iniciarPlataformas() {
-        plataformas = new Array<TiledMapTileLayer>(3);
-        String[] nombres = {"PlataformaPiso", "Plataformas", "Plataformas2"};
-        for(String s: nombres){
-            plataformas.add((TiledMapTileLayer)mapa.getLayers().get(s));
-        }
-        pared = (TiledMapTileLayer)mapa.getLayers().get("ParedPuerta");
-        malteada = (TiledMapTileLayer)mapa.getLayers().get("Malteada");
-    }
 
     public void draw(SpriteBatch batch, boolean right){
         sprite.draw(batch);
@@ -133,8 +116,8 @@ public class Abner {
     public void walk(boolean right){
 
         if (right){
-            if (!colisionX((sprite.getX()+(sprite.getWidth()/2))+mov, sprite.getY())){
-                if(colisionY(sprite.getX()+sprite.getWidth()/2, sprite.getY() - (saltoMov + gravedad)) || estadoSalto == Vertical.ACTIVADO){
+            if (!mapa.colisionX((sprite.getX() + (sprite.getWidth() / 2)) + mov, sprite.getY())){
+                if(mapa.colisionY(sprite.getX() + sprite.getWidth() / 2, sprite.getY() - (saltoMov + gravedad)) || estadoSalto == Vertical.ACTIVADO){
                     if(sprite.isFlipX()){
                         sprite.flip(true, false);
                     }
@@ -151,8 +134,8 @@ public class Abner {
             }
         }
         else {
-            if (!colisionX((sprite.getX()+(sprite.getWidth()/2)) - mov, sprite.getY())) {
-                if (colisionY(sprite.getX()+sprite.getWidth()/2, sprite.getY() - (saltoMov + gravedad))){
+            if (!mapa.colisionX((sprite.getX() + (sprite.getWidth() / 2)) - mov, sprite.getY())) {
+                if (mapa.colisionY(sprite.getX() + sprite.getWidth() / 2, sprite.getY() - (saltoMov + gravedad))){
                     if(!sprite.isFlipX()){
                         sprite.flip(true, false);
                     }
@@ -172,68 +155,6 @@ public class Abner {
 
     }
 
-    private void jumpForward(boolean right){
-
-        if (right){
-            if (!colisionX((sprite.getX()+(sprite.getWidth()/2)) + mov, sprite.getY())) {
-                if (sprite.isFlipX()) {
-                    sprite.flip(true, false);
-                }
-                sprite.translate(mov * 2, 0);
-                if (sprite.getX() > 530 && sprite.getX() < 2100)
-                    camara.translate(mov * 2, 0);
-            }
-        }
-        else {
-            if (!colisionX((sprite.getX()+(sprite.getWidth()/2)) - mov, sprite.getY())) {
-                if (!sprite.isFlipX()) {
-                    sprite.flip(true, false);
-                }
-                sprite.translate(-mov * 2, 0);
-                if (sprite.getX() > 530 && sprite.getX() < 2100)
-                    camara.translate(-mov * 2, 0);
-            }
-        }
-        camara.update();
-
-        switch (salto){
-            case SUBIENDO:
-                sprite.setY(sprite.getY()+saltoMov);
-                if(limiteCamara())
-                    camara.translate(0, saltoMov);
-                else if(sprite.getY() == y)
-                    camara.position.y = 400;
-                camara.update();
-                if(sprite.getY()>= alturaMax){
-                    sprite.setY(alturaMax);
-                    salto = Salto.BAJANDO;
-                }
-                break;
-            case BAJANDO:
-
-                if(colisionY(sprite.getX()+sprite.getWidth()/2, sprite.getY() - (saltoMov + gravedad))) {
-                    estadoSalto = Vertical.DESACTIVADO;
-                    alturaMax = sprite.getY() +270;
-                }
-                else {
-                    sprite.setY(sprite.getY() - (saltoMov + gravedad));
-                    if(limiteCamara())
-                        camara.translate(0,- (saltoMov + gravedad));
-                    else if(sprite.getY() == y)
-                        camara.position.y = 400;
-                    camara.update();
-                }
-                break;
-        }
-    }
-
-    public void neutral(boolean right) {
-        sprite.setTexture(neutral);
-        sprite.setSize(neutral.getWidth(), neutral.getHeight());
-        if (right&&sprite.isFlipX())
-            sprite.flip(true, false);
-    }
-
     public void setEstadoAtaque(Ataque estado) {
         this.estadoAtaque = estado;
     }
@@ -249,14 +170,8 @@ public class Abner {
         return (estadoSalto == Vertical.ACTIVADO);
     }
 
-    private boolean colisionX(float x, float y){
-        Cell cell = pared.getCell((int)(x/pared.getTileWidth()), (int)(y/pared.getTileHeight()));
-        return cell!=null;
-    }
-
     public boolean colisionMalteada(){
-        Cell cell = malteada.getCell(((int)((sprite.getX()+sprite.getWidth())/malteada.getTileWidth())), (int)(sprite.getY()/malteada.getTileHeight()));
-        return cell!=null;
+        return mapa.colisionItem(sprite.getX()+sprite.getWidth(), sprite.getY());
     }
 
     public void jump(){
@@ -276,7 +191,7 @@ public class Abner {
                 break;
             case BAJANDO:
 
-                if(colisionY(sprite.getX()+sprite.getWidth()/2, sprite.getY() - (saltoMov + gravedad))) {
+                if (mapa.colisionY(sprite.getX() + sprite.getWidth() / 2, sprite.getY() - (saltoMov + gravedad))) {
                     estadoSalto = Vertical.DESACTIVADO;
                     alturaMax = sprite.getY() +270;
                 } else {
@@ -291,15 +206,6 @@ public class Abner {
                 break;
 
         }
-    }
-
-    private boolean colisionY(float x, float y){
-        for (TiledMapTileLayer layer: plataformas) {
-            Cell cell = layer.getCell((int)(x/layer.getTileWidth()), (int)(y/layer.getTileHeight()));
-            if(cell!= null)
-                return true;
-        }
-        return false;
     }
 
     public void setSalto(Salto salto) {

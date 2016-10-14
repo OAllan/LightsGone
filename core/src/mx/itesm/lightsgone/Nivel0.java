@@ -42,11 +42,10 @@ public class Nivel0 implements Screen, InputProcessor{
     private boolean right;
     private Boton botonSaltar, botonHabilidad, pausa;
     private float mov = 1f;
+    private Array<Mapa> mapas;
+    private Mapa mapa;
     private Array<Proyectil> proyectiles;
-    private TiledMapRenderer renderer;
-    private TiledMap mapa;
-    private TiledMapTileLayer encima;
-    private TiledMapTileLayer malteada;
+
 
     public Nivel0(Juego juego) {
         this.juego = juego;
@@ -57,8 +56,19 @@ public class Nivel0 implements Screen, InputProcessor{
     public void show() {
         cargarTexturas();
         iniciarCamara();
+        crearMapas();
         crearEscena();
         Gdx.input.setInputProcessor(this);
+    }
+
+    private void crearMapas() {
+        mapas = new Array<Mapa>(3);
+        mapas.add(new Mapa("CuartoAbner.tmx", batch,camara));
+        mapa = mapas.get(0);
+        mapa.setPlataformaY("Plataformas2", "Plataformas", "PlataformaPiso");
+        mapa.setPlataformaX("ParedPuerta");
+        mapa.setEncima("CapaEncima");
+        mapa.setItem("Malteada");
     }
 
     private void iniciarCamara() {
@@ -66,15 +76,14 @@ public class Nivel0 implements Screen, InputProcessor{
         camara.position.set(640, 400, 0);
         camara.update();
         vista = new StretchViewport(1280, 800, camara);
-
         camaraHUD = new OrthographicCamera(1280,800);
         camaraHUD.position.set(640,400,0);
         camaraHUD.update();
+        batch = new SpriteBatch();
 
     }
 
     private void crearEscena() {
-        batch = new SpriteBatch();
         fondo = new Fondo(fondoTex);
         botonSaltar = new Boton(botonSalto, 1000,10, false);
         pad = new Pad(JFondo, JLeft, JRight);
@@ -84,11 +93,8 @@ public class Nivel0 implements Screen, InputProcessor{
         imgVida.setPosition(0,780-imgVida.getHeight());
         vida = new Texto("tipo.fnt", imgVida.getWidth(),690);
         cantVida = 99;
-        renderer = new OrthogonalTiledMapRenderer(mapa, batch);
-        renderer.setView(camara);
         abner = new Abner(neutral, correr1, correr2, salto1, salto2, resortera1, resortera2, resortera3, pResortera,camara, mapa);
-        encima = (TiledMapTileLayer)mapa.getLayers().get("CapaEncima");
-        malteada = (TiledMapTileLayer)mapa.getLayers().get("Malteada");
+
     }
 
     private void cargarTexturas() {
@@ -109,8 +115,6 @@ public class Nivel0 implements Screen, InputProcessor{
         assetManager.load("PResortera2.png", Texture.class);
         assetManager.load("PResortera3.png", Texture.class);
         assetManager.load("MunicionResortera.png", Texture.class);
-        assetManager.setLoader(TiledMap.class, new TmxMapLoader(new InternalFileHandleResolver()));
-        assetManager.load("CuartoAbner.tmx", TiledMap.class);
         assetManager.finishLoading();
         neutral = assetManager.get("PNeutral.png");
         salto1 = assetManager.get("PSalto1.png");
@@ -129,7 +133,6 @@ public class Nivel0 implements Screen, InputProcessor{
         resortera2 =  assetManager.get("PResortera2.png");
         resortera3 =  assetManager.get("PResortera3.png");
         pResortera = assetManager.get("MunicionResortera.png");
-        mapa = assetManager.get("CuartoAbner.tmx");
 
     }
 
@@ -159,16 +162,14 @@ public class Nivel0 implements Screen, InputProcessor{
         }
 
         if(abner.colisionMalteada()){
-            mapa.getLayers().remove(malteada);
+            mapa.remove("Malteada");
         }
 
 
-        renderer.setView(camara);
-        renderer.render();
+        mapa.draw();
         proyectiles = abner.getProyectiles();
         batch.setProjectionMatrix(camara.combined);
         batch.begin();
-
         abner.draw(batch, right);
 
         for (int i=0;i<proyectiles.size;i++) {
@@ -179,10 +180,10 @@ public class Nivel0 implements Screen, InputProcessor{
                 proyectiles.get(i).update();
             }
         }
-        renderer.setView(camara);
+
 
         if(abner.getY()>=480)
-            renderer.renderTileLayer(encima);
+            mapa.drawE();
         batch.end();
 
         batch.setProjectionMatrix(camaraHUD.combined);

@@ -22,6 +22,8 @@ public class Mapa {
     private static AssetManager manager = new AssetManager();
     private static OrthographicCamera camara;
     private Array<TiledMapTileLayer> puertas;
+    private Array<Enemigo> enemigos;
+    private SpriteBatch batch;
 
     public Mapa(String mapa, SpriteBatch batch, OrthographicCamera camara){
         this.mapa = cargarMapa(mapa);
@@ -31,10 +33,10 @@ public class Mapa {
         setPlataformaX("ParedPuerta", "PlataformasNoCruzar");
         setEncima("CapaEncima");
         setItem("Malteada");
-        puertas = new Array<TiledMapTileLayer>(2);
+        puertas = new Array<TiledMapTileLayer>(3);
+        puertas.add((TiledMapTileLayer) this.mapa.getLayers().get("PuertaCerrada"));
         puertas.add((TiledMapTileLayer) this.mapa.getLayers().get("PuertaDerecha"));
         puertas.add((TiledMapTileLayer) this.mapa.getLayers().get("PuertaIzquierda"));
-
     }
 
     private TiledMap cargarMapa(String mapa) {
@@ -110,12 +112,16 @@ public class Mapa {
 
     public int colisionPuerta(float x, float y) {
         for(TiledMapTileLayer capa: puertas){
-            TiledMapTileLayer.Cell cellDer = capa.getCell((int)(x/capa.getTileWidth()), (int)(y/capa.getTileHeight()));
-            TiledMapTileLayer.Cell cellIzq = capa.getCell((int)((x-250)/capa.getTileWidth()), (int)(y/capa.getTileHeight()));
-            if((cellDer != null||cellIzq!=null) && capa.getName().equals("PuertaIzquierda"))
-                return -1;
-            if((cellDer != null||cellIzq!=null) && capa.getName().equals("PuertaDerecha"))
-                return 1;
+            if(capa!=null){
+                TiledMapTileLayer.Cell cellDer = capa.getCell((int)(x/capa.getTileWidth()), (int)(y/capa.getTileHeight()));
+                TiledMapTileLayer.Cell cellIzq = capa.getCell((int)((x-250)/capa.getTileWidth()), (int)(y/capa.getTileHeight()));
+                if((cellDer != null||cellIzq!=null) && capa.getName().equals("PuertaCerrada"))
+                    return 0;
+                if((cellDer != null||cellIzq!=null) && capa.getName().equals("PuertaIzquierda"))
+                    return -1;
+                if((cellDer != null||cellIzq!=null) && capa.getName().equals("PuertaDerecha"))
+                    return 1;
+            }
         }
         return 0;
     }

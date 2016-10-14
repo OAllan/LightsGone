@@ -198,7 +198,7 @@ public class Abner {
                     sprite.setY(sprite.getY() - (saltoMov + gravedad));
                     if(limiteCamara())
                         camara.translate(0,- (saltoMov + gravedad));
-                    else if(sprite.getY() == y)
+                    else if(sprite.getY() <= y)
                         camara.position.y = 400;
 
                     camara.update();

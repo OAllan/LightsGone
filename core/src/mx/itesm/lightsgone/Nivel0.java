@@ -20,6 +20,8 @@ import com.badlogic.gdx.utils.viewport.Viewport;
  */
 public class Nivel0 implements Screen, InputProcessor{
 
+    public static final int ANCHO_MUNDO = 1280;
+    public static final int ALTO_MUNDO = 800;
     private OrthographicCamera camara;
     private OrthographicCamera camaraHUD;
     private Viewport vista;
@@ -28,7 +30,6 @@ public class Nivel0 implements Screen, InputProcessor{
     private AssetManager assetManager = new AssetManager();
     private Texture fondoTex, neutral, salto1, salto2, correr1, correr2, botonSalto, JLeft, JRight, JFondo, botonVida, habilidad, texPausa, resortera1, resortera2, resortera3, pResortera;
     private Sprite transicionNivel;
-    private Fondo fondo;
     private Abner abner;
     private Texto vida;
     private Pad pad;
@@ -74,27 +75,24 @@ public class Nivel0 implements Screen, InputProcessor{
         mapaActual = 0;
         mapa = mapas.get(mapaActual);
         transicion = Transicion.DISMINUYENDO;
-
     }
 
     private void iniciarCamara() {
-        camara = new OrthographicCamera(1280,800);
-        camara.position.set(640, 400, 0);
+        camara = new OrthographicCamera(ANCHO_MUNDO, ALTO_MUNDO);
+        camara.position.set(ANCHO_MUNDO/2, ALTO_MUNDO/2, 0);
         camara.update();
-        vista = new StretchViewport(1280, 800, camara);
-        camaraHUD = new OrthographicCamera(1280,800);
-        camaraHUD.position.set(640,400,0);
+        vista = new StretchViewport(ANCHO_MUNDO, ALTO_MUNDO, camara);
+        camaraHUD = new OrthographicCamera(ANCHO_MUNDO,ALTO_MUNDO);
+        camaraHUD.position.set(ANCHO_MUNDO/2,ALTO_MUNDO/2,0);
         camaraHUD.update();
         batch = new SpriteBatch();
-
     }
 
     private void crearEscena() {
-        fondo = new Fondo(fondoTex);
         botonSaltar = new Boton(botonSalto, 1000,10, false);
         pad = new Pad(JFondo, JLeft, JRight);
         botonHabilidad = new Boton(habilidad, 995-habilidad.getWidth(), 10, false);
-        pausa = new Boton(texPausa, 1280- texPausa.getWidth(), 800 - texPausa.getHeight(), false);
+        pausa = new Boton(texPausa, ANCHO_MUNDO- texPausa.getWidth(), ALTO_MUNDO - texPausa.getHeight(), false);
         imgVida = new Sprite(botonVida);
         imgVida.setPosition(0,780-imgVida.getHeight());
         vida = new Texto("tipo.fnt", imgVida.getWidth(),690);
@@ -109,7 +107,6 @@ public class Nivel0 implements Screen, InputProcessor{
         assetManager.load("PNeutral.png", Texture.class);
         assetManager.load("PSalto1.png", Texture.class);
         assetManager.load("PSalto2.png", Texture.class);
-        assetManager.load("FondoPrueba.png",Texture.class);
         assetManager.load("BotonSalto.png", Texture.class);
         assetManager.load("JoystickLeft.png", Texture.class);
         assetManager.load("JoystickRight.png", Texture.class);
@@ -128,7 +125,6 @@ public class Nivel0 implements Screen, InputProcessor{
         salto2 = assetManager.get("PSalto2.png");
         correr1 = assetManager.get("PCorrer1.png");
         correr2 = assetManager.get("PCorrer2.png");
-        fondoTex = assetManager.get("FondoPrueba.png");
         botonSalto = assetManager.get("BotonSalto.png");
         JLeft = assetManager.get("JoystickLeft.png");
         JRight = assetManager.get("JoystickRight.png");
@@ -141,7 +137,7 @@ public class Nivel0 implements Screen, InputProcessor{
         resortera3 =  assetManager.get("PResortera3.png");
         pResortera = assetManager.get("MunicionResortera.png");
         transicionNivel = new Sprite((Texture)assetManager.get("nivel.png"));
-        transicionNivel.setSize(1280,800);
+        transicionNivel.setSize(ANCHO_MUNDO,ALTO_MUNDO);
 
     }
 

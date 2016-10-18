@@ -18,6 +18,7 @@ import com.badlogic.gdx.utils.Array;
  */
 public class Abner {
     public static final int X = 350;
+    public static final int SALTOMAX = 270;
     private Sprite sprite;
     private int cont = 8;
     private float y = 135f, saltoMov = 8f, gravedad = 10f, alturaMax;
@@ -52,7 +53,7 @@ public class Abner {
         this.camara = camara;
         this.proyectiles = new Array<Proyectil>(50);
         this.mapa =mapa;
-        alturaMax = y + 270;
+        alturaMax = y + SALTOMAX;
         estadoHorizontal = Horizontal.DESACTIVADO;
         estadoAtaque = Ataque.DESACTIVADO;
         estadoSalto = Vertical.DESACTIVADO;
@@ -129,7 +130,7 @@ public class Abner {
                     if(limiteCamaraX())
                         camara.translate(mov,0);
                     else if(sprite.getX()<=530)
-                        camara.position.x = 640;
+                        camara.position.x = Nivel0.ANCHO_MUNDO/2;
                 }
                 else {
                     estadoSalto = Vertical.ACTIVADO;
@@ -189,8 +190,8 @@ public class Abner {
                 sprite.setY(sprite.getY()+saltoMov);
                 if(limiteCamara())
                     camara.translate(0,saltoMov);
-                else if(sprite.getY() == y)
-                    camara.position.y = 400;
+                else if(sprite.getY() <= y)
+                    camara.position.y = Nivel0.ALTO_MUNDO/2;
                 camara.update();
                 if(sprite.getY()>= alturaMax){
                     sprite.setY(alturaMax);
@@ -201,13 +202,13 @@ public class Abner {
 
                 if (mapa.colisionY(sprite.getX() + sprite.getWidth() / 2, sprite.getY() - (saltoMov + gravedad))) {
                     estadoSalto = Vertical.DESACTIVADO;
-                    alturaMax = sprite.getY() +270;
+                    alturaMax = sprite.getY() + SALTOMAX;
                 } else {
                     sprite.setY(sprite.getY() - (saltoMov + gravedad));
                     if(limiteCamara())
                         camara.translate(0,- (saltoMov + gravedad));
                     else if(sprite.getY() <= y+100)
-                        camara.position.y = 400;
+                        camara.position.y = Nivel0.ANCHO_MUNDO/2;
 
                     camara.update();
                 }
@@ -272,7 +273,7 @@ public class Abner {
             sprite.setPosition(mapa.getWidth()-450, y);
             camara.position.set(mapa.getWidth()-640, 275+sprite.getY(),0);
         }
-        alturaMax = sprite.getY() + 270;
+        alturaMax = sprite.getY() + SALTOMAX;
     }
 
     public enum Salto{

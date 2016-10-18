@@ -17,7 +17,7 @@ import com.badlogic.gdx.utils.Array;
  * Created by allanruiz on 19/09/16.
  */
 public class Abner {
-    public static final int X = 530;
+    public static final int X = 350;
     private Sprite sprite;
     private int cont = 8;
     private float y = 135f, saltoMov = 8f, gravedad = 10f, alturaMax;
@@ -262,14 +262,17 @@ public class Abner {
     }
 
     public void setInitialPosition(int i) {
-        if(i>0) {
-            sprite.setPosition(250, y);
-            camara.position.set(640,400,0);
+        float y = mapa.getPosition(i);
+        boolean right = mapa.getRight(i);
+        if(right){
+            sprite.setPosition(X, y);
+            camara.position.set(640, 275+sprite.getY(),0);
         }
-        else if(i<0){
+        else{
             sprite.setPosition(mapa.getWidth()-450, y);
-            camara.position.set(640+(mapa.getWidth()-1280), 400,0);
+            camara.position.set(mapa.getWidth()-640, 275+sprite.getY(),0);
         }
+        alturaMax = sprite.getY() + 270;
     }
 
     public enum Salto{

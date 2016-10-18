@@ -172,7 +172,7 @@ public class MenuPrincipal implements Screen {
 	}
 
 	private void cargarTexturas(){
-		assetManager.load("fondoMenu.png", Texture.class);
+		assetManager.load("FondoMenu.png", Texture.class);
 		assetManager.load("cargar.png", Texture.class);
 		assetManager.load("cargarP.png", Texture.class);
 		assetManager.load("acercaDe.png", Texture.class);
@@ -186,7 +186,7 @@ public class MenuPrincipal implements Screen {
 		assetManager.finishLoading();
 		rugido = assetManager.get("rugido.mp3");
 		texTransicion = assetManager.get("transicion.png");
-		texFondo = assetManager.get("fondoMenu.png");
+		texFondo = assetManager.get("FondoMenu.png");
 		acercaDe = assetManager.get("acercaDe.png");
 		acercaDeP = assetManager.get("acercaDeP.png");
 		nuevoJuego = assetManager.get("nuevo.png");

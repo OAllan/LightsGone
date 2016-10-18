@@ -42,6 +42,7 @@ public class Nivel0 implements Screen, InputProcessor{
     private Array<Proyectil> proyectiles;
     private Transicion transicion;
     private Estado estado;
+    private final float YBAJA = 135f, YMEDIA = 800f, YALTA =1100f;
 
 
 
@@ -60,9 +61,16 @@ public class Nivel0 implements Screen, InputProcessor{
     }
 
     private void crearMapas() {
-        mapas = new Array<Mapa>(3);
-        mapas.add(new Mapa("CuartoAbner.tmx", batch,camara));
-        mapas.add(new Mapa("Pasillo.tmx", batch,camara));
+        mapas = new Array<Mapa>(6);
+        boolean[] cuartoAbnerB = {true, false}, pasilloB = {true, false}, salaB={true, true, false, false}, cocina1B = {true, true},
+                cocina2B = {false,false}, cocina3B = {true};
+        int[] cuartoAbner = {0,1}, pasillo = {0,2}, sala = {1,0,0,3}, cocina1 = {2,4}, cocina2 = {3,5}, cocina3 = {4};
+        mapas.add(new Mapa("CuartoAbner.tmx", batch,camara, cuartoAbner,cuartoAbnerB,YBAJA,YBAJA));
+        mapas.add(new Mapa("Pasillo.tmx", batch,camara, pasillo, pasilloB,YBAJA, YBAJA));
+        mapas.add(new Mapa("Sala.tmx", batch, camara, sala, salaB,YALTA, YBAJA, YALTA, YMEDIA));
+        mapas.add(new Mapa("Cocina1.tmx", batch, camara, cocina1, cocina1B,YBAJA, YALTA));
+        mapas.add(new Mapa("Cocina2.tmx", batch, camara, cocina2,cocina2B ,YBAJA, YALTA));
+        mapas.add(new Mapa("Cocina3.tmx", batch, camara, cocina3,cocina3B, YBAJA));
         mapaActual = 0;
         mapa = mapas.get(mapaActual);
         transicion = Transicion.DISMINUYENDO;
@@ -167,12 +175,13 @@ public class Nivel0 implements Screen, InputProcessor{
         }
 
         int cambio= abner.cambioNivel();
-        if(cambio!=0){
+        if(cambio>=0){
+            int tempMapa = mapaActual;
             transicion = Transicion.AUMENTANDO;
-            mapaActual+= cambio;
+            mapaActual = cambio;
             mapa = mapas.get(mapaActual);
             abner.setMapa(mapa);
-            abner.setInitialPosition(cambio);
+            abner.setInitialPosition(tempMapa);
             estado = Estado.CAMBIO;
             mapa.draw();
         }
@@ -193,8 +202,8 @@ public class Nivel0 implements Screen, InputProcessor{
         }
 
 
-        if(abner.getY()>=480)
-            mapa.drawE();
+
+        mapa.drawE();
 
 
         batch.end();
@@ -260,7 +269,9 @@ public class Nivel0 implements Screen, InputProcessor{
         correr1.dispose();
         correr2.dispose();
         fondoTex.dispose();
+        mapa.dispose();
         batch.dispose();
+
     }
 
     @Override

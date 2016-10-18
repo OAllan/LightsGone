@@ -3,7 +3,6 @@ package mx.itesm.lightsgone;
 import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.assets.loaders.resolvers.InternalFileHandleResolver;
 import com.badlogic.gdx.graphics.OrthographicCamera;
-import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.maps.tiled.TiledMapRenderer;
@@ -18,26 +17,45 @@ import com.badlogic.gdx.utils.Array;
 public class Mapa {
     private TiledMap mapa;
     private TiledMapRenderer renderer;
-    private Array<TiledMapTileLayer> plataformaY, plataformaX,encima, items;
     private static AssetManager manager = new AssetManager();
     private static OrthographicCamera camara;
-    private Array<TiledMapTileLayer> puertas;
+    private Array<TiledMapTileLayer> puertas,plataformaY, plataformaX,encima, items;
     private Array<Enemigo> enemigos;
     private SpriteBatch batch;
-
-    public Mapa(String mapa, SpriteBatch batch, OrthographicCamera camara){
+    private int[] numPuertas;
+    private float[] posicionY;
+    private boolean[] right;
+    public Mapa(String mapa, SpriteBatch batch, OrthographicCamera camara, int[] numPuertas,boolean[] right,float... posicionY){
         this.mapa = cargarMapa(mapa);
         Mapa.camara = camara;
+        this.batch = batch;
         renderer = new OrthogonalTiledMapRenderer(this.mapa, batch);
-        setPlataformaY("Plataformas2", "Plataformas", "PlataformaPiso");
-        setPlataformaX("ParedPuerta", "PlataformasNoCruzar");
-        setEncima("CapaEncima");
-        setItem("Malteada");
-        puertas = new Array<TiledMapTileLayer>(3);
-        puertas.add((TiledMapTileLayer) this.mapa.getLayers().get("PuertaCerrada"));
-        puertas.add((TiledMapTileLayer) this.mapa.getLayers().get("PuertaDerecha"));
-        puertas.add((TiledMapTileLayer) this.mapa.getLayers().get("PuertaIzquierda"));
+        this.numPuertas = numPuertas;
+        this.posicionY = posicionY;
+        this.right = right;
+        cargarCapas();
     }
+
+    private void cargarCapas() {
+        plataformaY = new Array<TiledMapTileLayer>(3);
+        plataformaX = new Array<TiledMapTileLayer>(2);
+        items = new Array<TiledMapTileLayer>(1);
+        encima = new Array<TiledMapTileLayer>(1);
+        puertas = new Array<TiledMapTileLayer>(5);
+        plataformaY.add((TiledMapTileLayer)mapa.getLayers().get("PlataformaPiso"));
+        plataformaY.add((TiledMapTileLayer)mapa.getLayers().get("Plataformas"));
+        plataformaY.add((TiledMapTileLayer)mapa.getLayers().get("Plataformas2"));
+        plataformaX.add((TiledMapTileLayer)mapa.getLayers().get("ParedPuerta"));
+        plataformaX.add((TiledMapTileLayer)mapa.getLayers().get("PlataformasNoCruzar"));
+        encima.add((TiledMapTileLayer)mapa.getLayers().get("CapaEncima"));
+        items.add((TiledMapTileLayer)mapa.getLayers().get("Malteada"));
+        puertas.add((TiledMapTileLayer)mapa.getLayers().get("PuertaCerrada"));
+        puertas.add((TiledMapTileLayer)mapa.getLayers().get("Puerta1"));
+        puertas.add((TiledMapTileLayer)mapa.getLayers().get("Puerta2"));
+        puertas.add((TiledMapTileLayer)mapa.getLayers().get("Puerta3"));
+        puertas.add((TiledMapTileLayer) mapa.getLayers().get("Puerta4"));
+    }
+
 
     private TiledMap cargarMapa(String mapa) {
         manager.setLoader(TiledMap.class, new TmxMapLoader(new InternalFileHandleResolver()));
@@ -47,36 +65,9 @@ public class Mapa {
     }
 
 
-    private void setPlataformaY(String... capas){
-        plataformaY = new Array<TiledMapTileLayer>(capas.length);
-        for(String s: capas)
-            plataformaY.add((TiledMapTileLayer)mapa.getLayers().get(s));
-
-    }
-
-    private void setPlataformaX(String... capas){
-        plataformaX = new Array<TiledMapTileLayer>(capas.length);
-        for(String s: capas)
-            plataformaX.add((TiledMapTileLayer)mapa.getLayers().get(s));
-
-    }
-
-    private void setEncima(String... capas){
-        encima = new Array<TiledMapTileLayer>(capas.length);
-        for(String s: capas){
-            encima.add((TiledMapTileLayer)mapa.getLayers().get(s));
-        }
-    }
-
-    private void setItem(String... capas){
-        items = new Array<TiledMapTileLayer>(capas.length);
-        for(String s: capas){
-            items.add((TiledMapTileLayer) mapa.getLayers().get(s));
-        }
-    }
 
     public boolean colisionX(float x, float y){
-        return colision(x,y,plataformaX);
+        return colision(x, y, plataformaX);
     }
 
     public boolean colisionY(float x, float y){
@@ -85,9 +76,10 @@ public class Mapa {
 
     public boolean colision(float x, float y, Array<TiledMapTileLayer> capas){
         for(TiledMapTileLayer capa: capas){
-            TiledMapTileLayer.Cell cell = capa.getCell((int) (x / capa.getTileWidth()), (int) (y / capa.getTileHeight()));
-            if (cell != null) return true;
-
+            if(capa!=null){
+                TiledMapTileLayer.Cell cell = capa.getCell((int) (x / capa.getTileWidth()), (int) (y / capa.getTileHeight()));
+                if (cell != null) return true;
+            }
         }
         return false;
     }
@@ -102,8 +94,10 @@ public class Mapa {
     }
 
     public void drawE(){
-        for(TiledMapTileLayer layer: encima)
-            renderer.renderTileLayer(layer);
+        for(TiledMapTileLayer layer: encima) {
+            if(layer!=null)
+                renderer.renderTileLayer(layer);
+        }
     }
 
     public void remove(String layer){
@@ -116,14 +110,13 @@ public class Mapa {
                 TiledMapTileLayer.Cell cellDer = capa.getCell((int)(x/capa.getTileWidth()), (int)(y/capa.getTileHeight()));
                 TiledMapTileLayer.Cell cellIzq = capa.getCell((int)((x-125)/capa.getTileWidth()), (int)(y/capa.getTileHeight()));
                 if((cellDer != null||cellIzq!=null) && capa.getName().equals("PuertaCerrada"))
-                    return 0;
-                if((cellDer != null||cellIzq!=null) && capa.getName().equals("PuertaIzquierda"))
                     return -1;
-                if((cellDer != null||cellIzq!=null) && capa.getName().equals("PuertaDerecha"))
-                    return 1;
+                if((cellDer != null||cellIzq!=null)){
+                    return numPuertas[Integer.parseInt(""+capa.getName().charAt(capa.getName().length()-1))-1];
+                }
             }
         }
-        return 0;
+        return -1;
     }
 
     public float getWidth(){
@@ -134,5 +127,26 @@ public class Mapa {
     public float getHeight(){
         TiledMapTileLayer layer = (TiledMapTileLayer)mapa.getLayers().get(0);
         return layer.getHeight()*layer.getTileHeight();
+    }
+
+    public float getPosition(int i) {
+        return posicionY[index(i)];
+    }
+
+    private int index(int i) {
+        int j;
+        for(j = 0;j<numPuertas.length;j++){
+            if(numPuertas[j]==i)
+                break;
+        }
+        return j;
+    }
+
+    public boolean getRight(int i) {
+        return right[index(i)];
+    }
+
+    public void dispose() {
+        mapa.dispose();
     }
 }

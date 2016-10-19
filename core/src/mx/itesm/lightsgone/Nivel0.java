@@ -1,7 +1,6 @@
 package mx.itesm.lightsgone;
 
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.Input;
 import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.assets.AssetManager;
@@ -28,7 +27,7 @@ public class Nivel0 implements Screen, InputProcessor{
     private SpriteBatch batch;
     private final Juego juego;
     private AssetManager assetManager = new AssetManager();
-    private Texture fondoTex, neutral, salto1, salto2, correr1, correr2, botonSalto, JLeft, JRight, JFondo, botonVida, habilidad, texPausa, resortera1, resortera2, resortera3, pResortera;
+    private Texture neutral, salto1, salto2, correr1, correr2, botonSalto, JLeft, JRight, JFondo, botonVida, habilidad, texPausa, resortera1, resortera2, resortera3, pResortera, plataforma;
     private Sprite transicionNivel;
     private Abner abner;
     private Texto vida;
@@ -66,12 +65,16 @@ public class Nivel0 implements Screen, InputProcessor{
         boolean[] cuartoAbnerB = {true, false}, pasilloB = {true, false}, salaB={true, true, false, false}, cocina1B = {true, true},
                 cocina2B = {false,false}, cocina3B = {true};
         int[] cuartoAbner = {0,1}, pasillo = {0,2}, sala = {1,0,0,3}, cocina1 = {2,4}, cocina2 = {3,5}, cocina3 = {4};
-        mapas.add(new Mapa("CuartoAbner.tmx", batch,camara, cuartoAbner,cuartoAbnerB,YBAJA,YBAJA));
-        mapas.add(new Mapa("Pasillo.tmx", batch,camara, pasillo, pasilloB,YBAJA, YBAJA));
-        mapas.add(new Mapa("Sala.tmx", batch, camara, sala, salaB,YALTA, YBAJA, YALTA, YMEDIA));
-        mapas.add(new Mapa("Cocina1.tmx", batch, camara, cocina1, cocina1B,YBAJA, YALTA));
-        mapas.add(new Mapa("Cocina2.tmx", batch, camara, cocina2,cocina2B ,YBAJA, YALTA));
-        mapas.add(new Mapa("Cocina3.tmx", batch, camara, cocina3,cocina3B, YBAJA));
+        mapas.add(new Mapa("CuartoAbner.tmx", batch, camara, cuartoAbner, cuartoAbnerB, YBAJA, YBAJA));
+        mapas.add(new Mapa("Pasillo.tmx", batch, camara, pasillo, pasilloB, YBAJA, YBAJA));
+        mapas.add(new Mapa("Sala.tmx", batch, camara, sala, salaB, YALTA, YBAJA, YALTA, YMEDIA));
+        mapas.add(new Mapa("Cocina1.tmx", batch, camara, cocina1, cocina1B, YBAJA, YALTA));
+        mapas.add(new Mapa("Cocina2.tmx", batch, camara, cocina2, cocina2B, YBAJA, YALTA));
+        mapas.add(new Mapa("Cocina3.tmx", batch, camara, cocina3, cocina3B, YBAJA));
+        Sprite sprite = new Sprite(plataforma);
+        sprite.setRotation(12);
+        sprite.setPosition(ANCHO_MUNDO + 470, ALTO_MUNDO * 3 - 850);
+        mapas.get(4).setPlataformasInclinada(sprite);
         mapaActual = 0;
         mapa = mapas.get(mapaActual);
         transicion = Transicion.DISMINUYENDO;
@@ -119,6 +122,7 @@ public class Nivel0 implements Screen, InputProcessor{
         assetManager.load("PResortera3.png", Texture.class);
         assetManager.load("MunicionResortera.png", Texture.class);
         assetManager.load("nivel.png", Texture.class);
+        assetManager.load("PlataformaInclinada.png", Texture.class);
         assetManager.finishLoading();
         neutral = assetManager.get("PNeutral.png");
         salto1 = assetManager.get("PSalto1.png");
@@ -138,6 +142,7 @@ public class Nivel0 implements Screen, InputProcessor{
         pResortera = assetManager.get("MunicionResortera.png");
         transicionNivel = new Sprite((Texture)assetManager.get("nivel.png"));
         transicionNivel.setSize(ANCHO_MUNDO,ALTO_MUNDO);
+        plataforma = assetManager.get("PlataformaInclinada.png");
 
     }
 
@@ -264,7 +269,6 @@ public class Nivel0 implements Screen, InputProcessor{
         salto2.dispose();
         correr1.dispose();
         correr2.dispose();
-        fondoTex.dispose();
         mapa.dispose();
         batch.dispose();
 

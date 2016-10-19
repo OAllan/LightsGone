@@ -1,8 +1,10 @@
 package mx.itesm.lightsgone;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.assets.loaders.resolvers.InternalFileHandleResolver;
 import com.badlogic.gdx.graphics.OrthographicCamera;
+import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.maps.tiled.TiledMapRenderer;
@@ -25,6 +27,7 @@ public class Mapa {
     private int[] numPuertas;
     private float[] posicionY;
     private boolean[] right;
+    private Array<Sprite> plataformasInclinada;
     public Mapa(String mapa, SpriteBatch batch, OrthographicCamera camara, int[] numPuertas,boolean[] right,float... posicionY){
         this.mapa = cargarMapa(mapa);
         Mapa.camara = camara;
@@ -64,7 +67,11 @@ public class Mapa {
         return manager.get(mapa);
     }
 
-
+    public void setPlataformasInclinada(Sprite... sprites){
+        plataformasInclinada = new Array<Sprite>(sprites.length);
+        for (Sprite sprite:sprites)
+            plataformasInclinada.add(sprite);
+    }
 
     public boolean colisionX(float x, float y){
         return colision(x, y, plataformaX);
@@ -91,6 +98,14 @@ public class Mapa {
     public void draw(){
         renderer.setView(camara);
         renderer.render();
+
+        batch.begin();
+        if(plataformasInclinada != null) {
+            for (Sprite sprite: plataformasInclinada)
+                sprite.draw(batch);
+        }
+        batch.end();
+
     }
 
     public void drawE(){
@@ -145,6 +160,31 @@ public class Mapa {
     public boolean getRight(int i) {
         return right[index(i)];
     }
+
+    public boolean colisionInclinada(float x, float y){
+        if(plataformasInclinada!=null){
+            for(Sprite sprite1: plataformasInclinada){
+                float ancho = sprite1.getBoundingRectangle().getWidth();
+                float alto = sprite1.getBoundingRectangle().getHeight();
+                float extremoderecho = sprite1.getX()+ancho;
+                float rec_y = 1150;
+                float inc_y = alto/ancho;
+                float tempX = sprite1.getX(), tempY = rec_y;
+                float extremoAlto = sprite1.getY() + alto;
+                if(x>1700)
+                    Gdx.app.log("Posicion", "y: "+ y+ " "+ rec_y);
+                for(float xs = sprite1.getX(), ys=rec_y;xs<extremoderecho&&ys<extremoAlto; xs+=2, ys+=inc_y*2){
+                    if((sprite1.getX()<x&&x<xs)&&(rec_y<y&&y<=ys)){
+                        return true;
+                    }
+                }
+            }
+            return false;
+        }
+        return false;
+
+    }
+
 
     public void dispose() {
         mapa.dispose();

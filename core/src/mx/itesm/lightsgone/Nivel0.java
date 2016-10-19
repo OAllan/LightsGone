@@ -75,7 +75,7 @@ public class Nivel0 implements Screen, InputProcessor{
         sprite.setRotation(12);
         sprite.setPosition(ANCHO_MUNDO + 470, ALTO_MUNDO * 3 - 850);
         mapas.get(4).setPlataformasInclinada(sprite);
-        mapaActual = 0;
+        mapaActual = 4;
         mapa = mapas.get(mapaActual);
         transicion = Transicion.DISMINUYENDO;
     }

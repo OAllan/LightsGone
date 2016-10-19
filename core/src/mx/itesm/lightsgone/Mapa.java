@@ -167,19 +167,13 @@ public class Mapa {
                 float ancho = sprite1.getBoundingRectangle().getWidth();
                 float alto = sprite1.getBoundingRectangle().getHeight();
                 float extremoderecho = sprite1.getX()+ancho;
-                float rec_y = 1150;
+                float rec_y = 1160;
                 float inc_y = alto/ancho;
-                float tempX = sprite1.getX(), tempY = rec_y;
-                float extremoAlto = sprite1.getY() + alto;
-                if(x>1700)
-                    Gdx.app.log("Posicion", "y: "+ y+ " "+ rec_y);
-                for(float xs = sprite1.getX(), ys=rec_y;xs<extremoderecho&&ys<extremoAlto; xs+=2, ys+=inc_y*2){
-                    if((sprite1.getX()<x&&x<xs)&&(rec_y<y&&y<=ys)){
-                        return true;
-                    }
-                }
+                float ys = (x-sprite1.getX())*inc_y;
+                float altura = rec_y + ys+10;
+                if((sprite1.getX()<=x&&x<=extremoderecho)&&(rec_y<=y&&y<=altura))
+                    return true;
             }
-            return false;
         }
         return false;
 

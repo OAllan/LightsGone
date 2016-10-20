@@ -16,12 +16,12 @@ import com.badlogic.gdx.utils.Array;
 public class Abner {
     public static final int X = 350;
     public static final int SALTOMAX = 300;
-    public static final float MOVY = 1.48f;
     private Sprite sprite;
     private int cont = 8;
     private float y = 135f, saltoMov = 8f, gravedad = 10f, alturaMax;
     private Texture neutral, saltar1, saltar2, pResortera;
     private float mov = 7f;
+    private final float MOVY = (0.2125f)*mov;
     private Salto salto;
     private int cantVida;
     private Animation caminar, atacar;
@@ -123,7 +123,7 @@ public class Abner {
         if(estadoAtaque != Ataque.ACTIVADO && estadoSalto != Vertical.ACTIVADO && estadoHorizontal==Horizontal.DESACTIVADO )
             sprite.setTexture(neutral);
 
-        camara.position.set(camara.position.x, 265+sprite.getY(),0);
+        //camara.position.set(camara.position.x, 265 + sprite.getY(),0);
         camara.update();
     }
 
@@ -144,7 +144,7 @@ public class Abner {
     public void walk(boolean right){
 
         if (right){
-            if (!mapa.colisionX((sprite.getX() + (sprite.getWidth() / 2)) + mov, sprite.getY())||mapa.colisionInclinada((sprite.getX() + (sprite.getWidth() / 2))+ mov, sprite.getY())){
+            if (!mapa.colisionX((sprite.getX() + (sprite.getWidth() / 2)) + mov, sprite.getY())&&!mapa.colisionInclinada((sprite.getX() + (sprite.getWidth() / 2))+ mov, sprite.getY())){
                 if(mapa.colisionY(sprite.getX() + sprite.getWidth() / 2, sprite.getY() - (saltoMov + gravedad)) || estadoSalto == Vertical.ACTIVADO|| mapa.colisionInclinada(sprite.getX() + sprite.getWidth() / 2, sprite.getY() - (saltoMov + gravedad))){
                     if(sprite.isFlipX()){
                         sprite.flip(true, false);
@@ -162,7 +162,7 @@ public class Abner {
             }
         }
         else {
-            if (!mapa.colisionX((sprite.getX() + (sprite.getWidth() / 2))- mov, sprite.getY())||mapa.colisionInclinada((sprite.getX() + (sprite.getWidth() / 2))- mov, sprite.getY())) {
+            if (!mapa.colisionX((sprite.getX() + (sprite.getWidth() / 2))- mov, sprite.getY())&&!mapa.colisionInclinada((sprite.getX() + (sprite.getWidth() / 2))- mov, sprite.getY())) {
                 if (mapa.colisionY(sprite.getX() + sprite.getWidth() / 2, sprite.getY() - (saltoMov + gravedad)) || estadoSalto == Vertical.ACTIVADO|| mapa.colisionInclinada(sprite.getX() + sprite.getWidth() / 2, sprite.getY() - (saltoMov + gravedad))){
                     if(!sprite.isFlipX()){
                         sprite.flip(true, false);
@@ -226,7 +226,8 @@ public class Abner {
                 if (mapa.colisionY(sprite.getX() + sprite.getWidth() / 2, sprite.getY() - (saltoMov + gravedad))||mapa.colisionInclinada(sprite.getX() + sprite.getWidth() / 2, sprite.getY() - (saltoMov + gravedad))) {
                     estadoSalto = Vertical.DESACTIVADO;
                     alturaMax = sprite.getY() + SALTOMAX;
-                } else {
+                }
+                else {
                     sprite.setY(sprite.getY() - (saltoMov + gravedad));
                     if(limiteCamara())
                         camara.translate(0,- (saltoMov + gravedad));

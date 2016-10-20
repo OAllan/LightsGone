@@ -104,6 +104,10 @@ public class Mapa {
             for (Sprite sprite: plataformasInclinada)
                 sprite.draw(batch);
         }
+        if(enemigos!=null){
+            for(Enemigo enemigo: enemigos)
+                enemigo.draw(batch);
+        }
         batch.end();
 
     }
@@ -148,6 +152,10 @@ public class Mapa {
         return posicionY[index(i)];
     }
 
+    public void setEnemigos(Array<Enemigo> enemigos){
+        this.enemigos = enemigos;
+    }
+
     private int index(int i) {
         int j;
         for(j = 0;j<numPuertas.length;j++){
@@ -166,11 +174,12 @@ public class Mapa {
             for(Sprite sprite1: plataformasInclinada){
                 float ancho = sprite1.getBoundingRectangle().getWidth();
                 float alto = sprite1.getBoundingRectangle().getHeight();
+                Gdx.app.log("Rectangulo: ", "Ancho: "+x+" Alto"+ y);
                 float extremoderecho = sprite1.getX()+ancho;
                 float rec_y = 1160;
-                float inc_y = alto/ancho;
+                float inc_y = 0.2125f;
                 float ys = (x-sprite1.getX())*inc_y;
-                float altura = rec_y + ys+10;
+                float altura = rec_y + ys+121;
                 if((sprite1.getX()<=x&&x<=extremoderecho)&&(rec_y<=y&&y<=altura))
                     return true;
             }
@@ -179,8 +188,17 @@ public class Mapa {
 
     }
 
+    public boolean colisionLata(float x, float y){
+        TiledMapTileLayer layer = (TiledMapTileLayer)mapa.getLayers().get("DetallesFondo2");
+        if(layer!= null){
+            TiledMapTileLayer.Cell cell = layer.getCell((int)(x/layer.getTileWidth()),(int)(y/layer.getTileHeight()));
+            return cell!=null;
+        }
+        return false;
+    }
 
     public void dispose() {
         mapa.dispose();
     }
+
 }

@@ -671,4 +671,93 @@ public abstract class Enemigo  {
         }
     }
 
+    static class Lata extends Enemigo{
+        private static Texture neutral;
+        private EstadoLata estadoLata;
+        private float alto, alturaOriginal;
+        private final float MOVCAIDA = 18f, MOVX = 7f,MOVRODANDO = 0.2125f*MOVX;
+        private Mapa mapa;
+
+        static {
+            cargarTexturas();
+        }
+
+        private static void cargarTexturas() {
+            manager.load("Lata.png", Texture.class);
+            manager.finishLoading();
+            neutral = manager.get("Lata.png");
+        }
+
+        public Lata(float x, float y, Mapa mapa){
+            super(neutral, x, y);
+            estadoLata = EstadoLata.CAYENDO;
+            alto = alturaOriginal = sprite.getHeight();
+            this.mapa = mapa;
+        }
+
+        @Override
+        public void attack() {
+
+        }
+
+        @Override
+        public void setEstado(Estado estado) {
+
+        }
+
+        @Override
+        public void draw(SpriteBatch batch) {
+            sprite.draw(batch);
+            actualizar();
+        }
+
+        private void actualizar() {
+            switch (estadoLata){
+                case CAYENDO:
+                    sprite.setRegion(0, 0, (int)sprite.getWidth(), (int)alto);
+                    sprite.setSize(sprite.getWidth(), alto);
+                    if (mapa.colisionLata(sprite.getX() + sprite.getWidth() / 2, sprite.getY()))
+                        estadoLata = EstadoLata.DESAPARECIENDO;
+                    else if(!mapa.colisionInclinada(sprite.getX()+sprite.getWidth()/2, sprite.getY()+MOVCAIDA)){
+                        sprite.translate(0,-MOVCAIDA);
+                    }
+                    else{
+                        estadoLata = EstadoLata.RODANDO;
+                    }
+                    break;
+                case RODANDO:
+                    if(!mapa.colisionInclinada(sprite.getX()+sprite.getWidth()/2, sprite.getY()+MOVCAIDA)){
+                        estadoLata = EstadoLata.CAYENDO;
+                    }
+                    else{
+                        sprite.translate(-MOVX, -MOVRODANDO);
+                        sprite.rotate(10);
+                    }
+                    break;
+                case DESAPARECIENDO:
+                    sprite.setRotation(0);
+                    alto -= 5;
+                    if(alto<=0){
+                        estadoLata = EstadoLata.CAYENDO;
+                        sprite.setPosition(4871, mapa.getHeight());
+                        alto = alturaOriginal;
+                    }
+                    sprite.setRegion(0, 0, (int)sprite.getWidth(), (int)alto);
+                    sprite.setSize(sprite.getWidth(), alto);
+                    break;
+            }
+        }
+
+        @Override
+        public boolean muerte() {
+            return false;
+        }
+
+        private enum EstadoLata{
+            CAYENDO,
+            RODANDO,
+            DESAPARECIENDO
+        }
+    }
+
 }

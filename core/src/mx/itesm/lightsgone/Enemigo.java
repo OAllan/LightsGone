@@ -716,8 +716,10 @@ public abstract class Enemigo  {
                 case CAYENDO:
                     sprite.setRegion(0, 0, (int)sprite.getWidth(), (int)alto);
                     sprite.setSize(sprite.getWidth(), alto);
-                    if (mapa.colisionLata(sprite.getX() + sprite.getWidth() / 2, sprite.getY()))
+                    if (mapa.colisionLata(sprite.getX() + sprite.getWidth() / 2, sprite.getY())) {
                         estadoLata = EstadoLata.DESAPARECIENDO;
+                        sprite.translate(-40,-30);
+                    }
                     else if(!mapa.colisionInclinada(sprite.getX()+sprite.getWidth()/2, sprite.getY()+MOVCAIDA)){
                         sprite.translate(0,-MOVCAIDA);
                     }

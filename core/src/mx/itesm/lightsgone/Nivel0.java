@@ -21,6 +21,7 @@ public class Nivel0 implements Screen, InputProcessor{
 
     public static final int ANCHO_MUNDO = 1280;
     public static final int ALTO_MUNDO = 800;
+    private final int LATAX = 4871;
     private OrthographicCamera camara;
     private OrthographicCamera camaraHUD;
     private Viewport vista;
@@ -76,9 +77,11 @@ public class Nivel0 implements Screen, InputProcessor{
         sprite.setPosition(ANCHO_MUNDO + 470, ALTO_MUNDO * 3 - 850);
         mapas.get(4).setPlataformasInclinada(sprite);
         mapaActual = 4;
-        Array<Enemigo> enemigos = new Array<Enemigo>(2);
+        Array<Enemigo> enemigos = new Array<Enemigo>(3);
         mapa = mapas.get(mapaActual);
-        enemigos.add(new Enemigo.Lata(4871,70*45,mapa));
+        enemigos.add(new Enemigo.Lata(LATAX,mapa.getHeight(),mapa));
+        enemigos.add(new Enemigo.Lata(LATAX, mapa.getHeight()+3300, mapa));
+        enemigos.add(new Enemigo.Lata(LATAX, mapa.getHeight()+6600, mapa));
         mapa.setEnemigos(enemigos);
         transicion = Transicion.DISMINUYENDO;
     }

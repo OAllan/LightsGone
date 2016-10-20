@@ -4,16 +4,23 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.math.Rectangle;
 
 /**
  * Created by allanruiz on 21/09/16.
  */
 public class Boton {
     private Sprite sprite;
+    private Rectangle rectangle;
     private Estado estado;
     private float timer = 0.2f;
     private boolean pad;
     private Animacion animacion;
+
+    public Boton(float x, float y, float width, float height){
+        rectangle = new Rectangle(x,y,width,height);
+    }
+
     public Boton(Texture boton, float x, float y, boolean pad) {
         sprite = new Sprite(boton);
         sprite.setPosition(x,y);
@@ -42,7 +49,7 @@ public class Boton {
     }
 
     public boolean contiene(float x, float y) {
-        return sprite.getBoundingRectangle().contains(x,y);
+        return sprite!=null?sprite.getBoundingRectangle().contains(x,y):rectangle.contains(x,y);
     }
 
     public void press(){

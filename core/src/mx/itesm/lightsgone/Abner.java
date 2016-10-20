@@ -87,6 +87,7 @@ public class Abner {
                 sprite.translate(0,-MOVY);
                 camara.translate(0,-MOVY);
             }
+            alturaMax = sprite.getY() +SALTOMAX;
         }
 
 
@@ -123,7 +124,7 @@ public class Abner {
         if(estadoAtaque != Ataque.ACTIVADO && estadoSalto != Vertical.ACTIVADO && estadoHorizontal==Horizontal.DESACTIVADO )
             sprite.setTexture(neutral);
 
-        //camara.position.set(camara.position.x, 265 + sprite.getY(),0);
+        camara.position.set(camara.position.x, 265 + sprite.getY(),0);
         camara.update();
     }
 

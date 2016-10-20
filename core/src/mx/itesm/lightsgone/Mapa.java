@@ -174,10 +174,10 @@ public class Mapa {
             for(Sprite sprite1: plataformasInclinada){
                 float ancho = sprite1.getBoundingRectangle().getWidth();
                 float alto = sprite1.getBoundingRectangle().getHeight();
-                Gdx.app.log("Rectangulo: ", "Ancho: "+x+" Alto"+ y);
                 float extremoderecho = sprite1.getX()+ancho;
                 float rec_y = 1160;
                 float inc_y = 0.2125f;
+                Gdx.app.log("Posicion", "x: "+ x + " y: "+ y);
                 float ys = (x-sprite1.getX())*inc_y;
                 float altura = rec_y + ys+121;
                 if((sprite1.getX()<=x&&x<=extremoderecho)&&(rec_y<=y&&y<=altura))

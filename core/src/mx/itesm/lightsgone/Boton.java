@@ -82,9 +82,21 @@ public class Boton {
         sprite.translate(mov, 0);
     }
 
+    public void desaparecer(boolean flag){
+        if(flag){
+            sprite.setAlpha(0);
+            estado = Estado.OCULTO;
+        }
+        else{
+            if(estado != Estado.PRESIONADO)
+                estado = Estado.NOPRESIONADO;
+        }
+    }
+
     public enum Estado{
         PRESIONADO,
-        NOPRESIONADO
+        NOPRESIONADO,
+        OCULTO
     }
 
     public enum Animacion{

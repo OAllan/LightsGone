@@ -26,32 +26,43 @@ public class Nivel0 implements Screen, InputProcessor{
     private OrthographicCamera camaraHUD;
     private Viewport vista;
     private SpriteBatch batch;
-    private final Juego juego;
+    private Juego juego;
     private AssetManager assetManager = new AssetManager();
-    private Texture pausaTex,quitTex, opciones, neutral, salto1, salto2, correr1, correr2, botonSalto, JLeft, JRight, JFondo, botonVida, habilidad, texPausa, resortera1, resortera2, resortera3, pResortera, plataforma;
+    private Texture save,pausaTex,quitTex, opciones, neutral, salto1, salto2, correr1, correr2, botonSalto, JLeft, JRight, JFondo, botonVida, habilidad, texPausa, resortera1, resortera2, resortera3, pResortera, plataforma;
     private Sprite transicionNivel, pausaActual;
     private Abner abner;
     private Texto vida;
     private Pad pad;
     private Sprite imgVida;
-    private boolean right;
-    private Boton botonSaltar, botonHabilidad, pausa, botonResume, botonOpciones,botonQuit, botonYes,botonNo;
+    private boolean right, saveB;
+    private Boton botonSaltar, botonHabilidad, pausa, botonResume, botonOpciones,botonQuit, botonYes,botonNo, botonSave;
     private float alpha = 0;
     private Array<Mapa> mapas;
     private Mapa mapa;
-    private int mapaActual;
+    static int mapaActual;
     private Array<Proyectil> proyectiles;
     private Transicion transicion;
     private Estado estado;
     private EstadoPausa estadoPausa;
+    private GameInfo gameInfo;
     private final float YBAJA = 135f, YMEDIA = 800f, YALTA =1100f;
-
-
 
     public Nivel0(Juego juego) {
         this.juego = juego;
         right = true;
+        saveB = false;
+        gameInfo = new GameInfo();
     }
+
+    public Nivel0(Juego juego, String nombre){
+        this.juego = juego;
+        right = true;
+        saveB = false;
+        gameInfo = new GameInfo(nombre);
+    }
+
+
+
 
     @Override
     public void show() {
@@ -77,7 +88,7 @@ public class Nivel0 implements Screen, InputProcessor{
         sprite.setRotation(12);
         sprite.setPosition(ANCHO_MUNDO + 470, ALTO_MUNDO * 3 - 850);
         mapas.get(4).setPlataformasInclinada(sprite);
-        mapaActual = 0;
+        mapaActual = gameInfo.getMapa();
         Array<Enemigo> enemigos = new Array<Enemigo>(3);
         mapa = mapas.get(mapaActual);
         enemigos.add(new Enemigo.Lata(LATAX,mapas.get(4).getHeight(),mapas.get(4)));
@@ -106,7 +117,8 @@ public class Nivel0 implements Screen, InputProcessor{
         imgVida = new Sprite(botonVida);
         imgVida.setPosition(0,780-imgVida.getHeight());
         vida = new Texto("tipo.fnt", imgVida.getWidth(),690);
-        abner = new Abner(neutral, correr1, correr2, salto1, salto2, resortera1, resortera2, resortera3, pResortera,camara, mapa);
+        abner = new Abner(neutral, correr1, correr2, salto1, salto2, resortera1, resortera2, resortera3, pResortera,camara, mapa, gameInfo);
+        gameInfo.setAbner(abner);
         estado = Estado.JUGANDO;
         estadoPausa = EstadoPausa.PRINCIPAL;
         pausaActual = new Sprite(pausaTex);
@@ -115,6 +127,7 @@ public class Nivel0 implements Screen, InputProcessor{
         botonQuit = new Boton(538,93,202,79);
         botonYes = new Boton(402,106,141,79);
         botonNo = new Boton(714, 106,141,79);
+        botonSave = new Boton(save, ANCHO_MUNDO/2-(save.getWidth()/2), ALTO_MUNDO - save.getHeight(), false);
 
 
     }
@@ -141,6 +154,7 @@ public class Nivel0 implements Screen, InputProcessor{
         assetManager.load("menuPausa.png", Texture.class);
         assetManager.load("menuPausaQuit.png", Texture.class);
         assetManager.load("opciones.png", Texture.class);
+        assetManager.load("Save6.png", Texture.class);
         assetManager.finishLoading();
         neutral = assetManager.get("PNeutral.png");
         salto1 = assetManager.get("PSalto1.png");
@@ -164,6 +178,7 @@ public class Nivel0 implements Screen, InputProcessor{
         pausaTex = assetManager.get("menuPausa.png");
         opciones = assetManager.get("opciones.png");
         quitTex = assetManager.get("menuPausaQuit.png");
+        save = assetManager.get("Save6.png");
 
     }
 
@@ -214,7 +229,6 @@ public class Nivel0 implements Screen, InputProcessor{
             mapa.draw();
             batch.begin();
             abner.draw(batch, right);
-
             for (int i=0;i<proyectiles.size;i++) {
                 if(proyectiles.get(i).out())
                     proyectiles.removeIndex(i);
@@ -253,9 +267,15 @@ public class Nivel0 implements Screen, InputProcessor{
 
             transicionNivel.setAlpha(alpha);
             batch.setProjectionMatrix(camaraHUD.combined);
+            saveB = abner.guardar();
+            if(saveB)
+                botonSave.desaparecer(!saveB);
+            else
+                botonSave.desaparecer(!saveB);
             batch.begin();
             botonSaltar.draw(batch);
             pad.draw(batch);
+            botonSave.draw(batch);
             botonHabilidad.draw(batch);
             pausa.draw(batch);
             imgVida.draw(batch);
@@ -353,6 +373,14 @@ public class Nivel0 implements Screen, InputProcessor{
                 botonHabilidad.setEstado(Boton.Estado.PRESIONADO);
             if(pausa.contiene(x,y))
                 estado = Estado.PAUSA;
+            if(saveB) {
+                if(botonSave.contiene(x,y)) {
+                    gameInfo.guardarJuego();
+                    botonSave.setEstado(Boton.Estado.PRESIONADO);
+                }
+
+            }
+
         }
 
         if(estado == Estado.PAUSA){

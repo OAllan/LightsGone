@@ -21,7 +21,7 @@ public class Mapa {
     private TiledMapRenderer renderer;
     private static AssetManager manager = new AssetManager();
     private static OrthographicCamera camara;
-    private Array<TiledMapTileLayer> puertas,plataformaY, plataformaX,encima, items;
+    private Array<TiledMapTileLayer> puertas,plataformaY, plataformaX,encima, items, guardado;
     private Array<Enemigo> enemigos;
     private SpriteBatch batch;
     private int[] numPuertas;
@@ -45,6 +45,7 @@ public class Mapa {
         items = new Array<TiledMapTileLayer>(1);
         encima = new Array<TiledMapTileLayer>(1);
         puertas = new Array<TiledMapTileLayer>(5);
+        guardado = new Array<TiledMapTileLayer>(1);
         plataformaY.add((TiledMapTileLayer)mapa.getLayers().get("PlataformaPiso"));
         plataformaY.add((TiledMapTileLayer)mapa.getLayers().get("Plataformas"));
         plataformaY.add((TiledMapTileLayer)mapa.getLayers().get("Plataformas2"));
@@ -57,6 +58,7 @@ public class Mapa {
         puertas.add((TiledMapTileLayer)mapa.getLayers().get("Puerta2"));
         puertas.add((TiledMapTileLayer)mapa.getLayers().get("Puerta3"));
         puertas.add((TiledMapTileLayer) mapa.getLayers().get("Puerta4"));
+        guardado.add((TiledMapTileLayer)mapa.getLayers().get("Guardado"));
     }
 
 
@@ -163,6 +165,10 @@ public class Mapa {
                 break;
         }
         return j;
+    }
+
+    public boolean colisionGuardado(float x, float y){
+        return colision(x, y, guardado);
     }
 
     public boolean getRight(int i) {

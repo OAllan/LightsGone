@@ -14,6 +14,8 @@ import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.viewport.StretchViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 
+import java.util.ArrayList;
+
 /**
  * Created by allanruiz on 19/09/16.
  */
@@ -37,15 +39,16 @@ public class Nivel0 implements Screen, InputProcessor{
     private boolean right;
     private Boton botonSaltar, botonHabilidad, pausa, botonResume, botonOpciones,botonQuit, botonYes,botonNo;
     private float alpha = 0;
-    private Array<Mapa> mapas;
+    private Array<Mapa> mapas=new Array<Mapa>(6);
     private Mapa mapa;
     private int mapaActual;
-    private Array<Proyectil> proyectiles;
+    private ArrayList<Proyectil> proyectiles;
     private Transicion transicion;
     private Estado estado;
     private EstadoPausa estadoPausa;
     private final float YBAJA = 135f, YMEDIA = 800f, YALTA =1100f;
-
+    Array<Enemigo> enemigos = new Array<Enemigo>(3);
+    Array<Enemigo> enemigos1 = new Array<Enemigo>(3);
 
 
     public Nivel0(Juego juego) {
@@ -63,7 +66,8 @@ public class Nivel0 implements Screen, InputProcessor{
     }
 
     private void crearMapas() {
-        mapas = new Array<Mapa>(6);
+
+        abner = new Abner(neutral, correr1, correr2, salto1, salto2, resortera1, resortera2, resortera3, pResortera, camara, mapa);
         boolean[] cuartoAbnerB = {true, false}, pasilloB = {true, false}, salaB={true, true, false, false}, cocina1B = {true, true},
                 cocina2B = {false,false}, cocina3B = {true};
         int[] cuartoAbner = {0,1}, pasillo = {0,2}, sala = {1,0,0,3}, cocina1 = {2,4}, cocina2 = {3,5}, cocina3 = {4};
@@ -78,12 +82,15 @@ public class Nivel0 implements Screen, InputProcessor{
         sprite.setPosition(ANCHO_MUNDO + 470, ALTO_MUNDO * 3 - 850);
         mapas.get(4).setPlataformasInclinada(sprite);
         mapaActual = 0;
-        Array<Enemigo> enemigos = new Array<Enemigo>(3);
+
         mapa = mapas.get(mapaActual);
-        enemigos.add(new Enemigo.Lata(LATAX,mapa.getHeight(),mapa));
-        enemigos.add(new Enemigo.Lata(LATAX, mapa.getHeight()+3300, mapa));
-        enemigos.add(new Enemigo.Lata(LATAX, mapa.getHeight()+6600, mapa));
-        mapas.get(4).setEnemigos(enemigos);
+
+
+        //enemigos.add(new Enemigo.Lata(LATAX,mapa.getHeight(),mapa));
+        //enemigos.add(new Enemigo.Lata(LATAX, mapa.getHeight()+3300, mapa));
+       // enemigos.add(new Enemigo.Lata(LATAX, mapa.getHeight()+6600, mapa));
+
+        //mapas.get(4).setEnemigos(enemigos);
         transicion = Transicion.DISMINUYENDO;
     }
 
@@ -107,6 +114,14 @@ public class Nivel0 implements Screen, InputProcessor{
         imgVida.setPosition(0,780-imgVida.getHeight());
         vida = new Texto("tipo.fnt", imgVida.getWidth(),690);
         abner = new Abner(neutral, correr1, correr2, salto1, salto2, resortera1, resortera2, resortera3, pResortera,camara, mapa);
+        enemigos.add(new Enemigo.Mosca(2250,293,abner,mapa));
+        enemigos.add(new Enemigo.Mosca(2295,360,abner,mapa));
+        enemigos.add(new Enemigo.Mosca(2340,360,abner,mapa));
+        enemigos.add(new Enemigo.Brocoli(1215,110,abner,mapa));
+        enemigos.add(new Enemigo.Sopa(3420,540,abner,mapa));
+        //enemigos1.add(new Enemigo.PanTostadora(535,120,abner,mapa));
+        //enemigos1.add(new Enemigo.Tostadora(500,150,abner,mapa));
+        //enemigos1.add(new Enemigo.Fuego(1700,150,abner,mapa));
         estado = Estado.JUGANDO;
         estadoPausa = EstadoPausa.PRINCIPAL;
         pausaActual = new Sprite(pausaTex);
@@ -115,6 +130,7 @@ public class Nivel0 implements Screen, InputProcessor{
         botonQuit = new Boton(538,93,202,79);
         botonYes = new Boton(402,106,141,79);
         botonNo = new Boton(714, 106,141,79);
+        mapas.get(3).setEnemigos(enemigos);
 
 
     }
@@ -124,6 +140,7 @@ public class Nivel0 implements Screen, InputProcessor{
         assetManager.load("PCorrer2.png", Texture.class );
         assetManager.load("PNeutral.png", Texture.class);
         assetManager.load("PSalto1.png", Texture.class);
+        assetManager.load("PSalto2.png", Texture.class);
         assetManager.load("PSalto2.png", Texture.class);
         assetManager.load("BotonSalto.png", Texture.class);
         assetManager.load("JoystickLeft.png", Texture.class);
@@ -215,9 +232,10 @@ public class Nivel0 implements Screen, InputProcessor{
             batch.begin();
             abner.draw(batch, right);
 
-            for (int i=0;i<proyectiles.size;i++) {
+            for (int i=0;i<proyectiles.size();i++) {
                 if(proyectiles.get(i).out())
-                    proyectiles.removeIndex(i);
+                    proyectiles.remove(i);
+
                 else{
                     proyectiles.get(i).draw(batch);
                     proyectiles.get(i).update();

@@ -34,8 +34,8 @@ public class Proyectil {
     }
 
     public boolean out(){
-        if (right)return proyectil.getX() >= x+1000;
-        else return proyectil.getX() <= x-1000;
+        if (right)return proyectil.getX() >= x+700;
+        else return proyectil.getX() <= x-700;
     }
 
     public void setX(float x){

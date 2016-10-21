@@ -10,6 +10,8 @@ import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.utils.Array;
 
+import java.util.ArrayList;
+
 /**
  * Created by allanruiz on 19/09/16.
  */
@@ -26,12 +28,13 @@ public class Abner {
     private int cantVida;
     private Animation caminar, atacar;
     private OrthographicCamera camara;
-    private Array<Proyectil> proyectiles;
+    private ArrayList<Proyectil> proyectiles;
     private Mapa mapa;
     private float timerAnimation, timerAnimationA;
     private Ataque estadoAtaque;
     private Vertical estadoSalto;
     private Horizontal estadoHorizontal;
+    private Rectangle ProyectilRectangulo=new Rectangle();
 
     public Abner(Texture texture, Texture correr1, Texture correr2, Texture saltar1, Texture saltar2, Texture resortera1,
                  Texture resortera2, Texture resortera3, Texture pResortera,OrthographicCamera camara, Mapa mapa){
@@ -49,7 +52,7 @@ public class Abner {
         timerAnimationA =0;
         salto = Salto.BAJANDO;
         this.camara = camara;
-        this.proyectiles = new Array<Proyectil>(50);
+        this.proyectiles = new ArrayList<Proyectil>(50);
         this.mapa =mapa;
         alturaMax = y + SALTOMAX;
         estadoHorizontal = Horizontal.DESACTIVADO;
@@ -126,6 +129,8 @@ public class Abner {
 
         camara.position.set(camara.position.x, 265 + sprite.getY(),0);
         camara.update();
+        if(!proyectiles.isEmpty())
+        ProyectilRectangulo=proyectiles.get(0).getRectangle();
     }
 
     private void attack(boolean right){
@@ -133,6 +138,8 @@ public class Abner {
         sprite.setTexture(atacar.getKeyFrame(timerAnimationA).getTexture());
         if(timerAnimationA>=0.1&&timerAnimationA<(0.1+Gdx.graphics.getDeltaTime())){
             proyectiles.add(new Proyectil(pResortera, sprite.getX()+142, sprite.getY()+138, right));
+
+            //ProyectilRectangulo.overlaps();
             Gdx.app.debug("Ataque", "" + Gdx.graphics.getDeltaTime());
         }
         else if (timerAnimationA>atacar.getAnimationDuration()) {
@@ -262,7 +269,7 @@ public class Abner {
         return sprite.getBoundingRectangle();
     }
 
-    public Array<Proyectil> getProyectiles() {
+    public ArrayList<Proyectil> getProyectiles() {
         return proyectiles;
     }
 
@@ -279,11 +286,30 @@ public class Abner {
     }
 
     public void setCantVida(int vida){
+
         cantVida=vida;
+
     }
 
     public int cambioNivel() {
         return mapa.colisionPuerta(sprite.getX()+3*(sprite.getWidth()/4) + mov, sprite.getY());
+    }
+
+    public Rectangle getProyectilRectangulo(){
+        return ProyectilRectangulo;
+    }
+
+    public void borrarProyectiles(){
+        if(!proyectiles.isEmpty())
+            proyectiles.remove(0);
+    }
+
+    public void impactoFuegoX(){
+
+        for (int i=0; i<=50;i++) {
+            sprite.setX(sprite.getX() - (float).1);
+            camara.position.set(camara.position.x -(float) .1, sprite.getY(), 0);
+        }
     }
 
     public void setInitialPosition(int i) {

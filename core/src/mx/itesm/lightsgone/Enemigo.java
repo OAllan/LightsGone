@@ -8,6 +8,7 @@ import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.MathUtils;
+import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.utils.Array;
 
 /**
@@ -19,6 +20,8 @@ public abstract class Enemigo  {
     private static AssetManager manager = new AssetManager();
     boolean ataco=false;
     long startTime;
+    long startTime1;
+
 
     public Enemigo(Texture texture, float x, float y){
         xInicial = x;
@@ -46,11 +49,13 @@ public abstract class Enemigo  {
     }
 
     static class Sopa extends Enemigo{
-        private static Texture neutral1, neutral2, neutral3, ataque1, ataque2;
+        private static Texture neutral1, neutral2, neutral3, ataque1, ataque2, low;
         private Estado estado;
-        private static Animation neutral, ataque;
+        private static Animation neutral, ataque, dano;
         private float timerA, timer, timerD;
         private Abner abner;
+        private Mapa mapa;
+
 
 
 
@@ -59,11 +64,12 @@ public abstract class Enemigo  {
             cargarAnimacion();
         }
 
-        public Sopa(float x, float y, Abner abner){
+        public Sopa(float x, float y, Abner abner,Mapa mapa){
             super(neutral1, x, y);
             estado= Estado.NEUTRAL;
             timer = timerA = 0;
             this.abner = abner;
+            this.mapa=mapa;
 
         }
 
@@ -71,7 +77,10 @@ public abstract class Enemigo  {
         private static void cargarAnimacion() {
             neutral = new Animation(0.1f, new TextureRegion(neutral1), new TextureRegion(neutral2), new TextureRegion(neutral3));
             ataque = new Animation(0.2f, new TextureRegion(ataque1), new TextureRegion(ataque2));
+            dano=new Animation(0.2f, new TextureRegion(neutral1), new TextureRegion(low));
             neutral.setPlayMode(Animation.PlayMode.LOOP);
+            ataque.setPlayMode(Animation.PlayMode.LOOP);
+            dano.setPlayMode(Animation.PlayMode.LOOP);
         }
 
         @Override
@@ -89,6 +98,12 @@ public abstract class Enemigo  {
         @Override
         public void draw(SpriteBatch batch) {
             sprite.draw(batch);
+            if(System.currentTimeMillis()-startTime>=2000) {
+                if (abner.getX() > 400)
+                    estado = Estado.ATAQUE;
+                else
+                    estado = Estado.NEUTRAL;
+            }
             actualizar();
         }
 
@@ -99,7 +114,7 @@ public abstract class Enemigo  {
 
         private void actualizar() {
             if(abner.getBoundingRectangle().overlaps(sprite.getBoundingRectangle())){
-                if(ataco==false) {
+                if(ataco==false && estado==Estado.ATAQUE) {
                     attack();
                     startTime = System.currentTimeMillis();
                 }
@@ -108,6 +123,14 @@ public abstract class Enemigo  {
                 ataco=false;
                 startTime=0;
             }
+
+            if(sprite.getBoundingRectangle().overlaps(abner.getProyectilRectangulo())) {
+                estado=Estado.DANO;
+                abner.borrarProyectiles();
+                startTime = System.currentTimeMillis();
+            }
+
+
 
 
 
@@ -139,6 +162,7 @@ public abstract class Enemigo  {
                     break;
                 case DANO:
                     timerD += Gdx.graphics.getDeltaTime();
+                    sprite.setTexture(dano.getKeyFrame(timerA).getTexture());
                     if(timerD>5){
                         timerD = 0;
                         estado = Estado.NEUTRAL;
@@ -153,12 +177,14 @@ public abstract class Enemigo  {
             manager.load("SopaNeutral1.png", Texture.class);
             manager.load("SopaNeutral2.png", Texture.class);
             manager.load("SopaNeutral3.png", Texture.class);
+            manager.load("SopaLow.png",Texture.class);
             manager.finishLoading();
             neutral1 = manager.get("SopaNeutral1.png");
             ataque1 = manager.get("SopaAtaque1.png");
             ataque2 = manager.get("SopaAtaque2.png");
             neutral2 = manager.get("SopaNeutral2.png");
             neutral3 = manager.get("SopaNeutral3.png");
+            low=manager.get("SopaLow.png");
         }
 
         @Override
@@ -177,6 +203,8 @@ public abstract class Enemigo  {
         private float timer, timerA;
         private Abner abner;
         private int vida;
+        private Mapa mapa;
+
 
         static {
             cargarTexturas();
@@ -191,13 +219,14 @@ public abstract class Enemigo  {
 
         }
 
-        public Brocoli(float x, float y, Abner abner){
+        public Brocoli(float x, float y, Abner abner,Mapa mapa){
             super(neutral1, x, y);
             estado = Estado.NEUTRAL;
             right = true;
             timer = timerA=0;
             this.abner = abner;
-            vida = 3;
+            vida = 150;
+            this.mapa=mapa;
         }
 
         @Override
@@ -245,6 +274,14 @@ public abstract class Enemigo  {
                 ataco=false;
                 startTime=0;
             }
+
+            if(sprite.getBoundingRectangle().overlaps(abner.getProyectilRectangulo())) {
+                vida -= 1;
+                abner.borrarProyectiles();
+            }
+
+            if(vida<=0)
+                sprite.setSize(10,10);
 
 
 
@@ -331,18 +368,21 @@ public abstract class Enemigo  {
         private static Animation neutral, ataque;
         private float timerA, timer, timerD;
         private Abner abner;
+        private Mapa mapa;
 
         static {
             cargarTexturas();
             cargarAnimacion();
         }
 
-        public Tostadora(float x, float y, Abner abner){
+        public Tostadora(float x, float y, Abner abner, Mapa mapa){
             super(neutraltost, x, y);
             estado= Estado.NEUTRAL;
             timer = timerA = 0;
             this.abner = abner;
             batch = new SpriteBatch();
+            this.mapa=mapa;
+
         }
 
 
@@ -409,7 +449,7 @@ public abstract class Enemigo  {
         }
 
         private static void cargarTexturas(){
-            manager.load("Pan.png", Texture.class);
+
             manager.load("TostadorAtaque1.png", Texture.class);
             manager.load("TostadorAtaque2.png", Texture.class);
             manager.load("TostadorAtaque3.png", Texture.class);
@@ -419,7 +459,7 @@ public abstract class Enemigo  {
             ataquetost1 = manager.get("TostadorAtaque1.png");
             ataquetost2 = manager.get("TostadorAtaque2.png");
             ataquetost3 = manager.get("TostadorAtaque3.png");
-            pan = manager.get("Pan.png");
+
         }
 
         @Override
@@ -428,6 +468,94 @@ public abstract class Enemigo  {
         }
 
     }
+
+    static class PanTostadora extends Enemigo{
+        private static Texture pan;
+        private final float velocidad = 2f;
+        private Abner abner;
+        private Mapa mapa;
+        private String direccion="arriba";
+
+        static {
+            cargarTexturas();
+        }
+
+        public PanTostadora(float x, float y,Abner abner,Mapa mapa){
+            super(pan, x, y);
+            this.abner = abner;
+            this.mapa=mapa;
+
+        }
+
+        @Override
+        public void setEstado(Estado estado) {
+
+        }
+
+        @Override
+        public void attack() {
+
+            abner.setCantVida(abner.getcantVida()-3);
+            ataco=true;
+        }
+
+        @Override
+        public void draw(SpriteBatch batch) {
+            sprite.draw(batch);
+
+            actualizar();
+        }
+
+        @Override
+        public boolean muerte() {
+            return false;
+        }
+
+        private void actualizar() {
+            if(abner.getBoundingRectangle().overlaps(sprite.getBoundingRectangle())){
+                if(ataco==false) {
+                    attack();
+                    startTime = System.currentTimeMillis();
+                }
+            }
+            if(System.currentTimeMillis()-startTime>2000) {
+                ataco=false;
+                startTime=0;
+            }
+
+
+            if (sprite.getY()<=119){
+                direccion="arriba";
+                sprite.rotate(180);}
+            if (sprite.getY()>=700) {
+                direccion = "abajo";
+                sprite.rotate(180);
+            }
+
+
+            if (direccion=="arriba")
+                sprite.setY(sprite.getY()+8);
+            if (direccion=="abajo")
+                sprite.setY(sprite.getY()-8);
+
+
+            }
+
+        private static void cargarTexturas() {
+            manager.load("Pan.png", Texture.class);
+
+
+            manager.finishLoading();
+            pan = manager.get("Pan.png");
+
+
+
+        }
+
+        }
+
+
+
 
     static class Mosca extends Enemigo{
         private static Texture mosca1,mosca2,mosca3;
@@ -440,6 +568,7 @@ public abstract class Enemigo  {
         private int vida;
         private int tama=10;
         private boolean ataq=false;
+        private Mapa mapa;
 
 
         static {
@@ -455,13 +584,14 @@ public abstract class Enemigo  {
 
         }
 
-        public Mosca(float x, float y, Abner abner){
+        public Mosca(float x, float y, Abner abner, Mapa mapa){
             super(mosca1, x, y);
             estado = Estado.NEUTRAL;
             right = true;
             timer = timerA=0;
             this.abner = abner;
             vida = 3;
+            this.mapa=mapa;
         }
 
         @Override
@@ -513,6 +643,14 @@ public abstract class Enemigo  {
                 startTime=0;
             }
 
+            if(sprite.getBoundingRectangle().overlaps(abner.getProyectilRectangulo())) {
+                vida -= 1;
+                abner.borrarProyectiles();
+            }
+
+            if(vida<=0)
+                sprite.setSize(10,10);
+
             switch (estado){
                 case NEUTRAL:
                     sprite.setSize(10,10);
@@ -563,6 +701,7 @@ public abstract class Enemigo  {
         private int vida;
         private int tama=10;
         private boolean ataq=false;
+        private Mapa mapa;
 
 
         static {
@@ -578,19 +717,20 @@ public abstract class Enemigo  {
 
         }
 
-        public Fuego(float x, float y, Abner abner){
+        public Fuego(float x, float y, Abner abner, Mapa mapa){
             super(fuegoPrepara1, x, y);
             estado = Estado.NEUTRAL;
             right = true;
             timer = timerA=0;
             this.abner = abner;
+            this.mapa=mapa;
             vida = 3;
         }
 
         @Override
         public void attack() {
 
-            abner.setCantVida(abner.getcantVida()-20);
+            abner.setCantVida(abner.getcantVida()-1);
 
         }
 
@@ -601,17 +741,16 @@ public abstract class Enemigo  {
 
         @Override
         public void draw(SpriteBatch batch) {
-
             sprite.draw(batch);
-            startTime = System.currentTimeMillis();
-            if(System.currentTimeMillis()-startTime<=2000) {
-                estado=Estado.ATAQUE;
+            if (estado == Estado.NEUTRAL)
+                startTime = System.currentTimeMillis();
+            if (System.currentTimeMillis() - startTime >= 2000) {
+                estado = Estado.ATAQUE;
+                startTime = System.currentTimeMillis();
             }
-            if(System.currentTimeMillis()-startTime>2000 && System.currentTimeMillis()-startTime<=4000){
-                estado=Estado.NEUTRAL;
-                startTime=0;
-            }
-            actualizar();
+
+                actualizar();
+
         }
 
         @Override
@@ -620,13 +759,16 @@ public abstract class Enemigo  {
         }
 
         private void actualizar() {
-            if(abner.getBoundingRectangle().overlaps(sprite.getBoundingRectangle())){
+            if(abner.getBoundingRectangle().overlaps(new Rectangle(sprite.getX()+100,sprite.getY(),sprite.getWidth()-100,sprite.getHeight()))){
                 if(estado==Estado.ATAQUE) {
                     attack();
+                    if (abner.getX()<=sprite.getX())
+                        abner.impactoFuegoX();
+                    else
+                        abner.impactoFuegoX();
 
                 }
             }
-
 
             switch (estado){
                 case NEUTRAL:
@@ -761,5 +903,7 @@ public abstract class Enemigo  {
             DESAPARECIENDO
         }
     }
+
+
 
 }

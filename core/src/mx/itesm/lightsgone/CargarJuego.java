@@ -71,13 +71,15 @@ public class CargarJuego implements Screen {
         btnRegresar.setPosition(0, 0);
         escena.addActor(btnRegresar);
 
-        final TextureRegionDrawable trBtnJuego1 = new TextureRegionDrawable(new TextureRegion(numeroJuegos!=1?empty:juego1Tex));
+        final TextureRegionDrawable trBtnJuego1 = new TextureRegionDrawable(new TextureRegion(numeroJuegos!=1&&numeroJuegos!=3?empty:juego1Tex));
         juego1 = new ImageButton(trBtnJuego1);
         juego1.setPosition(693, 455);
+        escena.addActor(juego1);
 
-        final TextureRegionDrawable trBtnJuego2 = new TextureRegionDrawable(new TextureRegion(numeroJuegos!=2?empty:juego2Tex));
+        final TextureRegionDrawable trBtnJuego2 = new TextureRegionDrawable(new TextureRegion(numeroJuegos!=2&&numeroJuegos!=3?empty:juego2Tex));
         juego2 = new ImageButton(trBtnJuego2);
         juego2.setPosition(693,216);
+        escena.addActor(juego2);
 
 
 
@@ -93,6 +95,7 @@ public class CargarJuego implements Screen {
             public void clicked(InputEvent event, float x, float y) {
                 if(!trBtnJuego1.getRegion().getTexture().equals(empty)){
                     juego.setScreen(new Nivel0(juego,"Juego1.txt"));
+                    Juego.audio.stop();
                 }
             }
         });
@@ -102,6 +105,7 @@ public class CargarJuego implements Screen {
             public void clicked(InputEvent event, float x, float y) {
                 if(!trBtnJuego2.getRegion().getTexture().equals(empty)){
                     juego.setScreen(new Nivel0(juego,"Juego2.txt"));
+                    Juego.audio.stop();
                 }
             }
         });
@@ -112,10 +116,16 @@ public class CargarJuego implements Screen {
         assetManager.load("cargarMenu.png", Texture.class);
         assetManager.load("Sonido2.wav", Music.class);
         assetManager.load("back.png", Texture.class);
+        assetManager.load("Empty.png", Texture.class);
+        assetManager.load("Load1.png", Texture.class);
+        assetManager.load("Load2.png", Texture.class);
         assetManager.finishLoading();
         texFondo = assetManager.get("cargarMenu.png");
         //audio = assetManager.get("Sonido2.wav");
         regresar = assetManager.get("back.png");
+        juego1Tex = assetManager.get("Load1.png");
+        juego2Tex = assetManager.get("Load2.png");
+        empty = assetManager.get("Empty.png");
     }
 
     @Override

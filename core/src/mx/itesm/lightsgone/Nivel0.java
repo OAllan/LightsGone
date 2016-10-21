@@ -80,15 +80,15 @@ public class Nivel0 implements Screen, InputProcessor{
         mapaActual = 0;
         Array<Enemigo> enemigos = new Array<Enemigo>(3);
         mapa = mapas.get(mapaActual);
-        enemigos.add(new Enemigo.Lata(LATAX,mapa.getHeight(),mapa));
-        enemigos.add(new Enemigo.Lata(LATAX, mapa.getHeight()+3300, mapa));
-        enemigos.add(new Enemigo.Lata(LATAX, mapa.getHeight()+6600, mapa));
+        enemigos.add(new Enemigo.Lata(LATAX,mapas.get(4).getHeight(),mapas.get(4)));
+        enemigos.add(new Enemigo.Lata(LATAX, mapas.get(4).getHeight()+3300, mapas.get(4)));
+        enemigos.add(new Enemigo.Lata(LATAX, mapas.get(4).getHeight()+6600, mapas.get(4)));
         mapas.get(4).setEnemigos(enemigos);
         transicion = Transicion.DISMINUYENDO;
     }
 
     private void iniciarCamara() {
-        camara = new OrthographicCamera(ANCHO_MUNDO, ALTO_MUNDO);
+        camara = new OrthographicCamera(ANCHO_MUNDO,ALTO_MUNDO);
         camara.position.set(ANCHO_MUNDO / 2, ALTO_MUNDO/2, 0);
         camara.update();
         vista = new StretchViewport(ANCHO_MUNDO,ALTO_MUNDO, camara);
@@ -315,7 +315,8 @@ public class Nivel0 implements Screen, InputProcessor{
         salto2.dispose();
         correr1.dispose();
         correr2.dispose();
-        mapa.dispose();
+        for(Mapa mapa: mapas)
+            mapa.dispose();
         batch.dispose();
 
     }

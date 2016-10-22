@@ -1,6 +1,7 @@
 package mx.itesm.lightsgone;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.files.FileHandle;
 
 import java.io.File;
 import java.io.FileWriter;
@@ -43,50 +44,44 @@ public class GameInfo {
     }
 
     private void cargarJuego(String juego) {
-        File txt;
-        Scanner scn=null;
+
         try{
-            txt = new File(juego);
-            scn= new Scanner(txt);
-            scn.nextLine();
-            mapa = Integer.parseInt(scn.nextLine().trim());
-            x = Float.parseFloat(scn.nextLine().trim());
-            y = Float.parseFloat(scn.nextLine().trim());
-            vida = Integer.parseInt(scn.nextLine().trim());
-            pogo = Boolean.parseBoolean(scn.nextLine().trim());
-            lanzapapas = Boolean.parseBoolean(scn.nextLine().trim());
-            capita = Boolean.parseBoolean(scn.nextLine().trim());
-            camaraX = Float.parseFloat(scn.nextLine().trim());
-            camaraY = Float.parseFloat(scn.nextLine().trim());
+            FileHandle fileHandle;
+            fileHandle = Gdx.files.local(juego);
+            String archivo = fileHandle.readString();
+            String[] lineas = archivo.split("\n");
+            mapa = Integer.parseInt(lineas[1].trim());
+            x = Float.parseFloat(lineas[2].trim());
+            y = Float.parseFloat(lineas[3].trim());
+            vida = Integer.parseInt(lineas[4].trim());
+            pogo = Boolean.parseBoolean(lineas[5].trim());
+            lanzapapas = Boolean.parseBoolean(lineas[6].trim());
+            capita = Boolean.parseBoolean(lineas[7].trim());
+            camaraX = Float.parseFloat(lineas[8].trim());
+            camaraY = Float.parseFloat(lineas[9].trim());
+
         }
         catch (Exception e){
             Gdx.app.log("Exception ", e.getMessage());
         }
-        finally {
-            if(scn!= null)
-                scn.close();
-        }
+
     }
 
     public void guardarJuego(){
         actualizarDatos();
-        File txt = null;
-        FileWriter save = null;
         fecha = new GregorianCalendar();
         try{
-            txt = new File(nombre);
-            save = new FileWriter(txt);
-            save.write(fecha.get(Calendar.DAY_OF_MONTH) + "/"+fecha.get(Calendar.MONTH)+"/"+fecha.get(Calendar.YEAR)+"\n");
-            save.write(mapa+"\n");
-            save.write(x+"\n");
-            save.write(y+"\n");
-            save.write(vida+"\n");
-            save.write(pogo+"\n");
-            save.write(lanzapapas+"\n");
-            save.write(capita+"\n");
-            save.write(camaraX+"\n");
-            save.write(camaraY +"\n");
-            save.close();
+            FileHandle save = Gdx.files.local(nombre);
+            save.writeString(fecha.get(Calendar.DAY_OF_MONTH) + "/" + fecha.get(Calendar.MONTH) + "/" + fecha.get(Calendar.YEAR) + "\n", false);
+            save.writeString(mapa+"\n",true);
+            save.writeString(x + "\n", true);
+            save.writeString(y + "\n", true);
+            save.writeString(vida + "\n", true);
+            save.writeString(pogo + "\n", true);
+            save.writeString(lanzapapas + "\n", true);
+            save.writeString(capita + "\n", true);
+            save.writeString(camaraX + "\n", true);
+            save.writeString(camaraY + "\n", true);
         }
         catch (Exception e){
             Gdx.app.log("Exception ", e.getMessage());
@@ -109,26 +104,23 @@ public class GameInfo {
         String nombre = "Juego";
         Character numero = null;
         try {
-            File archivo = new File(".");
-            File directorio = new File(archivo.getCanonicalPath());
-            ArrayList<File> files = new ArrayList<File>(directorio.listFiles().length);
-            for(File file: directorio.listFiles())
+            String path = Gdx.files.getLocalStoragePath();
+            FileHandle directorio = new FileHandle(path);
+            ArrayList<FileHandle> files = new ArrayList<FileHandle>(directorio.list().length);
+            for(FileHandle file: directorio.list())
                 files.add(file);
 
-            Iterator<File> iterator = files.iterator();
+            Iterator<FileHandle> iterator = files.iterator();
             while(iterator.hasNext()){
-                File file = iterator.next();
-                String name = file.getName();
-                if(name.length()>3)
-                    if(!name.substring(name.length()-3, name.length()).equalsIgnoreCase("txt")){
-                        iterator.remove();
-                    }
+                FileHandle file = iterator.next();
+                String extension = file.extension();
+                if(!"txt".equalsIgnoreCase(extension))
+                    iterator.remove();
             }
 
-            if(files.size()==2)
-                borrarJuego(files);
-            else if(files.size()==1){
-                String name = files.get(0).getName();
+
+            if(files.size()==1){
+                String name = files.get(0).name();
                 numero = name.charAt(5);
             }
             else if(files.size()==0)
@@ -147,8 +139,8 @@ public class GameInfo {
         return null;
     }
 
-    private String borrarJuego(ArrayList<File> files) {
-        return null;
+    public static void borrarJuego(String file) {
+        Gdx.files.local(file).delete();
     }
 
 

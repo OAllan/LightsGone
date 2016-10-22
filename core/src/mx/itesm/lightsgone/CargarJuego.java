@@ -1,9 +1,11 @@
 package mx.itesm.lightsgone;
 
+import com.badlogic.gdx.Files;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.audio.Music;
+import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
@@ -156,22 +158,22 @@ public class CargarJuego implements Screen {
         dispose();
     }
 
-    private int juegos(){
-        ArrayList<File> files = null;
+    public static int juegos(){
+        ArrayList<FileHandle> files = null;
         try {
-            File archivo = new File(".");
-            File directorio = new File(archivo.getCanonicalPath());
-            files = new ArrayList<File>(directorio.listFiles().length);
-            for(File file: directorio.listFiles())
+            String fileHandle = Gdx.files.getLocalStoragePath();
+            FileHandle directorio = new FileHandle(fileHandle);
+            Gdx.app.log("Directorio", fileHandle);
+            files = new ArrayList<FileHandle>(directorio.list().length);
+            for(FileHandle file: directorio.list())
                 files.add(file);
-            Iterator<File> iterator = files.iterator();
+
+            Iterator<FileHandle> iterator = files.iterator();
             while(iterator.hasNext()){
-                File file = iterator.next();
-                String name = file.getName();
-                if(name.length()>3)
-                    if(!name.substring(name.length()-3, name.length()).equalsIgnoreCase("txt")){
-                        iterator.remove();
-                    }
+                FileHandle file = iterator.next();
+                String extension = file.extension();
+                if(!"txt".equalsIgnoreCase(extension))
+                    iterator.remove();
             }
 
         }catch (Exception e){
@@ -181,7 +183,7 @@ public class CargarJuego implements Screen {
             if(files.size()==0)
                 return 0;
             if(files.size()==1)
-                return Integer.parseInt(files.get(0).getName().charAt(5) + "");
+                return Integer.parseInt(files.get(0).name().charAt(5) + "");
             else if(files.size()==2)
                 return 3;
         }

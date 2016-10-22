@@ -287,6 +287,7 @@ public class Nivel0 implements Screen, InputProcessor{
         else if(estado == Estado.PAUSA){
             pad.getLeft().setEstado(Boton.Estado.NOPRESIONADO);
             pad.getRight().setEstado(Boton.Estado.NOPRESIONADO);
+            abner.setEstadoHorizontal(Abner.Horizontal.DESACTIVADO);
             switch (estadoPausa){
                 case PRINCIPAL:
                     pausaActual.setTexture(pausaTex);

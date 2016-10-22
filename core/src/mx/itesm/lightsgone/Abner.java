@@ -15,7 +15,7 @@ import com.badlogic.gdx.utils.Array;
  */
 public class Abner {
     public static final int X = 350;
-    public static final int SALTOMAX = 300;
+    public static final int SALTOMAX = 280;
     private Sprite sprite;
     private int cont = 8;
     private float y = 135f, saltoMov = 8f, gravedad = 10f, alturaMax;
@@ -150,7 +150,7 @@ public class Abner {
     public void walk(boolean right){
 
         if (right){
-            if (!mapa.colisionX((sprite.getX() + (sprite.getWidth() / 2)) + mov, sprite.getY())&&!mapa.colisionInclinada((sprite.getX() + (sprite.getWidth() / 2))+ mov, sprite.getY())){
+            if (!mapa.colisionX((sprite.getX() + (sprite.getWidth() / 2)) + mov, sprite.getY()+20)&&!mapa.colisionInclinada((sprite.getX() + (sprite.getWidth() / 2))+ mov, sprite.getY())){
                 if(mapa.colisionY(sprite.getX() + sprite.getWidth() / 2, sprite.getY() - (saltoMov + gravedad)) || estadoSalto == Vertical.ACTIVADO|| mapa.colisionInclinada(sprite.getX() + sprite.getWidth() / 2, sprite.getY() - (saltoMov + gravedad))){
                     if(sprite.isFlipX()){
                         sprite.flip(true, false);
@@ -168,7 +168,7 @@ public class Abner {
             }
         }
         else {
-            if (!mapa.colisionX((sprite.getX() + (sprite.getWidth() / 2))- mov, sprite.getY())&&!mapa.colisionInclinada((sprite.getX() + (sprite.getWidth() / 2))- mov, sprite.getY())) {
+            if (!mapa.colisionX((sprite.getX() + (sprite.getWidth() / 2))- mov, sprite.getY()+20)&&!mapa.colisionInclinada((sprite.getX() + (sprite.getWidth() / 2))- mov, sprite.getY())) {
                 if (mapa.colisionY(sprite.getX() + sprite.getWidth() / 2, sprite.getY() - (saltoMov + gravedad)) || estadoSalto == Vertical.ACTIVADO|| mapa.colisionInclinada(sprite.getX() + sprite.getWidth() / 2, sprite.getY() - (saltoMov + gravedad))){
                     if(!sprite.isFlipX()){
                         sprite.flip(true, false);

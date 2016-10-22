@@ -18,6 +18,8 @@ import com.badlogic.gdx.utils.Timer;
 import com.badlogic.gdx.utils.viewport.StretchViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 
+import java.util.Random;
+
 public class MenuPrincipal implements Screen {
 
 	private final boolean flag;
@@ -91,6 +93,10 @@ public class MenuPrincipal implements Screen {
 		btnNuevo.addListener(new ClickListener(){
 			@Override
 			public void clicked(InputEvent event, float x, float y) {
+				if(CargarJuego.juegos()==3){
+					Random rnd = new Random();
+					GameInfo.borrarJuego("Juego"+ (rnd.nextInt(2)+1) +".txt");
+				}
 				Image transicion = new Image(texTransicion);
 				escena.addActor(transicion);
 				Juego.audio.pause();

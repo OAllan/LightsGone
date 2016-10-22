@@ -16,9 +16,10 @@ import com.badlogic.gdx.utils.Array;
 public class Abner {
     public static final int X = 350;
     public static final int SALTOMAX = 280;
+    private float xOriginal, yOriginal;
     private Sprite sprite;
     private int cont = 8;
-    private float y = 135f, saltoMov = 8f, gravedad = 10f, alturaMax;
+    private float y = 135f, saltoMov = 8f, gravedad = 13f, alturaMax;
     private Texture neutral, saltar1, saltar2, pResortera;
     private float mov = 7f;
     private final float MOVY = (0.2125f)*mov;
@@ -34,10 +35,13 @@ public class Abner {
     private Horizontal estadoHorizontal;
     public boolean pogo, capita, lanzapapas;
     private boolean muerte;
+    private Texture saltarPogo1, saltarPogo2;
 
     public Abner(Texture texture, Texture correr1, Texture correr2, Texture saltar1, Texture saltar2, Texture resortera1,
-                 Texture resortera2, Texture resortera3, Texture pResortera,OrthographicCamera camara, Mapa mapa, GameInfo gameInfo){
+                 Texture resortera2, Texture resortera3, Texture pResortera,Texture saltarPogo1,Texture saltarPogo2,OrthographicCamera camara, Mapa mapa, GameInfo gameInfo){
         this.neutral = texture;
+        xOriginal = texture.getWidth();
+        yOriginal = texture.getHeight();
         this.saltar1 = saltar1;
         this.saltar2 = saltar2;
         this.pResortera = pResortera;
@@ -62,6 +66,8 @@ public class Abner {
         this.pogo = gameInfo.isPogo();
         this.capita = gameInfo.isCapita();
         this.lanzapapas = gameInfo.isLanzapapas();
+        this.saltarPogo1 = saltarPogo1;
+        this.saltarPogo2 = saltarPogo2;
 
     }
 
@@ -79,9 +85,10 @@ public class Abner {
             else cantVida = 99;
         }
 
-        if(mapa.colisionItem(sprite.getX()+(3*sprite.getWidth()/4), sprite.getY()+20,"Pogo"))
+        if(mapa.colisionItem(sprite.getX()+(3*sprite.getWidth()/4), sprite.getY()+20,"Pogo")) {
+            mapa.remove("Pogo");
             pogo = true;
-
+        }
 
         if(cantVida<= 0||sprite.getY()<=0)
             muerte =true;
@@ -90,7 +97,7 @@ public class Abner {
 
         if(estadoHorizontal == Horizontal.INCLINADO){
             sprite.setRotation(12);
-            if(estadoSalto!=Vertical.ACTIVADO&&estadoAtaque!= Ataque.ACTIVADO){
+            if(estadoSalto==Vertical.ACTIVADO&&estadoAtaque!= Ataque.ACTIVADO){
                 timerAnimation += Gdx.graphics.getDeltaTime();
                 sprite.setTexture(caminar.getKeyFrame(timerAnimation).getTexture());
                 walk(right);
@@ -111,7 +118,7 @@ public class Abner {
 
         if(estadoHorizontal == Horizontal.ACTIVADO){
             sprite.setRotation(0);
-            if(estadoSalto!=Vertical.ACTIVADO&&estadoAtaque!= Ataque.ACTIVADO){
+            if(estadoSalto==Vertical.DESACTIVADO&&estadoAtaque!= Ataque.ACTIVADO){
                 timerAnimation += Gdx.graphics.getDeltaTime();
                 sprite.setTexture(caminar.getKeyFrame(timerAnimation).getTexture());
                 walk(right);
@@ -120,7 +127,21 @@ public class Abner {
                 walk(right);
         }
 
-        if(estadoSalto == Vertical.ACTIVADO){
+        if(estadoSalto==Vertical.POGO) {
+            if (estadoAtaque != Ataque.ACTIVADO) {
+                if (cont >= 0) {
+                    sprite.setTexture(saltarPogo1);
+                    sprite.setSize(saltarPogo1.getWidth(), saltarPogo1.getHeight());
+                    cont--;
+                } else {
+                    sprite.setTexture(saltarPogo2);
+                    sprite.setSize(saltarPogo2.getWidth(), saltarPogo2.getHeight());
+                    jump(alturaMax + SALTOMAX);
+                }
+            }
+        }
+
+        else if(estadoSalto == Vertical.ACTIVADO){
             if(estadoAtaque != Ataque.ACTIVADO){
                 if(cont>=0){
                     sprite.setTexture(saltar1);
@@ -128,18 +149,22 @@ public class Abner {
                 }
                 else {
                     sprite.setTexture(saltar2);
-                    jump();
+                    jump(alturaMax);
                 }
             }
             else
-                jump();
+                jump(alturaMax);
         }
 
-        if(estadoAtaque == Ataque.ACTIVADO){
+
+        if(estadoAtaque == Ataque.ACTIVADO&&estadoSalto!= Vertical.POGO){
             attack(right);
         }
+        else{
+            estadoAtaque = Ataque.DESACTIVADO;
+        }
 
-        if(estadoAtaque != Ataque.ACTIVADO && estadoSalto != Vertical.ACTIVADO && estadoHorizontal==Horizontal.DESACTIVADO){
+        if(estadoAtaque != Ataque.ACTIVADO && estadoSalto == Vertical.DESACTIVADO && estadoHorizontal==Horizontal.DESACTIVADO){
             if(mapa.colisionY(sprite.getX()+sprite.getWidth()/2,sprite.getY()-(saltoMov+gravedad)))sprite.setTexture(neutral);
             else{
                 estadoSalto = Vertical.ACTIVADO;
@@ -156,8 +181,7 @@ public class Abner {
         timerAnimationA += Gdx.graphics.getDeltaTime();
         sprite.setTexture(atacar.getKeyFrame(timerAnimationA).getTexture());
         if(timerAnimationA>=0.1&&timerAnimationA<(0.1+Gdx.graphics.getDeltaTime())){
-            proyectiles.add(new Proyectil(pResortera, sprite.getX()+142, sprite.getY()+138, right));
-            Gdx.app.debug("Ataque", "" + Gdx.graphics.getDeltaTime());
+            proyectiles.add(new Proyectil(pResortera, sprite.getX() + 142, sprite.getY()+138, right));
         }
         else if (timerAnimationA>atacar.getAnimationDuration()) {
             estadoAtaque = Ataque.DESACTIVADO;
@@ -170,7 +194,7 @@ public class Abner {
 
         if (right){
             if (!mapa.colisionX((sprite.getX() + (sprite.getWidth() / 2)) + mov, sprite.getY()+20)&&!mapa.colisionInclinada((sprite.getX() + (sprite.getWidth() / 2))+ mov, sprite.getY())){
-                if(mapa.colisionY(sprite.getX() + sprite.getWidth() / 2, sprite.getY() - (saltoMov + gravedad)) || estadoSalto == Vertical.ACTIVADO|| mapa.colisionInclinada(sprite.getX() + sprite.getWidth() / 2, sprite.getY() - (saltoMov + gravedad))){
+                if(mapa.colisionY(sprite.getX() + sprite.getWidth() / 2, sprite.getY() - (saltoMov + gravedad)) || estadoSalto != Vertical.DESACTIVADO|| mapa.colisionInclinada(sprite.getX() + sprite.getWidth() / 2, sprite.getY() - (saltoMov + gravedad))){
                     if(sprite.isFlipX()){
                         sprite.flip(true, false);
                     }
@@ -188,7 +212,7 @@ public class Abner {
         }
         else {
             if (!mapa.colisionX((sprite.getX() + (sprite.getWidth() / 2))- mov, sprite.getY()+20)&&!mapa.colisionInclinada((sprite.getX() + (sprite.getWidth() / 2))- mov, sprite.getY())) {
-                if (mapa.colisionY(sprite.getX() + sprite.getWidth() / 2, sprite.getY() - (saltoMov + gravedad)) || estadoSalto == Vertical.ACTIVADO|| mapa.colisionInclinada(sprite.getX() + sprite.getWidth() / 2, sprite.getY() - (saltoMov + gravedad))){
+                if (mapa.colisionY(sprite.getX() + sprite.getWidth() / 2, sprite.getY() - (saltoMov + gravedad)) || estadoSalto != Vertical.DESACTIVADO|| mapa.colisionInclinada(sprite.getX() + sprite.getWidth() / 2, sprite.getY() - (saltoMov + gravedad))){
                     if(!sprite.isFlipX()){
                         sprite.flip(true, false);
                     }
@@ -228,11 +252,11 @@ public class Abner {
     }
 
     public boolean isJumping(){
-        return (estadoSalto == Vertical.ACTIVADO);
+        return (estadoSalto != Vertical.DESACTIVADO);
     }
 
 
-    public void jump(){
+    public void jump(float alturaMax){
 
         switch (salto){
             case SUBIENDO:
@@ -246,7 +270,8 @@ public class Abner {
 
                 if (mapa.colisionY(sprite.getX() + sprite.getWidth() / 2, sprite.getY() - (saltoMov + gravedad))||mapa.colisionInclinada(sprite.getX() + sprite.getWidth() / 2, sprite.getY() - (saltoMov + gravedad))) {
                     estadoSalto = Vertical.DESACTIVADO;
-                    alturaMax = sprite.getY() + SALTOMAX;
+                    this.alturaMax = sprite.getY() + SALTOMAX;
+                    sprite.setSize(xOriginal, yOriginal);
                 }
                 else
                     sprite.setY(sprite.getY() - (saltoMov + gravedad));
@@ -363,7 +388,8 @@ public class Abner {
 
     public enum Vertical{
         ACTIVADO,
-        DESACTIVADO
+        DESACTIVADO,
+        POGO
     }
 
 

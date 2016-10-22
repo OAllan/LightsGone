@@ -47,6 +47,7 @@ public class Nivel0 implements Screen, InputProcessor{
     private EstadoPausa estadoPausa;
     private GameInfo gameInfo;
     private final float YBAJA = 135f, YMEDIA = 800f, YALTA =1100f;
+    private Texture pPogo1, pPogo2;
 
     public Nivel0(Juego juego) {
         this.juego = juego;
@@ -89,7 +90,7 @@ public class Nivel0 implements Screen, InputProcessor{
         sprite.setRotation(12);
         sprite.setPosition(ANCHO_MUNDO + 470, ALTO_MUNDO * 3 - 850);
         mapas.get(4).setPlataformasInclinada(sprite);
-        mapaActual = 5;
+        mapaActual = gameInfo.getMapa();
         Array<Enemigo> enemigos = new Array<Enemigo>(3);
         mapa = mapas.get(mapaActual);
         enemigos.add(new Enemigo.Lata(LATAX,mapas.get(4).getHeight(),mapas.get(4)));
@@ -118,7 +119,7 @@ public class Nivel0 implements Screen, InputProcessor{
         imgVida = new Sprite(botonVida);
         imgVida.setPosition(0,780-imgVida.getHeight());
         vida = new Texto("tipo.fnt", imgVida.getWidth(),690);
-        abner = new Abner(neutral, correr1, correr2, salto1, salto2, resortera1, resortera2, resortera3, pResortera,camara, mapa, gameInfo);
+        abner = new Abner(neutral, correr1, correr2, salto1, salto2, resortera1, resortera2, resortera3, pResortera,pPogo1,pPogo2,camara, mapa, gameInfo);
         gameInfo.setAbner(abner);
         estado = Estado.JUGANDO;
         botonHabilidad = new Boton(abner.getPogo() ?habilidadPogo:habilidadDes, ANCHO_MUNDO-habilidadDes.getWidth()-10,YBOTON,false);
@@ -159,6 +160,8 @@ public class Nivel0 implements Screen, InputProcessor{
         assetManager.load("Save6.png", Texture.class);
         assetManager.load("BotonHabilidadDesactivado.png", Texture.class);
         assetManager.load("BotonHabPogo.png", Texture.class);
+        assetManager.load("PPogo1.png", Texture.class);
+        assetManager.load("PPogo2.png", Texture.class);
         assetManager.finishLoading();
         neutral = assetManager.get("PNeutral.png");
         salto1 = assetManager.get("PSalto1.png");
@@ -185,6 +188,8 @@ public class Nivel0 implements Screen, InputProcessor{
         save = assetManager.get("Save6.png");
         habilidadDes = assetManager.get("BotonHabilidadDesactivado.png");
         habilidadPogo = assetManager.get("BotonHabPogo.png");
+        pPogo1 = assetManager.get("PPogo1.png");
+        pPogo2 = assetManager.get("PPogo2.png");
     }
 
     @Override
@@ -203,6 +208,11 @@ public class Nivel0 implements Screen, InputProcessor{
 
             if(botonArma.isPressed()){
                 abner.setEstadoAtaque(Abner.Ataque.ACTIVADO);
+            }
+
+            if(botonHabilidad.isPressed()){
+                abner.setEstadoVertical(Abner.Vertical.POGO);
+                abner.setSalto(Abner.Salto.SUBIENDO);
             }
 
             if(pad.getRight().isPressed()) {
@@ -389,8 +399,13 @@ public class Nivel0 implements Screen, InputProcessor{
                     gameInfo.guardarJuego();
                     botonSave.setEstado(Boton.Estado.PRESIONADO);
                 }
-
             }
+
+            if(abner.getPogo()){
+                if(botonHabilidad.contiene(x,y)&&!abner.isJumping()&&!abner.isAttacking())
+                    botonHabilidad.setEstado(Boton.Estado.PRESIONADO);
+            }
+
 
         }
 

@@ -78,8 +78,8 @@ public class Boton {
         this.estado = estado;
     }
 
-    public void update(float mov) {
-        sprite.translate(mov, 0);
+    public void setTexture(Texture texture){
+        sprite.setTexture(texture);
     }
 
     public void desaparecer(boolean flag){

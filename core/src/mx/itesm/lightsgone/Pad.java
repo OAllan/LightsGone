@@ -32,9 +32,5 @@ public class Pad {
         right.draw(batch);
     }
 
-    public void update(float mov){
-        left.update(mov);
-        right.update(mov);
-        fondo.translate(mov,0);
-    }
+
 }

@@ -42,7 +42,7 @@ public class Mapa {
     private void cargarCapas() {
         plataformaY = new Array<TiledMapTileLayer>(3);
         plataformaX = new Array<TiledMapTileLayer>(2);
-        items = new Array<TiledMapTileLayer>(1);
+        items = new Array<TiledMapTileLayer>(3);
         encima = new Array<TiledMapTileLayer>(1);
         puertas = new Array<TiledMapTileLayer>(5);
         guardado = new Array<TiledMapTileLayer>(1);
@@ -53,6 +53,8 @@ public class Mapa {
         plataformaX.add((TiledMapTileLayer)mapa.getLayers().get("PlataformasNoCruzar"));
         encima.add((TiledMapTileLayer)mapa.getLayers().get("CapaEncima"));
         items.add((TiledMapTileLayer)mapa.getLayers().get("Malteada"));
+        items.add((TiledMapTileLayer)mapa.getLayers().get("Pogo"));
+        items.add((TiledMapTileLayer)mapa.getLayers().get("VidaExtra"));
         puertas.add((TiledMapTileLayer)mapa.getLayers().get("PuertaCerrada"));
         puertas.add((TiledMapTileLayer)mapa.getLayers().get("Puerta1"));
         puertas.add((TiledMapTileLayer)mapa.getLayers().get("Puerta2"));
@@ -93,8 +95,18 @@ public class Mapa {
         return false;
     }
 
-    public boolean colisionItem(float x, float y){
-        return colision(x,y,items);
+    public boolean colisionItem(float x, float y, String name){
+        return colision(x,y,items, name);
+    }
+
+    private boolean colision(float x, float y, Array<TiledMapTileLayer> items, String name) {
+        for(TiledMapTileLayer capa: items){
+            if(capa!=null){
+                TiledMapTileLayer.Cell cell = capa.getCell((int) (x / capa.getTileWidth()), (int) (y / capa.getTileHeight()));
+                if (cell != null&&capa.getName().equalsIgnoreCase(name)) return true;
+            }
+        }
+        return false;
     }
 
     public void draw(){
@@ -183,7 +195,6 @@ public class Mapa {
                 float extremoderecho = sprite1.getX()+ancho;
                 float rec_y = 1160;
                 float inc_y = 0.2125f;
-                Gdx.app.log("Posicion", "x: "+ x + " y: "+ y);
                 float ys = (x-sprite1.getX())*inc_y;
                 float altura = rec_y + ys+121;
                 if((sprite1.getX()<=x&&x<=extremoderecho)&&(rec_y<=y&&y<=altura))
@@ -201,6 +212,10 @@ public class Mapa {
             return cell!=null;
         }
         return false;
+    }
+
+    public Array<Enemigo> getEnemigos(){
+        return enemigos;
     }
 
     public void dispose() {

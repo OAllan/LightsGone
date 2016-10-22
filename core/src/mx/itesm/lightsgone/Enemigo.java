@@ -99,7 +99,7 @@ public abstract class Enemigo  {
 
         private void actualizar() {
             if(abner.getBoundingRectangle().overlaps(sprite.getBoundingRectangle())){
-                if(ataco==false) {
+                if(!ataco) {
                     attack();
                     startTime = System.currentTimeMillis();
                 }
@@ -759,6 +759,10 @@ public abstract class Enemigo  {
             CAYENDO,
             RODANDO,
             DESAPARECIENDO
+        }
+
+        public String toString(){
+            return "Lata";
         }
     }
 

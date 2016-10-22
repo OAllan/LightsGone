@@ -33,6 +33,7 @@ public class Abner {
     private Vertical estadoSalto;
     private Horizontal estadoHorizontal;
     public boolean pogo, capita, lanzapapas;
+    private boolean muerte;
 
     public Abner(Texture texture, Texture correr1, Texture correr2, Texture saltar1, Texture saltar2, Texture resortera1,
                  Texture resortera2, Texture resortera3, Texture pResortera,OrthographicCamera camara, Mapa mapa, GameInfo gameInfo){
@@ -53,7 +54,7 @@ public class Abner {
         this.camara.position.set(gameInfo.getCamaraX(), gameInfo.getCamaraY(), 0);
         this.proyectiles = new Array<Proyectil>(50);
         this.mapa =mapa;
-        alturaMax = y + SALTOMAX;
+        alturaMax = sprite.getY() + SALTOMAX;
         estadoHorizontal = Horizontal.DESACTIVADO;
         estadoAtaque = Ataque.DESACTIVADO;
         estadoSalto = Vertical.DESACTIVADO;
@@ -72,6 +73,18 @@ public class Abner {
 
     private void actualizar(boolean right) {
 
+        if(mapa.colisionItem(sprite.getX()+sprite.getWidth(), sprite.getY(), "Malteada")){
+            mapa.remove("Malteada");
+            if((cantVida + 10)<=99) cantVida+=10;
+            else cantVida = 99;
+        }
+
+        if(mapa.colisionItem(sprite.getX()+(3*sprite.getWidth()/4), sprite.getY()+20,"Pogo"))
+            pogo = true;
+
+
+        if(cantVida<= 0||sprite.getY()<=0)
+            muerte =true;
         if(mapa.colisionInclinada(sprite.getX() + sprite.getWidth() / 2, sprite.getY() - (saltoMov + gravedad))&&estadoHorizontal == Horizontal.ACTIVADO)
             estadoHorizontal = Horizontal.INCLINADO;
 
@@ -126,10 +139,16 @@ public class Abner {
             attack(right);
         }
 
-        if(estadoAtaque != Ataque.ACTIVADO && estadoSalto != Vertical.ACTIVADO && estadoHorizontal==Horizontal.DESACTIVADO )
-            sprite.setTexture(neutral);
+        if(estadoAtaque != Ataque.ACTIVADO && estadoSalto != Vertical.ACTIVADO && estadoHorizontal==Horizontal.DESACTIVADO){
+            if(mapa.colisionY(sprite.getX()+sprite.getWidth()/2,sprite.getY()-(saltoMov+gravedad)))sprite.setTexture(neutral);
+            else{
+                estadoSalto = Vertical.ACTIVADO;
+                salto = Salto.BAJANDO;
+            }
+        }
 
-        camara.position.set(camara.position.x, 265 + sprite.getY(), 0);
+        if(limiteCamara())
+            camara.position.set(camara.position.x, 265 + sprite.getY(), 0);
         camara.update();
     }
 
@@ -190,7 +209,7 @@ public class Abner {
     }
 
     private boolean limiteCamaraX() {
-        return sprite.getX()>530&&sprite.getX()<mapa.getWidth()-750;
+        return sprite.getX()>530&&sprite.getX()<mapa.getWidth()-770;
     }
 
     public void setEstadoAtaque(Ataque estado) {
@@ -204,24 +223,20 @@ public class Abner {
         this.estadoHorizontal = estado;
     }
 
+    public void colisionEnemigo(Enemigo enemigo){
+
+    }
+
     public boolean isJumping(){
         return (estadoSalto == Vertical.ACTIVADO);
     }
 
-    public boolean colisionMalteada(){
-        return mapa.colisionItem(sprite.getX()+sprite.getWidth(), sprite.getY());
-    }
 
     public void jump(){
 
         switch (salto){
             case SUBIENDO:
-                sprite.setY(sprite.getY()+saltoMov);
-                if(limiteCamara())
-                    camara.translate(0,saltoMov);
-                else if(sprite.getY() <= y)
-                    camara.position.y = Nivel0.ALTO_MUNDO/2;
-                camara.update();
+                sprite.setY(sprite.getY() + saltoMov);
                 if(sprite.getY()>= alturaMax){
                     sprite.setY(alturaMax);
                     salto = Salto.BAJANDO;
@@ -233,15 +248,8 @@ public class Abner {
                     estadoSalto = Vertical.DESACTIVADO;
                     alturaMax = sprite.getY() + SALTOMAX;
                 }
-                else {
+                else
                     sprite.setY(sprite.getY() - (saltoMov + gravedad));
-                    if(limiteCamara())
-                        camara.translate(0,- (saltoMov + gravedad));
-                    else if(sprite.getY() <= y+100)
-                        camara.position.y = Nivel0.ANCHO_MUNDO/2;
-
-                    camara.update();
-                }
                 break;
 
         }
@@ -256,7 +264,10 @@ public class Abner {
     }
 
     private boolean limiteCamara(){
-        return sprite.getY()<mapa.getHeight()-800 && sprite.getY()>y;
+        if(mapa.getHeight()<= 1260)
+            return false;
+        Gdx.app.log("Mapa: ", mapa.getHeight()+" Abner: "+ sprite.getY()+ " y: "+y);
+        return sprite.getY()<mapa.getHeight()-810 && sprite.getY()>=135;
     }
 
     public boolean isAttacking() {
@@ -293,6 +304,10 @@ public class Abner {
 
     public int cambioNivel() {
         return mapa.colisionPuerta(sprite.getX()+3*(sprite.getWidth()/4) + mov, sprite.getY());
+    }
+
+    public boolean isDead(){
+        return muerte;
     }
 
     public void setInitialPosition(int i) {

@@ -6,6 +6,8 @@ import com.badlogic.gdx.assets.loaders.resolvers.InternalFileHandleResolver;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.maps.MapLayer;
+import com.badlogic.gdx.maps.MapLayers;
 import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.maps.tiled.TiledMapRenderer;
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
@@ -87,7 +89,7 @@ public class Mapa {
 
     public boolean colision(float x, float y, Array<TiledMapTileLayer> capas){
         for(TiledMapTileLayer capa: capas){
-            if(capa!=null){
+            if(capa!=null&&capa.isVisible()){
                 TiledMapTileLayer.Cell cell = capa.getCell((int) (x / capa.getTileWidth()), (int) (y / capa.getTileHeight()));
                 if (cell != null) return true;
             }
@@ -101,7 +103,7 @@ public class Mapa {
 
     private boolean colision(float x, float y, Array<TiledMapTileLayer> items, String name) {
         for(TiledMapTileLayer capa: items){
-            if(capa!=null){
+            if(capa!=null&&capa.isVisible()){
                 TiledMapTileLayer.Cell cell = capa.getCell((int) (x / capa.getTileWidth()), (int) (y / capa.getTileHeight()));
                 if (cell != null&&capa.getName().equalsIgnoreCase(name)) return true;
             }
@@ -134,7 +136,7 @@ public class Mapa {
     }
 
     public void remove(String layer){
-        mapa.getLayers().remove(mapa.getLayers().get(layer));
+        mapa.getLayers().get(layer).setVisible(false);
     }
 
     public int colisionPuerta(float x, float y) {
@@ -191,7 +193,6 @@ public class Mapa {
         if(plataformasInclinada!=null){
             for(Sprite sprite1: plataformasInclinada){
                 float ancho = sprite1.getBoundingRectangle().getWidth();
-                float alto = sprite1.getBoundingRectangle().getHeight();
                 float extremoderecho = sprite1.getX()+ancho;
                 float rec_y = 1160;
                 float inc_y = 0.2125f;
@@ -222,4 +223,17 @@ public class Mapa {
         mapa.dispose();
     }
 
+    public void reiniciar(GameInfo gameInfo) {
+        MapLayers layers = mapa.getLayers();
+        for(MapLayer mapLayer: layers){
+            mapLayer.setVisible(true);
+        }
+        if(gameInfo.isPogo()&&mapa.getLayers().get("Pogo")!=null)
+            mapa.getLayers().get("Pogo").setVisible(false);
+        if(gameInfo.isCapita()&&mapa.getLayers().get("Capita")!=null)
+            mapa.getLayers().get("Capita").setVisible(false);
+        if(gameInfo.isLanzapapas()&&mapa.getLayers().get("Lanzapapas")!=null)
+            mapa.getLayers().get("Lanzapapas").setVisible(false);
+
+    }
 }

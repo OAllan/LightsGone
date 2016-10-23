@@ -8,6 +8,7 @@ import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.MathUtils;
+import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.utils.Array;
 
 /**
@@ -695,6 +696,10 @@ public abstract class Enemigo  {
             this.mapa = mapa;
         }
 
+        public Rectangle getBoundingRectangle(){
+            return sprite.getBoundingRectangle();
+        }
+
         @Override
         public void attack() {
 
@@ -761,6 +766,7 @@ public abstract class Enemigo  {
             DESAPARECIENDO
         }
 
+        @Override
         public String toString(){
             return "Lata";
         }

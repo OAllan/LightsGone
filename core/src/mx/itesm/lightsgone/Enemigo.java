@@ -837,6 +837,10 @@ public abstract class Enemigo  {
             this.mapa = mapa;
         }
 
+        public Rectangle getBoundingRectangle(){
+            return sprite.getBoundingRectangle();
+        }
+
         @Override
         public void attack() {
 
@@ -902,8 +906,11 @@ public abstract class Enemigo  {
             RODANDO,
             DESAPARECIENDO
         }
+
+        @Override
+        public String toString(){
+            return "Lata";
+        }
     }
-
-
 
 }

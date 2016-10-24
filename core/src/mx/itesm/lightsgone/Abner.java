@@ -171,7 +171,7 @@ public class Abner {
         }
 
         if(estadoAtaque != Ataque.ACTIVADO && estadoSalto == Vertical.DESACTIVADO && estadoHorizontal==Horizontal.DESACTIVADO){
-            if(mapa.colisionY(sprite.getX()+sprite.getWidth()/2,sprite.getY()-(saltoMov+gravedad))||mapa.colisionInclinada(sprite.getX() + sprite.getWidth() / 2, sprite.getY() - (saltoMov + gravedad)))sprite.setTexture(neutral);
+            if(mapa.colisionY(sprite.getX()+sprite.getWidth()/2,sprite.getY()-(saltoMov+gravedad))||mapa.colisionInclinada(sprite.getX() + sprite.getWidth() / 2, sprite.getY() - (saltoMov + gravedad))||arrastrado)sprite.setTexture(neutral);
             else{
                 estadoSalto = Vertical.ACTIVADO;
                 salto = Salto.BAJANDO;
@@ -203,7 +203,7 @@ public class Abner {
                 sprite.flip(true, false);
             }
             if (!mapa.colisionX((sprite.getX() + (sprite.getWidth() / 2)) + mov, sprite.getY()+20)&&!mapa.colisionInclinada((sprite.getX() + (sprite.getWidth() / 2)) + mov, sprite.getY())&&!arrastrado){
-                if(mapa.colisionY(sprite.getX() + sprite.getWidth() / 2, sprite.getY() - (saltoMov + gravedad)) || estadoSalto != Vertical.DESACTIVADO|| mapa.colisionInclinada(sprite.getX() + sprite.getWidth() / 2, sprite.getY() - (saltoMov + gravedad))){
+                if(mapa.colisionY(sprite.getX() + sprite.getWidth() / 2, sprite.getY() - (saltoMov + gravedad)) || estadoSalto != Vertical.DESACTIVADO|| mapa.colisionInclinada(sprite.getX() + sprite.getWidth() / 2, sprite.getY() - (saltoMov + gravedad))||arrastrado){
                     sprite.translate(mov, 0);
                     if(limiteCamaraX())
                         camara.translate(mov,0);
@@ -221,7 +221,7 @@ public class Abner {
                 sprite.flip(true, false);
             }
             if (!mapa.colisionX((sprite.getX() + (sprite.getWidth() / 2)) - mov, sprite.getY()+20)&&!mapa.colisionInclinada((sprite.getX() + (sprite.getWidth() / 2))- mov, sprite.getY())&&!arrastrado) {
-                if (mapa.colisionY(sprite.getX() + sprite.getWidth() / 2, sprite.getY() - (saltoMov + gravedad)) || estadoSalto != Vertical.DESACTIVADO|| mapa.colisionInclinada(sprite.getX() + sprite.getWidth() / 2, sprite.getY() - (saltoMov + gravedad))){
+                if (mapa.colisionY(sprite.getX() + sprite.getWidth() / 2, sprite.getY() - (saltoMov + gravedad)) || estadoSalto != Vertical.DESACTIVADO|| mapa.colisionInclinada(sprite.getX() + sprite.getWidth() / 2, sprite.getY() - (saltoMov + gravedad))||arrastrado){
                     sprite.translate(-mov, 0);
                     if(limiteCamaraX())
                         camara.translate(-mov,0);
@@ -256,7 +256,7 @@ public class Abner {
     public boolean colisionEnemigo(Enemigo enemigo){
         if(enemigo.toString().equalsIgnoreCase("Lata")){
             Enemigo.Lata lata= (Enemigo.Lata)enemigo;
-            if(lata.getBoundingRectangle().contains(sprite.getX()+(3*sprite.getWidth()/4), sprite.getY()+10)) {
+            if(lata.getBoundingRectangle().contains(sprite.getX()+(3*sprite.getWidth()/4), sprite.getY()+10)||lata.getBoundingRectangle().contains(sprite.getX()+(3*sprite.getWidth()/6), sprite.getY()-(saltoMov+gravedad))) {
                 arrastrado = true;
             }
             else{
@@ -284,7 +284,7 @@ public class Abner {
                 break;
             case BAJANDO:
 
-                if (mapa.colisionY(sprite.getX() + sprite.getWidth() / 2, sprite.getY() - (saltoMov + gravedad))||mapa.colisionInclinada(sprite.getX() + sprite.getWidth() / 2, sprite.getY() - (estadoSalto==Vertical.POGO?saltoMov + gravedad+10:saltoMov + gravedad))) {
+                if (mapa.colisionY(sprite.getX() + sprite.getWidth() / 2, sprite.getY() - (saltoMov + gravedad))||mapa.colisionInclinada(sprite.getX() + sprite.getWidth() / 2, sprite.getY() - (estadoSalto==Vertical.POGO?saltoMov + gravedad+10:saltoMov + gravedad))||arrastrado) {
                     estadoSalto = Vertical.DESACTIVADO;
                     this.alturaMax = sprite.getY() + SALTOMAX;
                     sprite.setSize(xOriginal, yOriginal);

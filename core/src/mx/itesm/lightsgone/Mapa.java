@@ -24,14 +24,16 @@ public class Mapa {
     private static AssetManager manager = new AssetManager();
     private static OrthographicCamera camara;
     private Array<TiledMapTileLayer> puertas,plataformaY, plataformaX,encima, items, guardado, muerte;
-    private Array<Enemigo> enemigos;
+    private Array<Enemigo> enemigos, enemigosActuales;
     private SpriteBatch batch;
     private int[] numPuertas;
     private float[] posicionY;
     private boolean[] right;
+    private String nombre;
     private Array<Sprite> plataformasInclinada;
     public Mapa(String mapa, SpriteBatch batch, OrthographicCamera camara, int[] numPuertas,boolean[] right,float... posicionY){
         this.mapa = cargarMapa(mapa);
+        this.nombre = mapa;
         Mapa.camara = camara;
         this.batch = batch;
         renderer = new OrthogonalTiledMapRenderer(this.mapa, batch);
@@ -176,6 +178,16 @@ public class Mapa {
 
     public void setEnemigos(Array<Enemigo> enemigos){
         this.enemigos = enemigos;
+        copiarEnemigos();
+    }
+
+    private void copiarEnemigos() {
+        if(enemigos!=null){
+            this.enemigosActuales = new Array<Enemigo>(enemigos.size);
+            for(Enemigo enemigo: enemigos) {
+                enemigosActuales.add(enemigo);
+            }
+        }
     }
 
     private int index(int i) {
@@ -224,7 +236,7 @@ public class Mapa {
 
 
     public Array<Enemigo> getEnemigos(){
-        return enemigos;
+        return enemigosActuales;
     }
 
     public void dispose() {
@@ -233,6 +245,7 @@ public class Mapa {
 
     public void reiniciar(GameInfo gameInfo) {
         MapLayers layers = mapa.getLayers();
+        copiarEnemigos();
         for(MapLayer mapLayer: layers){
             mapLayer.setVisible(true);
         }
@@ -252,4 +265,7 @@ public class Mapa {
 
     }
 
+    public String getName() {
+        return nombre;
+    }
 }

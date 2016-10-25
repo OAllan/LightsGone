@@ -1,6 +1,7 @@
 package mx.itesm.lightsgone;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Input;
 import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.assets.AssetManager;
@@ -15,8 +16,10 @@ import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.viewport.StretchViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
+import com.sun.scenario.effect.impl.sw.sse.SSEBlend_ADDPeer;
 
 import java.util.ArrayList;
+import java.util.Random;
 
 /**
  * Created by allanruiz on 19/09/16.
@@ -28,6 +31,7 @@ public class Nivel0 implements Screen, InputProcessor{
     public static final int YBOTON = 30;
     public static final float YCOCINA3 = 361.0f;
     public static final int YCOCINA2 = 1950;
+    public static final float YCOCINA1 = 2039.0f;
     private final int LATAX = 4871;
     private OrthographicCamera camara;
     private OrthographicCamera camaraHUD;
@@ -36,7 +40,7 @@ public class Nivel0 implements Screen, InputProcessor{
     private Music ambiente, gameover;
     private Juego juego;
     private AssetManager assetManager = new AssetManager();
-    private Texture nivelVida, gameOver,habilidadDes, habilidadPogo,save,pausaTex,quitTex, opciones, neutral, salto1, salto2, correr1, correr2, botonSalto, JLeft, JRight, JFondo, botonVida, habilidad, texPausa, resortera1, resortera2, resortera3, pResortera, plataforma;
+    private Texture malteada, dano, nivelVida, gameOver,habilidadDes, habilidadPogo,save,pausaTex,quitTex, opciones, neutral, salto1, salto2, correr1, correr2, botonSalto, JLeft, JRight, JFondo, botonVida, habilidad, texPausa, resortera1, resortera2, resortera3, pResortera, plataforma;
     private Sprite transicionNivel, pausaActual;
     private Abner abner;
     private Texto vida;
@@ -58,6 +62,7 @@ public class Nivel0 implements Screen, InputProcessor{
     private Texture pPogo1, pPogo2;
     private float alphaGame;
     private Array<Sprite> vidas;
+    private Array<Sprite> malteadas;
     Array<Enemigo> enemigos = new Array<Enemigo>(3);
     Array<Enemigo> enemigosC1 = new Array<Enemigo>(3);
     Array<Enemigo> enemigosC2 = new Array<Enemigo>(9);
@@ -90,14 +95,14 @@ public class Nivel0 implements Screen, InputProcessor{
 
     private void crearMapas() {
         mapas = new Array<Mapa>(6);
-        abner = new Abner(neutral, correr1, correr2, salto1, salto2, resortera1, resortera2, resortera3, pResortera,pPogo1,pPogo2,camara, mapa, gameInfo);
+        abner = new Abner(neutral, correr1, correr2, salto1, salto2, resortera1, resortera2, resortera3, pResortera,pPogo1,pPogo2,dano, camara, mapa, gameInfo);
         boolean[] cuartoAbnerB = {true, false}, pasilloB = {true, false}, salaB={true, true, false, false}, cocina1B = {true, true},
                 cocina2B = {false,false}, cocina3B = {true};
         int[] cuartoAbner = {0,1}, pasillo = {0,2}, sala = {1,0,0,3}, cocina1 = {2,4}, cocina2 = {3,5}, cocina3 = {4};
         mapas.add(new Mapa("CuartoAbner.tmx", batch, camara, cuartoAbner, cuartoAbnerB, YBAJA, YBAJA));
         mapas.add(new Mapa("Pasillo.tmx", batch, camara, pasillo, pasilloB, YBAJA, YBAJA));
         mapas.add(new Mapa("Sala.tmx", batch, camara, sala, salaB, YALTA, YBAJA, YALTA, YMEDIA));
-        mapas.add(new Mapa("Cocina1.tmx", batch, camara, cocina1, cocina1B, YBAJA, YCOCINA2));
+        mapas.add(new Mapa("Cocina1.tmx", batch, camara, cocina1, cocina1B, YBAJA, YCOCINA1));
         mapas.add(new Mapa("Cocina2.tmx", batch, camara, cocina2, cocina2B, YBAJA, YCOCINA2));
         mapas.add(new Mapa("Cocina3.tmx", batch, camara, cocina3, cocina3B, YCOCINA3));
         for(Mapa mapa: mapas)
@@ -115,6 +120,8 @@ public class Nivel0 implements Screen, InputProcessor{
         enemigosC1.add(new Enemigo.Lata(LATAX,mapas.get(4).getHeight(),mapas.get(4)));
         enemigosC1.add(new Enemigo.Lata(LATAX, mapas.get(4).getHeight()+3300, mapas.get(4)));
         enemigosC1.add(new Enemigo.Lata(LATAX, mapas.get(4).getHeight()+6600, mapas.get(4)));
+        enemigosC1.add(new Enemigo.Lata(2640, 160, mapas.get(4),""));
+        enemigosC1.add(new Enemigo.Lata(1110, 160, mapas.get(4),""));
         mapas.get(4).setEnemigos(enemigos);
         transicion = Transicion.DISMINUYENDO;
         musica = true;
@@ -144,21 +151,16 @@ public class Nivel0 implements Screen, InputProcessor{
         botonArma = new Boton(habilidad, ANCHO_MUNDO - habilidadDes.getWidth()- botonSalto.getWidth()-habilidad.getWidth()-30, YBOTON, false);
         pausa = new Boton(texPausa, ANCHO_MUNDO- texPausa.getWidth(), ALTO_MUNDO - texPausa.getHeight(), false);
         imgVida = new Sprite(botonVida);
+        malteadas = new Array<Sprite>();
         imgVida.setPosition(0, 780 - imgVida.getHeight());
         vida = new Texto("tipo.fnt", imgVida.getWidth(),690);
-        abner = new Abner(neutral, correr1, correr2, salto1, salto2, resortera1, resortera2, resortera3, pResortera,pPogo1,pPogo2,camara, mapa, gameInfo);
+        abner = new Abner(neutral, correr1, correr2, salto1, salto2, resortera1, resortera2, resortera3, pResortera,pPogo1,pPogo2,dano, camara, mapa, gameInfo);
+
         //Moscas
         enemigos.add(new Enemigo.Mosca(2295,293,abner,mapa));
         enemigos.add(new Enemigo.Mosca(2745,2295,abner,mapa));
         enemigos.add(new Enemigo.Mosca(3420,2295,abner,mapa));
 
-        //enemigos.add(new Enemigo.Mosca(2475,2340,abner,mapa));
-        //enemigos.add(new Enemigo.Mosca(2565,2340,abner,mapa));
-        //enemigos.add(new Enemigo.Mosca(2655,2340,abner,mapa));
-
-        //enemigos.add(new Enemigo.Mosca(3465,2340,abner,mapa));
-        //enemigos.add(new Enemigo.Mosca(3555,2340,abner,mapa));
-        //enemigos.add(new Enemigo.Mosca(3645,2340,abner,mapa));
 
         //Flamas
         enemigos.add(new Enemigo.Fuego(7650,1010,abner,mapa));
@@ -240,6 +242,7 @@ public class Nivel0 implements Screen, InputProcessor{
         mapas.get(3).setEnemigos(enemigos);
         mapas.get(4).setEnemigos(enemigosC1);
         mapas.get(5).setEnemigos(enemigosC2);
+        enemigos = mapa.getEnemigos();
         ambiente.setVolume(0.5f);
 
     }
@@ -272,6 +275,8 @@ public class Nivel0 implements Screen, InputProcessor{
         assetManager.load("PPogo2.png", Texture.class);
         assetManager.load("gameOver.png", Texture.class);
         assetManager.load("BotonNivelVida.png", Texture.class);
+        assetManager.load("PDaño.png", Texture.class);
+        assetManager.load("MalteadaMundo.png", Texture.class);
         assetManager.load("ambiente.mp3", Music.class);
         assetManager.load("risa.mp3", Music.class);
         assetManager.finishLoading();
@@ -304,6 +309,8 @@ public class Nivel0 implements Screen, InputProcessor{
         nivelVida = assetManager.get("BotonNivelVida.png");
         ambiente = assetManager.get("ambiente.mp3");
         gameover = assetManager.get("risa.mp3");
+        dano = assetManager.get("PDaño.png");
+        malteada = assetManager.get("MalteadaMundo.png");
     }
 
     @Override
@@ -311,8 +318,10 @@ public class Nivel0 implements Screen, InputProcessor{
         Gdx.gl.glClearColor(1, 1, 1, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
+
         botonHabilidad.setTexture(abner.getPogo() ? habilidadPogo : habilidadDes);
         estado = abner.isDead()?Estado.MUERTE:estado;
+
 
         if(musica){
             switch(mapaActual){
@@ -329,6 +338,25 @@ public class Nivel0 implements Screen, InputProcessor{
             ambiente.pause();
 
         if(estado != Estado.PAUSA&&estado!=Estado.MUERTE){
+
+            if(Gdx.input.isKeyPressed(Input.Keys.DPAD_LEFT))
+                pad.getLeft().setEstado(Boton.Estado.PRESIONADO);
+            else{
+                pad.getLeft().setEstado(Boton.Estado.NOPRESIONADO);
+                abner.setEstadoHorizontal(Abner.Horizontal.DESACTIVADO);
+            }
+            if(Gdx.input.isKeyPressed(Input.Keys.DPAD_RIGHT))
+                pad.getRight().setEstado(Boton.Estado.PRESIONADO);
+            else {
+                pad.getRight().setEstado(Boton.Estado.NOPRESIONADO);
+                abner.setEstadoHorizontal(Abner.Horizontal.DESACTIVADO);
+            }
+
+            if(Gdx.input.isKeyPressed(Input.Keys.A)&&!abner.isJumping()&&!abner.isAttacking())
+                botonSaltar.setEstado(Boton.Estado.PRESIONADO);
+            if(Gdx.input.isKeyPressed(Input.Keys.S)&&!abner.isAttacking())
+                botonArma.setEstado(Boton.Estado.PRESIONADO);
+
             if(botonSaltar.isPressed()) {
                 abner.setEstadoVertical(Abner.Vertical.ACTIVADO);
                 abner.setSalto(Abner.Salto.SUBIENDO);
@@ -368,16 +396,32 @@ public class Nivel0 implements Screen, InputProcessor{
             }
 
             if(enemigos!=null) {
-                for(Enemigo enemigo : enemigos)
-                    if(abner.colisionEnemigo(enemigo))
+                for (Enemigo enemigo : enemigos) {
+                    if (abner.colisionEnemigo(enemigo))
                         break;
+                    if(enemigo.muerte()){
+                        Sprite sprite = new Sprite(malteada);
+                        sprite.setPosition(enemigo.getX(), enemigo.getY());
+                        malteadas.add(sprite);
+                    }
+                }
             }
             proyectiles = abner.getProyectiles();
             batch.setProjectionMatrix(camara.combined);
             mapa.draw();
             batch.begin();
             abner.draw(batch, right);
-
+            for(Sprite sprite:malteadas) {
+                if(abner.getBoundingRectangle().overlaps(sprite.getBoundingRectangle())){
+                    abner.setCantVida(abner.getcantVida()+10);
+                    malteadas.removeIndex(malteadas.indexOf(sprite, true));
+                }
+                else {
+                    if(!mapa.colisionY(sprite.getX()+sprite.getWidth()/2, sprite.getY()-10))
+                        sprite.translate(0,-10);
+                    sprite.draw(batch);
+                }
+            }
             for (int i=0;i<proyectiles.size();i++) {
                 if(proyectiles.get(i).out())
                     proyectiles.remove(i);
@@ -591,6 +635,8 @@ public class Nivel0 implements Screen, InputProcessor{
         if(estado == Estado.MUERTE){
             if(botonMain.contiene(x,y)){
                 juego.setScreen(new MenuPrincipal(juego));
+                if(gameover.isPlaying())
+                    gameover.stop();
             }
             if(botonTry.contiene(x,y)){
                 reiniciarEscena();

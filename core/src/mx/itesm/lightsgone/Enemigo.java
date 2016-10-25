@@ -27,10 +27,9 @@ public abstract class Enemigo  {
     protected float xInicial, yInicial;
     private static AssetManager manager = new AssetManager();
     boolean ataco=false;
+    protected boolean muerte;
     long startTime;
     long startTime1;
-
-
 
 
 
@@ -52,6 +51,16 @@ public abstract class Enemigo  {
 
     public abstract boolean muerte();
 
+    public void setMuerte(boolean muerte){
+        this.muerte = muerte;
+    }
+
+    public float getX(){
+        return yInicial;
+    }
+    public float getY(){
+        return xInicial;
+    }
 
     public enum Estado{
         NEUTRAL,
@@ -100,9 +109,11 @@ public abstract class Enemigo  {
 
         @Override
         public void attack() {
-            abner.setCantVida(abner.getcantVida()-5);
-            ataco=true;
-
+            if(!abner.getDano()) {
+                abner.setCantVida(abner.getcantVida() - 5);
+                ataco = true;
+                abner.setDano(true);
+            }
         }
 
         @Override
@@ -128,7 +139,7 @@ public abstract class Enemigo  {
         }
 
         private void actualizar() {
-            if(abner.getBoundingRectangle().overlaps(sprite.getBoundingRectangle())){
+            if(abner.getBoundingRectangle().overlaps(getRectangle())){
                 if(ataco==false && estado==Estado.ATAQUE) {
                     attack();
                     startTime = System.currentTimeMillis();
@@ -187,7 +198,6 @@ public abstract class Enemigo  {
                             estado = Estado.NEUTRAL;
                             timerA = 0;
                         }
-
                         break;
 
 
@@ -216,6 +226,9 @@ public abstract class Enemigo  {
         }
 
 
+        public Rectangle getRectangle() {
+            return new Rectangle(sprite.getX()+71,sprite.getY(), 262,153);
+        }
     }
 
     static class Brocoli extends Enemigo{
@@ -261,8 +274,11 @@ public abstract class Enemigo  {
         @Override
         public void attack() {
 
-            abner.setCantVida(abner.getcantVida()-5);
-            ataco=true;
+            if(!abner.getDano()){
+                abner.setCantVida(abner.getcantVida()-5);
+                ataco=true;
+                abner.setDano(true);
+            }
         }
 
         @Override
@@ -289,7 +305,7 @@ public abstract class Enemigo  {
 
         @Override
         public boolean muerte() {
-            return vida <=0;
+            return muerte;
         }
 
         private void actualizar() {
@@ -311,6 +327,9 @@ public abstract class Enemigo  {
             }
 
             if(vida<=0) {
+                xInicial = sprite.getX()+sprite.getWidth()/2;
+                yInicial = sprite.getY();
+                muerte = true;
                 sprite.setPosition(20000,20000);
             }
             if(sprite.getY()!=1620 && sprite.getY()!=495) {
@@ -330,15 +349,6 @@ public abstract class Enemigo  {
                     right = true;
             }
 
-            /*if(!mapa.colisionY(sprite.getX(),sprite.getY())){
-
-                if(sprite.getX()<xInicial) {
-                    right=true;
-                }
-                if(sprite.getX()>xInicial) {
-                    right = false;
-                }
-            }*/
 
                 switch (estado) {
                     case NEUTRAL:
@@ -364,12 +374,16 @@ public abstract class Enemigo  {
                             caminar.setFrameDuration(0.1f);
                             timer += Gdx.graphics.getDeltaTime();
                             sprite.setTexture(caminar.getKeyFrame(timer).getTexture());
-                            if (right)
+                            if (right) {
                                 sprite.translate(velocidad * 2, 0);
-
-                            else
+                                if(!sprite.isFlipX())
+                                    sprite.flip(true, false);
+                            }
+                            else {
                                 sprite.translate(-velocidad * 2, 0);
-
+                                if(sprite.isFlipX())
+                                    sprite.flip(true, false);
+                            }
                             if (Math.abs(sprite.getX() - abner.getX()) <= 10)
                                 ata = true;
                         } else {
@@ -551,9 +565,11 @@ public abstract class Enemigo  {
 
         @Override
         public void attack() {
-
-            abner.setCantVida(abner.getcantVida()-3);
-            ataco=true;
+            if(!abner.getDano()){
+                abner.setCantVida(abner.getcantVida()-3);
+                ataco=true;
+                abner.setDano(true);
+            }
         }
 
         @Override
@@ -609,8 +625,6 @@ public abstract class Enemigo  {
         }
 
 
-
-
     static class Mosca extends Enemigo{
         private static Texture mosca1,mosca2,mosca3;
         private static Animation caminar, ataque;
@@ -655,9 +669,13 @@ public abstract class Enemigo  {
 
         @Override
         public void attack() {
+            if(!abner.getDano()){
+                abner.setCantVida(abner.getcantVida()-3);
+                ataco=true;
+                abner.setDano(true);
+            }
 
-            abner.setCantVida(abner.getcantVida()-3);
-            ataco=true;
+
         }
 
         @Override
@@ -675,9 +693,9 @@ public abstract class Enemigo  {
                     if (Math.abs(distancia) <= 700) {
                         estado = Estado.ATAQUE;
                         ataq = true;
-                    } else if (ataq == false)
+                    } else if (!ataq)
                         estado = Estado.NEUTRAL;
-                    if (ataq == true && Math.abs(distancia) >= 1000) {
+                    if (ataq && Math.abs(distancia) >= 1000) {
 
                     }
                 }
@@ -687,7 +705,7 @@ public abstract class Enemigo  {
 
         @Override
         public boolean muerte() {
-            return vida <=0;
+            return muerte;
         }
 
         private void actualizar() {
@@ -715,7 +733,7 @@ public abstract class Enemigo  {
             }
 
             if(abner.getBoundingRectangle().overlaps(sprite.getBoundingRectangle())){
-                if(ataco==false) {
+                if(!ataco) {
                     attack();
                    startTime = System.currentTimeMillis();
                 }
@@ -733,6 +751,9 @@ public abstract class Enemigo  {
             }
 
             if(vida<=0) {
+                xInicial = sprite.getX();
+                yInicial = sprite.getY();
+                muerte = true;
                 sprite.setPosition(20000,20000);
                 vida=1;
             }
@@ -777,8 +798,6 @@ public abstract class Enemigo  {
             return "mosca";
         }
     }
-
-
 
 
     static class Fuego extends Enemigo{
@@ -846,7 +865,10 @@ public abstract class Enemigo  {
         @Override
         public void attack() {
 
-            abner.setCantVida(abner.getcantVida()-1);
+            if(!abner.getDano()){
+                abner.setCantVida(abner.getcantVida()-1);
+                abner.setDano(true);
+            }
 
         }
 
@@ -940,12 +962,15 @@ public abstract class Enemigo  {
         private static Texture neutral;
         private EstadoLata estadoLata;
         private float alto, alturaOriginal;
-        private final float MOVCAIDA = 18f, MOVX = 7f,MOVRODANDO = 0.2125f*MOVX;
+        private float MOVX = 7f, rotation = 10f;
+        private final float MOVCAIDA = 18f, MOVRODANDO = 0.2125f*MOVX;
         private Mapa mapa;
 
         static {
             cargarTexturas();
         }
+
+        private float mov;
 
         private static void cargarTexturas() {
             manager.load("Lata.png", Texture.class);
@@ -960,7 +985,16 @@ public abstract class Enemigo  {
             this.mapa = mapa;
         }
 
+        public Lata(float x, float y, Mapa mapa, String string){
+            super(neutral, x, y);
+            estadoLata = EstadoLata.RODANDOPISO;
+            this.mapa = mapa;
+        }
+
         public Rectangle getBoundingRectangle(){
+            if(estadoLata== EstadoLata.RODANDOPISO){
+                return new Rectangle(sprite.getX()+MOVX, sprite.getY(), sprite.getWidth(), sprite.getHeight());
+            }
             return sprite.getBoundingRectangle();
         }
 
@@ -1016,6 +1050,13 @@ public abstract class Enemigo  {
                     sprite.setRegion(0, 0, (int)sprite.getWidth(), (int)alto);
                     sprite.setSize(sprite.getWidth(), alto);
                     break;
+                case RODANDOPISO:
+                    sprite.translate(MOVX, 0);
+                    sprite.rotate(rotation);
+                    if(mapa.colisionX(sprite.getX()+sprite.getWidth(), sprite.getY()+sprite.getHeight())||mapa.colisionX(sprite.getX(), sprite.getY()+sprite.getHeight())){
+                        MOVX*=-1;
+                        rotation*= -1;
+                    }
             }
         }
 
@@ -1024,10 +1065,19 @@ public abstract class Enemigo  {
             return false;
         }
 
+        public boolean piso(){
+            return estadoLata == EstadoLata.RODANDOPISO;
+        }
+
+        public float getMov() {
+            return MOVX;
+        }
+
         private enum EstadoLata{
             CAYENDO,
             RODANDO,
-            DESAPARECIENDO
+            DESAPARECIENDO,
+            RODANDOPISO
         }
 
         @Override

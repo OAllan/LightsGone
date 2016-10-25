@@ -34,7 +34,6 @@ public class Nivel0 implements Screen, InputProcessor{
     private Viewport vista;
     private SpriteBatch batch;
     private Music ambiente, gameover;
-    private Music ambiente, gameover;
     private Juego juego;
     private AssetManager assetManager = new AssetManager();
     private Texture nivelVida, gameOver,habilidadDes, habilidadPogo,save,pausaTex,quitTex, opciones, neutral, salto1, salto2, correr1, correr2, botonSalto, JLeft, JRight, JFondo, botonVida, habilidad, texPausa, resortera1, resortera2, resortera3, pResortera, plataforma;
@@ -44,7 +43,6 @@ public class Nivel0 implements Screen, InputProcessor{
     private Pad pad;
     private Sprite imgVida, menuGameOver;
     private boolean right, saveB;
-    public static boolean musica;
     public static boolean musica;
     private Boton botonBack, botonOn, botonOff, botonTry, botonMain,botonSaltar, botonArma, pausa, botonResume, botonOpciones,botonQuit, botonYes,botonNo, botonSave, botonHabilidad;
     private float alpha = 0;
@@ -60,9 +58,9 @@ public class Nivel0 implements Screen, InputProcessor{
     private Texture pPogo1, pPogo2;
     private float alphaGame;
     private Array<Sprite> vidas;
-    private Array<Sprite> vidas;
     Array<Enemigo> enemigos = new Array<Enemigo>(3);
     Array<Enemigo> enemigosC1 = new Array<Enemigo>(3);
+    Array<Enemigo> enemigosC2 = new Array<Enemigo>(9);
 
     public Nivel0(Juego juego) {
         this.juego = juego;

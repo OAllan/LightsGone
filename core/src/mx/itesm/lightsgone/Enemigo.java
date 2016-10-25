@@ -619,6 +619,9 @@ public abstract class Enemigo  {
         private int tama=10;
         private boolean ataq=false;
         private Mapa mapa;
+        private int direccion;
+        private float posXOriginal;
+        private float posYOriginal;
 
 
         static {
@@ -642,6 +645,8 @@ public abstract class Enemigo  {
             this.abner = abner;
             vida = 1;
             this.mapa=mapa;
+            posXOriginal=sprite.getX();
+            posYOriginal=sprite.getY();
         }
 
         @Override
@@ -660,17 +665,17 @@ public abstract class Enemigo  {
         public void draw(SpriteBatch batch) {
 
             sprite.draw(batch);
-            float distancia = sprite.getX()-abner.getX();
-            if(estado!= Estado.DANO){
-                if(Math.abs(distancia)<=700){
-                    estado = Estado.ATAQUE;
-                    ataq=true;
-                }
-                else
-                    if (ataq==false)
-                    estado = Estado.NEUTRAL;
-                if(ataq==true&&Math.abs(distancia)>=1000){
+            if(Math.abs(abner.getY()-posYOriginal)<400) {
+                float distancia = sprite.getX() - abner.getX();
+                if (estado != Estado.DANO) {
+                    if (Math.abs(distancia) <= 700) {
+                        estado = Estado.ATAQUE;
+                        ataq = true;
+                    } else if (ataq == false)
+                        estado = Estado.NEUTRAL;
+                    if (ataq == true && Math.abs(distancia) >= 1000) {
 
+                    }
                 }
             }
             actualizar();
@@ -682,6 +687,29 @@ public abstract class Enemigo  {
         }
 
         private void actualizar() {
+            if(sprite.getX()<0){
+                sprite.setPosition(10000,10000);
+                vida=1;
+            }
+            if(sprite.getX()>12000 || sprite.getX()<8000 && sprite.getX()>6000){
+                sprite.setPosition(posXOriginal,posYOriginal);
+                estado=Estado.NEUTRAL;
+                tama=10;
+            }
+
+            if(abner.getX()>posXOriginal){
+                direccion=-1;
+                if(!sprite.isFlipX()) {
+                    sprite.flip(true, false);
+                }
+            }
+            else {
+                direccion=1;
+                if(sprite.isFlipX()){
+                    sprite.flip(true,false);
+                }
+            }
+
             if(abner.getBoundingRectangle().overlaps(sprite.getBoundingRectangle())){
                 if(ataco==false) {
                     attack();
@@ -703,6 +731,7 @@ public abstract class Enemigo  {
             if(vida<=0) {
                 sprite.setX(10000);
                 sprite.setY(10000);
+                vida=1;
             }
 
 
@@ -715,8 +744,9 @@ public abstract class Enemigo  {
                         sprite.setSize(tama+=5,tama);
                     timer += Gdx.graphics.getDeltaTime();
                     sprite.setTexture(ataque.getKeyFrame(timer).getTexture());
-                    sprite.setX(sprite.getX()-4);
-                    sprite.setY(sprite.getY()+MathUtils.random(-4,4));
+
+                    sprite.setX(sprite.getX()-8*direccion);
+                    sprite.setY(abner.getY()+(abner.getHeight()/2)-50);
 
                     break;
                 case DANO:

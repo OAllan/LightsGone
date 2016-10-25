@@ -55,6 +55,7 @@ public class Nivel0 implements Screen, InputProcessor{
     private float alphaGame;
     Array<Enemigo> enemigos = new Array<Enemigo>(3);
     Array<Enemigo> enemigosC1 = new Array<Enemigo>(3);
+    Array<Enemigo> enemigosC2 = new Array<Enemigo>(3);
 
     public Nivel0(Juego juego) {
         this.juego = juego;
@@ -130,17 +131,17 @@ public class Nivel0 implements Screen, InputProcessor{
         vida = new Texto("tipo.fnt", imgVida.getWidth(),690);
         abner = new Abner(neutral, correr1, correr2, salto1, salto2, resortera1, resortera2, resortera3, pResortera,pPogo1,pPogo2,camara, mapa, gameInfo);
         //Moscas
-        enemigos.add(new Enemigo.Mosca(2250,293,abner,mapa));
-        enemigos.add(new Enemigo.Mosca(2295,360,abner,mapa));
-        enemigos.add(new Enemigo.Mosca(2340,360,abner,mapa));
+        enemigos.add(new Enemigo.Mosca(2295,293,abner,mapa));
+        enemigos.add(new Enemigo.Mosca(2745,2295,abner,mapa));
+        enemigos.add(new Enemigo.Mosca(3420,2295,abner,mapa));
 
-        enemigos.add(new Enemigo.Mosca(2475,2340,abner,mapa));
-        enemigos.add(new Enemigo.Mosca(2565,2340,abner,mapa));
-        enemigos.add(new Enemigo.Mosca(2655,2340,abner,mapa));
+        //enemigos.add(new Enemigo.Mosca(2475,2340,abner,mapa));
+        //enemigos.add(new Enemigo.Mosca(2565,2340,abner,mapa));
+        //enemigos.add(new Enemigo.Mosca(2655,2340,abner,mapa));
 
-        enemigos.add(new Enemigo.Mosca(3465,2340,abner,mapa));
-        enemigos.add(new Enemigo.Mosca(3555,2340,abner,mapa));
-        enemigos.add(new Enemigo.Mosca(3645,2340,abner,mapa));
+        //enemigos.add(new Enemigo.Mosca(3465,2340,abner,mapa));
+        //enemigos.add(new Enemigo.Mosca(3555,2340,abner,mapa));
+        //enemigos.add(new Enemigo.Mosca(3645,2340,abner,mapa));
 
         //Flamas
         enemigos.add(new Enemigo.Fuego(7785,990,abner,mapa));
@@ -169,13 +170,37 @@ public class Nivel0 implements Screen, InputProcessor{
         enemigos.add(new Enemigo.Brocoli(9900,1620,abner,mapa));
         enemigos.add(new Enemigo.Brocoli(8865,2025,abner,mapa));
 
+
         //Enemigos cocina 2
         //Sopas
         enemigosC1.add(new Enemigo.Sopa(5265,180,abner,mapa));
         enemigosC1.add(new Enemigo.Sopa(4005,225,abner,mapa));
         enemigosC1.add(new Enemigo.Sopa(1395,1125,abner,mapa));
+
         //Brocolis
         enemigosC1.add(new Enemigo.Brocoli(765,495,abner,mapa));
+
+
+        //Enemigos cocina 3
+        //Moscas
+        enemigosC2.add(new Enemigo.Mosca(3330,765,abner,mapa));
+        enemigosC2.add(new Enemigo.Mosca(5355,1125,abner,mapa));
+
+
+        //Sopas
+        enemigosC2.add(new Enemigo.Sopa(2700,585,abner,mapa));
+        enemigosC2.add(new Enemigo.Sopa(4635,945,abner,mapa));
+        enemigosC2.add(new Enemigo.Sopa(5805,1530,abner,mapa));
+
+        //Panes Tostadores
+        enemigosC2.add(new Enemigo.PanTostadora(4298,780,abner,mapa));
+        enemigosC2.add(new Enemigo.PanTostadora(6143,1320,abner,mapa));
+
+        //Tostadores
+        enemigosC2.add(new Enemigo.Tostadora(4275,765,abner,mapa));
+        enemigosC2.add(new Enemigo.Tostadora(6120,1305,abner,mapa));
+
+
 
         gameInfo.setAbner(abner);
         estado = Estado.JUGANDO;
@@ -194,6 +219,7 @@ public class Nivel0 implements Screen, InputProcessor{
         alphaGame = 0;
         mapas.get(3).setEnemigos(enemigos);
         mapas.get(4).setEnemigos(enemigosC1);
+        mapas.get(5).setEnemigos(enemigosC2);
 
 
     }

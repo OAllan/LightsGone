@@ -407,6 +407,10 @@ public class Abner {
         return camara.position.y;
     }
 
+    public float getHeight(){return sprite.getHeight();}
+
+    public float getWidth(){return sprite.getWidth();}
+
     public void reiniciar(GameInfo gameInfo) {
         sprite.setPosition(gameInfo.getX(), gameInfo.getY());
         camara.position.set(gameInfo.getCamaraX(), gameInfo.getCamaraY(), gameInfo.getY());

@@ -11,10 +11,10 @@ public class Pad {
     private Boton left;
     private Boton right;
     private Sprite fondo;
-    public Pad(Texture fondo, Texture left, Texture right){
+    public Pad(Texture fondo){
         this.fondo = new Sprite(fondo);
-        this.left = new Boton(left, 100,30, true);
-        this.right = new Boton(right, 270,30, true);
+        this.left = new Boton(100,30,75,240, true);
+        this.right = new Boton( 270,30,75,240, true);
         this.fondo.setPosition(100,30);
     }
 
@@ -28,8 +28,6 @@ public class Pad {
 
     public void draw(SpriteBatch batch){
         fondo.draw(batch);
-        left.draw(batch);
-        right.draw(batch);
     }
 
 

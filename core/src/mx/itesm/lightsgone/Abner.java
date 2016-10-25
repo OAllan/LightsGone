@@ -30,7 +30,7 @@ public class Abner {
     private float mov = 10f;
     private final float MOVY = (0.2125f)*mov;
     private Salto salto;
-    private int cantVida;
+    private int cantVida, vidas;
     private Animation caminar, atacar;
     private OrthographicCamera camara;
     private ArrayList<Proyectil> proyectiles;
@@ -78,6 +78,7 @@ public class Abner {
         this.saltarPogo1 = saltarPogo1;
         this.saltarPogo2 = saltarPogo2;
         arrastrado = false;
+        this.vidas = gameInfo.getVidas();
     }
 
 
@@ -88,8 +89,22 @@ public class Abner {
 
     private void actualizar(boolean right) {
 
-        if(cantVida<= 0||sprite.getY()<=0)
+
+        if(sprite.getY()<=0||mapa.colisionMuerte(sprite.getX(),sprite.getY()))
+            muerte = true;
+
+        if(cantVida<=0&&vidas<=0)
             muerte =true;
+        else if(cantVida<=0&&vidas>=1) {
+            vidas--;
+            cantVida = 99;
+        }
+
+        if(mapa.colisionItem(sprite.getX()+sprite.getWidth(),sprite.getY(),"VidaExtra")){
+            mapa.remove("VidaExtra");
+            if(vidas<3)
+                vidas++;
+        }
 
         if(mapa.colisionItem(sprite.getX()+sprite.getWidth(), sprite.getY(), "Malteada")){
             mapa.remove("Malteada");
@@ -427,6 +442,10 @@ public class Abner {
         capita = gameInfo.isCapita();
         lanzapapas = gameInfo.isLanzapapas();
         muerte = false;
+    }
+
+    public int getVidas() {
+        return vidas;
     }
 
     public enum Salto{

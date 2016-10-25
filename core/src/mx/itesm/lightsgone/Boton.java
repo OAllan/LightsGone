@@ -29,6 +29,11 @@ public class Boton {
         this.animacion = Animacion.DESACTIVADA;
     }
 
+    public Boton(float x, float y, float width, float height, boolean pad) {
+        this(x,y,width,height);
+        this.pad = pad;
+    }
+
     public void draw(SpriteBatch batch){
         switch (estado){
             case NOPRESIONADO:

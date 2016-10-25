@@ -15,7 +15,7 @@ import java.util.Scanner;
  * Created by allanruiz on 21/10/16.
  */
 public class GameInfo {
-    private int vida;
+    private int vida, vidas;
     private boolean pogo, capita, lanzapapas;
     private int mapa;
     private float x, y, camaraX, camaraY;
@@ -24,6 +24,7 @@ public class GameInfo {
     private Abner abner;
 
     public GameInfo(){
+        vidas = 0;
         vida = 99;
         pogo = capita = lanzapapas = false;
         mapa = 0;
@@ -59,6 +60,7 @@ public class GameInfo {
             capita = Boolean.parseBoolean(lineas[7].trim());
             camaraX = Float.parseFloat(lineas[8].trim());
             camaraY = Float.parseFloat(lineas[9].trim());
+            vidas = Integer.parseInt(lineas[10].trim());
 
         }
         catch (Exception e){
@@ -82,6 +84,7 @@ public class GameInfo {
             save.writeString(capita + "\n", true);
             save.writeString(camaraX + "\n", true);
             save.writeString(camaraY + "\n", true);
+            save.writeString(vidas + "\n", true);
         }
         catch (Exception e){
             Gdx.app.log("Exception ", e.getMessage());
@@ -99,6 +102,7 @@ public class GameInfo {
         y = abner.getY();
         camaraX = abner.getCamaraX();
         camaraY = abner.getCamaraY();
+        vidas = abner.getVidas();
     }
 
     private String nombre(){
@@ -180,5 +184,9 @@ public class GameInfo {
 
     public float getCamaraY(){
         return camaraY;
+    }
+
+    public int getVidas() {
+        return vidas;
     }
 }

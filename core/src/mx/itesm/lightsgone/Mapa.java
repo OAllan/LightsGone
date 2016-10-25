@@ -23,7 +23,7 @@ public class Mapa {
     private TiledMapRenderer renderer;
     private static AssetManager manager = new AssetManager();
     private static OrthographicCamera camara;
-    private Array<TiledMapTileLayer> puertas,plataformaY, plataformaX,encima, items, guardado;
+    private Array<TiledMapTileLayer> puertas,plataformaY, plataformaX,encima, items, guardado, muerte;
     private Array<Enemigo> enemigos;
     private SpriteBatch batch;
     private int[] numPuertas;
@@ -48,6 +48,7 @@ public class Mapa {
         encima = new Array<TiledMapTileLayer>(1);
         puertas = new Array<TiledMapTileLayer>(5);
         guardado = new Array<TiledMapTileLayer>(1);
+        muerte = new Array<TiledMapTileLayer>(1);
         plataformaY.add((TiledMapTileLayer)mapa.getLayers().get("PlataformaPiso"));
         plataformaY.add((TiledMapTileLayer)mapa.getLayers().get("Plataformas"));
         plataformaY.add((TiledMapTileLayer)mapa.getLayers().get("Plataformas2"));
@@ -63,6 +64,7 @@ public class Mapa {
         puertas.add((TiledMapTileLayer)mapa.getLayers().get("Puerta3"));
         puertas.add((TiledMapTileLayer) mapa.getLayers().get("Puerta4"));
         guardado.add((TiledMapTileLayer)mapa.getLayers().get("Guardado"));
+        muerte.add((TiledMapTileLayer)mapa.getLayers().get("SopaMortal"));
     }
 
 
@@ -95,6 +97,10 @@ public class Mapa {
             }
         }
         return false;
+    }
+
+    public boolean colisionMuerte(float x, float y){
+        return colision(x,y,muerte);
     }
 
     public boolean colisionItem(float x, float y, String name){
@@ -245,4 +251,5 @@ public class Mapa {
         return false;
 
     }
+
 }

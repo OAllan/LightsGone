@@ -5,6 +5,7 @@ import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.audio.Music;
+import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
@@ -33,6 +34,7 @@ public class Nivel0 implements Screen, InputProcessor{
     private Viewport vista;
     private SpriteBatch batch;
     private Music ambiente, gameover;
+    private Music ambiente, gameover;
     private Juego juego;
     private AssetManager assetManager = new AssetManager();
     private Texture nivelVida, gameOver,habilidadDes, habilidadPogo,save,pausaTex,quitTex, opciones, neutral, salto1, salto2, correr1, correr2, botonSalto, JLeft, JRight, JFondo, botonVida, habilidad, texPausa, resortera1, resortera2, resortera3, pResortera, plataforma;
@@ -42,6 +44,7 @@ public class Nivel0 implements Screen, InputProcessor{
     private Pad pad;
     private Sprite imgVida, menuGameOver;
     private boolean right, saveB;
+    public static boolean musica;
     public static boolean musica;
     private Boton botonBack, botonOn, botonOff, botonTry, botonMain,botonSaltar, botonArma, pausa, botonResume, botonOpciones,botonQuit, botonYes,botonNo, botonSave, botonHabilidad;
     private float alpha = 0;
@@ -56,6 +59,7 @@ public class Nivel0 implements Screen, InputProcessor{
     private final float YBAJA = 135f, YMEDIA = 800f, YALTA =1100f;
     private Texture pPogo1, pPogo2;
     private float alphaGame;
+    private Array<Sprite> vidas;
     private Array<Sprite> vidas;
     Array<Enemigo> enemigos = new Array<Enemigo>(3);
     Array<Enemigo> enemigosC1 = new Array<Enemigo>(3);
@@ -100,6 +104,8 @@ public class Nivel0 implements Screen, InputProcessor{
         mapas.add(new Mapa("Cocina3.tmx", batch, camara, cocina3, cocina3B, YCOCINA3));
         for(Mapa mapa: mapas)
             mapa.reiniciar(gameInfo);
+        for(Mapa mapa: mapas)
+            mapa.reiniciar(gameInfo);
         Sprite sprite = new Sprite(plataforma);
         sprite.setRotation(12);
         sprite.setPosition(ANCHO_MUNDO + 470, ALTO_MUNDO * 3 - 850);
@@ -113,6 +119,7 @@ public class Nivel0 implements Screen, InputProcessor{
         enemigosC1.add(new Enemigo.Lata(LATAX, mapas.get(4).getHeight()+6600, mapas.get(4)));
         mapas.get(4).setEnemigos(enemigos);
         transicion = Transicion.DISMINUYENDO;
+        musica = true;
         musica = true;
     }
 
@@ -182,13 +189,37 @@ public class Nivel0 implements Screen, InputProcessor{
         enemigos.add(new Enemigo.Brocoli(9900,1620,abner,mapa));
         enemigos.add(new Enemigo.Brocoli(8865,2025,abner,mapa));
 
+
         //Enemigos cocina 2
         //Sopas
         enemigosC1.add(new Enemigo.Sopa(5265,180,abner,mapa));
         enemigosC1.add(new Enemigo.Sopa(4005,225,abner,mapa));
         enemigosC1.add(new Enemigo.Sopa(1395,1125,abner,mapa));
+
         //Brocolis
         enemigosC1.add(new Enemigo.Brocoli(765,495,abner,mapa));
+
+
+        //Enemigos cocina 3
+        //Moscas
+        enemigosC2.add(new Enemigo.Mosca(3330,765,abner,mapa));
+        enemigosC2.add(new Enemigo.Mosca(5355,1125,abner,mapa));
+
+
+        //Sopas
+        enemigosC2.add(new Enemigo.Sopa(2700,585,abner,mapa));
+        enemigosC2.add(new Enemigo.Sopa(4635,945,abner,mapa));
+        enemigosC2.add(new Enemigo.Sopa(5805,1530,abner,mapa));
+
+        //Panes Tostadores
+        enemigosC2.add(new Enemigo.PanTostadora(4298,780,abner,mapa));
+        enemigosC2.add(new Enemigo.PanTostadora(6143,1320,abner,mapa));
+
+        //Tostadores
+        enemigosC2.add(new Enemigo.Tostadora(4275,765,abner,mapa));
+        enemigosC2.add(new Enemigo.Tostadora(6120,1305,abner,mapa));
+
+
 
         gameInfo.setAbner(abner);
         estado = Estado.JUGANDO;

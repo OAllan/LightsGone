@@ -69,6 +69,7 @@ public abstract class Enemigo  {
         private float timerA, timer, timerD;
         private Abner abner;
         private Mapa mapa;
+        private int vida=1;
 
 
 
@@ -112,7 +113,7 @@ public abstract class Enemigo  {
         @Override
         public void draw(SpriteBatch batch) {
             sprite.draw(batch);
-            if(System.currentTimeMillis()-startTime>=2000) {
+            if(vida==1) {
                 if (abner.getX() > 400)
                     estado = Estado.ATAQUE;
                 else
@@ -140,9 +141,16 @@ public abstract class Enemigo  {
 
             if(!abner.getProyectiles().isEmpty()) {
                 if (sprite.getBoundingRectangle().overlaps(abner.getProyectiles().get(0).getRectangle())) {
-                    estado=Estado.DANO;
+                    vida=0;
                     abner.borrarProyectiles();
                 }
+            }
+
+
+
+            if(vida<=0){
+                sprite.setTexture(low);
+                estado=Estado.NEUTRAL;
             }
 
 
@@ -157,35 +165,35 @@ public abstract class Enemigo  {
             else if(distancia<0&&!sprite.isFlipX())
                 sprite.flip(true, false);
 
-            switch(estado){
-                case NEUTRAL:
-                    timer += Gdx.graphics.getDeltaTime();
-                    sprite.setTexture(neutral.getKeyFrame(timer).getTexture());
-                    if(timer >5){
-                        estado = Estado.ATAQUE;
-                        timer = 0;
-                    }
+            if(Math.abs(distancia)>650){
+                vida=1;
+            }
 
-                    break;
-                case ATAQUE:
-                    timerA += Gdx.graphics.getDeltaTime();
-                    sprite.setTexture(ataque.getKeyFrame(timerA).getTexture());
-                    if(ataque.getAnimationDuration()<timerA){
-                        estado = Estado.NEUTRAL;
-                        timerA = 0;
-                    }
-                    break;
-                case DANO:
-                    timerD += Gdx.graphics.getDeltaTime();
-                    sprite.setTexture(dano.getKeyFrame(timerA).getTexture());
-                    if(timerD>5){
-                        timerD = 0;
-                        estado = Estado.NEUTRAL;
-                    }
+            if(vida==1) {
+                switch (estado) {
+                    case NEUTRAL:
+                        timer += Gdx.graphics.getDeltaTime();
+                        sprite.setTexture(neutral.getKeyFrame(timer).getTexture());
+                        if (timer > 5) {
+                            estado = Estado.ATAQUE;
+                            timer = 0;
+                        }
 
+                        break;
+                    case ATAQUE:
+                        timerA += Gdx.graphics.getDeltaTime();
+                        sprite.setTexture(ataque.getKeyFrame(timerA).getTexture());
+                        if (ataque.getAnimationDuration() < timerA) {
+                            estado = Estado.NEUTRAL;
+                            timerA = 0;
+                        }
+
+                        break;
+
+
+                }
             }
         }
-
         private static void cargarTexturas(){
             manager.load("SopaAtaque1.png", Texture.class);
             manager.load("SopaAtaque2.png", Texture.class);
@@ -206,6 +214,7 @@ public abstract class Enemigo  {
         public String toString() {
             return "Sopa";
         }
+
 
     }
 
@@ -300,7 +309,7 @@ public abstract class Enemigo  {
                 sprite.setX(10000);
                 sprite.setY(10000);
             }
-            if(sprite.getY()!=1620) {
+            if(sprite.getY()!=1620 && sprite.getY()!=495) {
                 if (sprite.getX() >= xInicial + 400)
 
                     right = false;
@@ -309,10 +318,10 @@ public abstract class Enemigo  {
                     right = true;
             }
             else{
-                if (sprite.getX() >= xInicial + 150)
+                if (sprite.getX() >= xInicial + 100)
 
                     right = false;
-                if (sprite.getX() < xInicial - 150)
+                if (sprite.getX() < xInicial - 100)
 
                     right = true;
             }

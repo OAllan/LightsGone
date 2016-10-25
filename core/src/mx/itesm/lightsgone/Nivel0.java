@@ -54,7 +54,7 @@ public class Nivel0 implements Screen, InputProcessor{
     private Texture pPogo1, pPogo2;
     private float alphaGame;
     Array<Enemigo> enemigos = new Array<Enemigo>(3);
-    Array<Enemigo> enemigos1 = new Array<Enemigo>(3);
+    Array<Enemigo> enemigosC1 = new Array<Enemigo>(3);
 
     public Nivel0(Juego juego) {
         this.juego = juego;
@@ -100,10 +100,11 @@ public class Nivel0 implements Screen, InputProcessor{
         mapas.get(4).setPlataformasInclinada(sprite);
         mapaActual = gameInfo.getMapa();
         Array<Enemigo> enemigos = new Array<Enemigo>(3);
+        Array<Enemigo> enemigosC2 = new Array<Enemigo>(3);
         mapa = mapas.get(mapaActual);
-        enemigos.add(new Enemigo.Lata(LATAX,mapas.get(4).getHeight(),mapas.get(4)));
-        enemigos.add(new Enemigo.Lata(LATAX, mapas.get(4).getHeight()+3300, mapas.get(4)));
-        enemigos.add(new Enemigo.Lata(LATAX, mapas.get(4).getHeight()+6600, mapas.get(4)));
+        enemigosC1.add(new Enemigo.Lata(LATAX,mapas.get(4).getHeight(),mapas.get(4)));
+        enemigosC1.add(new Enemigo.Lata(LATAX, mapas.get(4).getHeight()+3300, mapas.get(4)));
+        enemigosC1.add(new Enemigo.Lata(LATAX, mapas.get(4).getHeight()+6600, mapas.get(4)));
         mapas.get(4).setEnemigos(enemigos);
         transicion = Transicion.DISMINUYENDO;
     }
@@ -167,6 +168,15 @@ public class Nivel0 implements Screen, InputProcessor{
         enemigos.add(new Enemigo.Brocoli(6435,900,abner,mapa));
         enemigos.add(new Enemigo.Brocoli(9900,1620,abner,mapa));
         enemigos.add(new Enemigo.Brocoli(8865,2025,abner,mapa));
+
+        //Enemigos cocina 2
+        //Sopas
+        enemigosC1.add(new Enemigo.Sopa(5265,180,abner,mapa));
+        enemigosC1.add(new Enemigo.Sopa(4005,225,abner,mapa));
+        enemigosC1.add(new Enemigo.Sopa(1395,1125,abner,mapa));
+        //Brocolis
+        enemigosC1.add(new Enemigo.Brocoli(765,495,abner,mapa));
+
         gameInfo.setAbner(abner);
         estado = Estado.JUGANDO;
         botonHabilidad = new Boton(abner.getPogo() ?habilidadPogo:habilidadDes, ANCHO_MUNDO-habilidadDes.getWidth()-10,YBOTON,false);
@@ -183,6 +193,7 @@ public class Nivel0 implements Screen, InputProcessor{
         botonTry = new Boton(195,224,355,65);
         alphaGame = 0;
         mapas.get(3).setEnemigos(enemigos);
+        mapas.get(4).setEnemigos(enemigosC1);
 
 
     }

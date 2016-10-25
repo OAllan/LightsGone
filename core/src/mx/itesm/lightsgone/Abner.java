@@ -20,14 +20,14 @@ import java.util.ArrayList;
  */
 public class Abner {
     public static final int X = 450;
-    public static final int SALTOMAX = 280;
+    public static final int SALTOMAX = 500;
     public static final int CAMARAINICIAL = 640;
     private float xOriginal, yOriginal;
     private Sprite sprite;
     private int cont = 8;
     private float y = 135f, saltoMov = 8f, gravedad = 13f, alturaMax;
     private Texture neutral, saltar1, saltar2, pResortera;
-    private float mov = 7f;
+    private float mov = 25f;
     private final float MOVY = (0.2125f)*mov;
     private Salto salto;
     private int cantVida;

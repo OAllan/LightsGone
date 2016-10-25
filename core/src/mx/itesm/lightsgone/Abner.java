@@ -27,7 +27,7 @@ public class Abner {
     private int cont = 8;
     private float y = 135f, saltoMov = 8f, gravedad = 13f, alturaMax;
     private Texture neutral, saltar1, saltar2, pResortera;
-    private float mov = 7f;
+    private float mov = 10f;
     private final float MOVY = (0.2125f)*mov;
     private Salto salto;
     private int cantVida;
@@ -320,7 +320,7 @@ public class Abner {
     }
 
     public Rectangle getBoundingRectangle(){
-        return sprite.getBoundingRectangle();
+        return new Rectangle(sprite.getX()+50,sprite.getY(),sprite.getWidth()-100,sprite.getHeight());
     }
 
     public ArrayList<Proyectil> getProyectiles() {

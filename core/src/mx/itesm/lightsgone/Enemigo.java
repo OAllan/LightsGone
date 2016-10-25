@@ -296,8 +296,10 @@ public abstract class Enemigo  {
                 }
             }
 
-            if(vida<=0)
+            if(vida<=0) {
                 sprite.setX(10000);
+                sprite.setY(10000);
+            }
             if(sprite.getY()!=1620) {
                 if (sprite.getX() >= xInicial + 400)
 
@@ -689,8 +691,11 @@ public abstract class Enemigo  {
                 }
             }
 
-            if(vida<=0)
+            if(vida<=0) {
                 sprite.setX(10000);
+                sprite.setY(10000);
+            }
+
 
             switch (estado){
                 case NEUTRAL:

@@ -91,6 +91,7 @@ public class GameInfo {
 
     private void actualizarDatos() {
         mapa = Nivel0.mapaActual;
+        vida = abner.getcantVida();
         pogo = abner.getPogo();
         capita = abner.getCapita();
         lanzapapas = abner.getLanzapapas();

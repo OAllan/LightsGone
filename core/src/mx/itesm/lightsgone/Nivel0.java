@@ -516,7 +516,8 @@ public class Nivel0 implements Screen, InputProcessor{
 
     private void reiniciarEscena() {
         abner.reiniciar(gameInfo);
-        mapa = mapas.get(gameInfo.getMapa());
+        mapaActual = gameInfo.getMapa();
+        mapa = mapas.get(mapaActual);
         abner.setMapa(mapa);
         for(Mapa mapa: mapas)
             mapa.reiniciar(gameInfo);

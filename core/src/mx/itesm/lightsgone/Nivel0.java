@@ -24,6 +24,8 @@ public class Nivel0 implements Screen, InputProcessor{
     public static final int ANCHO_MUNDO = 1280;
     public static final int ALTO_MUNDO = 800;
     public static final int YBOTON = 30;
+    public static final float YCOCINA3 = 361.0f;
+    public static final int YCOCINA2 = 1950;
     private final int LATAX = 4871;
     private OrthographicCamera camara;
     private OrthographicCamera camaraHUD;
@@ -90,8 +92,8 @@ public class Nivel0 implements Screen, InputProcessor{
         mapas.add(new Mapa("Pasillo.tmx", batch, camara, pasillo, pasilloB, YBAJA, YBAJA));
         mapas.add(new Mapa("Sala.tmx", batch, camara, sala, salaB, YALTA, YBAJA, YALTA, YMEDIA));
         mapas.add(new Mapa("Cocina1.tmx", batch, camara, cocina1, cocina1B, YBAJA, YALTA));
-        mapas.add(new Mapa("Cocina2.tmx", batch, camara, cocina2, cocina2B, YBAJA, YALTA));
-        mapas.add(new Mapa("Cocina3.tmx", batch, camara, cocina3, cocina3B, 361.0f));
+        mapas.add(new Mapa("Cocina2.tmx", batch, camara, cocina2, cocina2B, YBAJA, YCOCINA2));
+        mapas.add(new Mapa("Cocina3.tmx", batch, camara, cocina3, cocina3B, YCOCINA3));
         Sprite sprite = new Sprite(plataforma);
         sprite.setRotation(12);
         sprite.setPosition(ANCHO_MUNDO + 470, ALTO_MUNDO * 3 - 850);
@@ -383,7 +385,7 @@ public class Nivel0 implements Screen, InputProcessor{
         else if(estado == Estado.MUERTE){
             batch.setProjectionMatrix(camara.combined);
             mapa.draw();
-            alphaGame+=0.1f;
+            alphaGame+=0.01f;
             if(alphaGame>=1)
                 alphaGame=1;
             menuGameOver.setAlpha(alphaGame);

@@ -19,8 +19,9 @@ import java.util.ArrayList;
  * Created by allanruiz on 19/09/16.
  */
 public class Abner {
-    public static final int X = 350;
+    public static final int X = 450;
     public static final int SALTOMAX = 280;
+    public static final int CAMARAINICIAL = 640;
     private float xOriginal, yOriginal;
     private Sprite sprite;
     private int cont = 8;
@@ -174,7 +175,7 @@ public class Abner {
         }
 
         if(estadoAtaque != Ataque.ACTIVADO && estadoSalto == Vertical.DESACTIVADO && estadoHorizontal==Horizontal.DESACTIVADO){
-            if(mapa.colisionY(sprite.getX()+sprite.getWidth()/2,sprite.getY()-(saltoMov+gravedad))||mapa.colisionInclinada(sprite.getX() + sprite.getWidth() / 2, sprite.getY() - (saltoMov + gravedad)))sprite.setTexture(neutral);
+            if(mapa.colisionY(sprite.getX()+sprite.getWidth()/2,sprite.getY()-(saltoMov+gravedad))||mapa.colisionInclinada(sprite.getX() + sprite.getWidth() / 2, sprite.getY() - (saltoMov + gravedad))||arrastrado)sprite.setTexture(neutral);
             else{
                 estadoSalto = Vertical.ACTIVADO;
                 salto = Salto.BAJANDO;
@@ -206,7 +207,7 @@ public class Abner {
                 sprite.flip(true, false);
             }
             if (!mapa.colisionX((sprite.getX() + (sprite.getWidth() / 2)) + mov, sprite.getY()+20)&&!mapa.colisionInclinada((sprite.getX() + (sprite.getWidth() / 2)) + mov, sprite.getY())&&!arrastrado){
-                if(mapa.colisionY(sprite.getX() + sprite.getWidth() / 2, sprite.getY() - (saltoMov + gravedad)) || estadoSalto != Vertical.DESACTIVADO|| mapa.colisionInclinada(sprite.getX() + sprite.getWidth() / 2, sprite.getY() - (saltoMov + gravedad))){
+                if(mapa.colisionY(sprite.getX() + sprite.getWidth() / 2, sprite.getY() - (saltoMov + gravedad)) || estadoSalto != Vertical.DESACTIVADO|| mapa.colisionInclinada(sprite.getX() + sprite.getWidth() / 2, sprite.getY() - (saltoMov + gravedad))||arrastrado){
                     sprite.translate(mov, 0);
                     if(limiteCamaraX())
                         camara.translate(mov,0);
@@ -224,7 +225,7 @@ public class Abner {
                 sprite.flip(true, false);
             }
             if (!mapa.colisionX((sprite.getX() + (sprite.getWidth() / 2)) - mov, sprite.getY()+20)&&!mapa.colisionInclinada((sprite.getX() + (sprite.getWidth() / 2))- mov, sprite.getY())&&!arrastrado) {
-                if (mapa.colisionY(sprite.getX() + sprite.getWidth() / 2, sprite.getY() - (saltoMov + gravedad)) || estadoSalto != Vertical.DESACTIVADO|| mapa.colisionInclinada(sprite.getX() + sprite.getWidth() / 2, sprite.getY() - (saltoMov + gravedad))){
+                if (mapa.colisionY(sprite.getX() + sprite.getWidth() / 2, sprite.getY() - (saltoMov + gravedad)) || estadoSalto != Vertical.DESACTIVADO|| mapa.colisionInclinada(sprite.getX() + sprite.getWidth() / 2, sprite.getY() - (saltoMov + gravedad))||arrastrado){
                     sprite.translate(-mov, 0);
                     if(limiteCamaraX())
                         camara.translate(-mov,0);
@@ -259,7 +260,7 @@ public class Abner {
     public boolean colisionEnemigo(Enemigo enemigo){
         if(enemigo.toString().equalsIgnoreCase("Lata")){
             Enemigo.Lata lata= (Enemigo.Lata)enemigo;
-            if(lata.getBoundingRectangle().contains(sprite.getX()+(3*sprite.getWidth()/4), sprite.getY()+10)) {
+            if(lata.getBoundingRectangle().contains(sprite.getX()+(3*sprite.getWidth()/4), sprite.getY()+10)||lata.getBoundingRectangle().contains(sprite.getX()+(3*sprite.getWidth()/6), sprite.getY()-(saltoMov))) {
                 arrastrado = true;
             }
             else{
@@ -287,7 +288,7 @@ public class Abner {
                 break;
             case BAJANDO:
 
-                if (mapa.colisionY(sprite.getX() + sprite.getWidth() / 2, sprite.getY() - (saltoMov + gravedad))||mapa.colisionInclinada(sprite.getX() + sprite.getWidth() / 2, sprite.getY() - (estadoSalto==Vertical.POGO?saltoMov + gravedad+10:saltoMov + gravedad))) {
+                if (mapa.colisionY(sprite.getX() + sprite.getWidth() / 2, sprite.getY() - (saltoMov + gravedad))||mapa.colisionInclinada(sprite.getX() + sprite.getWidth() / 2, sprite.getY() - (estadoSalto==Vertical.POGO?saltoMov + gravedad+10:saltoMov + gravedad))||arrastrado) {
                     estadoSalto = Vertical.DESACTIVADO;
                     this.alturaMax = sprite.getY() + SALTOMAX;
                     sprite.setSize(xOriginal, yOriginal);
@@ -376,11 +377,11 @@ public class Abner {
         boolean right = mapa.getRight(i);
         if(right){
             sprite.setPosition(X, y);
-            camara.position.set(640, 275+sprite.getY(),0);
+            camara.position.set(CAMARAINICIAL, 275+sprite.getY(),0);
         }
         else{
             sprite.setPosition(mapa.getWidth()-450, y);
-            camara.position.set(mapa.getWidth()-640, 275+sprite.getY(),0);
+            camara.position.set(mapa.getWidth()- CAMARAINICIAL, 275+sprite.getY(),0);
         }
         alturaMax = sprite.getY() + SALTOMAX;
         this.y = y;

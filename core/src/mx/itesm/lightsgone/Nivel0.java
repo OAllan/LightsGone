@@ -144,13 +144,13 @@ public class Nivel0 implements Screen, InputProcessor{
         //enemigos.add(new Enemigo.Mosca(3645,2340,abner,mapa));
 
         //Flamas
-        enemigos.add(new Enemigo.Fuego(7785,990,abner,mapa));
-        enemigos.add(new Enemigo.Fuego(8415,990,abner,mapa));
-        enemigos.add(new Enemigo.Fuego(8775,990,abner,mapa));
-        enemigos.add(new Enemigo.Fuego(9135,990,abner,mapa));
-        enemigos.add(new Enemigo.Fuego(9225,990,abner,mapa));
-        enemigos.add(new Enemigo.Fuego(9315,990,abner,mapa));
-        enemigos.add(new Enemigo.Fuego(9405,990,abner,mapa));
+        enemigos.add(new Enemigo.Fuego(7650,1010,abner,mapa));
+        enemigos.add(new Enemigo.Fuego(8300,1010,abner,mapa));
+        enemigos.add(new Enemigo.Fuego(8660,1010,abner,mapa));
+        enemigos.add(new Enemigo.Fuego(9020,1010,abner,mapa));
+        enemigos.add(new Enemigo.Fuego(9110,1010,abner,mapa));
+        enemigos.add(new Enemigo.Fuego(9200,1010,abner,mapa));
+        enemigos.add(new Enemigo.Fuego(9290,1010,abner,mapa));
 
         //Panes tostadores
         enemigos.add(new Enemigo.PanTostadora(7635,2035,abner,mapa));

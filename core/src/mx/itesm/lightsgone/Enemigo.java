@@ -139,7 +139,7 @@ public abstract class Enemigo  {
                 startTime=0;
             }
 
-            if(!abner.getProyectiles().isEmpty()) {
+            if(!abner.getProyectiles().isEmpty()&& sprite.getTexture()!=low) {
                 if (sprite.getBoundingRectangle().overlaps(abner.getProyectiles().get(0).getRectangle())) {
                     vida=0;
                     abner.borrarProyectiles();
@@ -311,8 +311,7 @@ public abstract class Enemigo  {
             }
 
             if(vida<=0) {
-                sprite.setX(10000);
-                sprite.setY(10000);
+                sprite.setPosition(20000,20000);
             }
             if(sprite.getY()!=1620 && sprite.getY()!=495) {
                 if (sprite.getX() >= xInicial + 400)
@@ -693,10 +692,10 @@ public abstract class Enemigo  {
 
         private void actualizar() {
             if(sprite.getX()<0){
-                sprite.setPosition(10000,10000);
+                sprite.setPosition(20000,20000);
                 vida=1;
             }
-            if(sprite.getX()>12000 || sprite.getX()<8000 && sprite.getX()>6000){
+            if(sprite.getX()>22000 || sprite.getX()<18000 && sprite.getX()>16000){
                 sprite.setPosition(posXOriginal,posYOriginal);
                 estado=Estado.NEUTRAL;
                 tama=10;
@@ -734,8 +733,7 @@ public abstract class Enemigo  {
             }
 
             if(vida<=0) {
-                sprite.setX(10000);
-                sprite.setY(10000);
+                sprite.setPosition(20000,20000);
                 vida=1;
             }
 
@@ -797,6 +795,8 @@ public abstract class Enemigo  {
         private Mapa mapa;
         long contador=0;
         long contador1=0;
+        float posXOriginal;
+        int direccion;
 
 
         static {
@@ -812,6 +812,7 @@ public abstract class Enemigo  {
             neutral.setPlayMode(Animation.PlayMode.LOOP);
             ataque.setPlayMode(Animation.PlayMode.LOOP);
 
+
         }
 
         public Fuego(float x, float y, Abner abner, Mapa mapa){
@@ -822,6 +823,7 @@ public abstract class Enemigo  {
             this.abner = abner;
             this.mapa=mapa;
             vida = 3;
+            posXOriginal=sprite.getX();
             //sprite.setSize(250,400);
 
         }
@@ -879,12 +881,14 @@ public abstract class Enemigo  {
             if(abner.getBoundingRectangle().overlaps(new Rectangle(sprite.getX()+100,sprite.getY(),sprite.getWidth()-100,sprite.getHeight()))){
                 if(estado==Estado.ATAQUE) {
                     attack();
-
-                    if (abner.getX()<=sprite.getX())
-                        abner.impactoFuegoX();
-                    else
-                        abner.impactoFuegoX();
-
+                    if(abner.getX()>posXOriginal){
+                        direccion=-1;
+                    }
+                    else {
+                        direccion=1;
+                    }
+                    abner.setX(abner.getX()-(float)1*direccion);
+                    abner.ajusteCamara(direccion);
                 }
             }
 

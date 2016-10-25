@@ -44,6 +44,7 @@ public class Abner {
     private boolean muerte;
     private Texture saltarPogo1, saltarPogo2;
     private boolean arrastrado;
+    private  int direccion;
 
     public Abner(Texture texture, Texture correr1, Texture correr2, Texture saltar1, Texture saltar2, Texture resortera1,
                  Texture resortera2, Texture resortera3, Texture pResortera,Texture saltarPogo1,Texture saltarPogo2,OrthographicCamera camara, Mapa mapa, GameInfo gameInfo){
@@ -364,12 +365,15 @@ public class Abner {
             proyectiles.remove(0);
     }
 
-    public void impactoFuegoX(){
+    public void ajusteCamara(int direccion){
 
-        for (int i=0; i<=50;i++) {
-            sprite.setX(sprite.getX() - (float).1);
-            camara.position.set(camara.position.x -(float) .1, sprite.getY(), 0);
-        }
+            //sprite.setX(sprite.getX() - (float).1);
+            camara.position.set(camara.position.x -(float) 1*direccion, sprite.getY(), 0);
+
+    }
+
+    public void setX(float x){
+        sprite.setX(x);
     }
 
     public void setInitialPosition(int i) {

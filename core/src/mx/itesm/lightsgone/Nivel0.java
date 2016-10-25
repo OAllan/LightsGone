@@ -252,8 +252,6 @@ public class Nivel0 implements Screen, InputProcessor{
         assetManager.load("PSalto2.png", Texture.class);
         assetManager.load("PSalto2.png", Texture.class);
         assetManager.load("BotonSalto.png", Texture.class);
-        assetManager.load("JoystickLeft.png", Texture.class);
-        assetManager.load("JoystickRight.png", Texture.class);
         assetManager.load("JoystickBoton.png", Texture.class);
         assetManager.load("BotonPausa.png", Texture.class);
         assetManager.load("BotonVida.png", Texture.class);

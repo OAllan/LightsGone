@@ -26,7 +26,7 @@ public class Abner {
     private int cont = 8;
     private float y = 135f, saltoMov = 8f, gravedad = 13f, alturaMax;
     private Texture neutral, saltar1, saltar2, pResortera;
-    private float mov = 7f;
+    private float mov = 25f;
     private final float MOVY = (0.2125f)*mov;
     private Salto salto;
     private int cantVida;
@@ -184,8 +184,6 @@ public class Abner {
         if(limiteCamara())
             camara.position.set(camara.position.x, 265 + sprite.getY(), 0);
         camara.update();
-        if(!proyectiles.isEmpty())
-        ProyectilRectangulo=proyectiles.get(0).getRectangle();
     }
 
     private void attack(boolean right){
@@ -352,6 +350,10 @@ public class Abner {
         return mapa.colisionPuerta(sprite.getX()+3*(sprite.getWidth()/4) + mov, sprite.getY());
     }
 
+    public boolean isDead(){
+        return muerte;
+    }
+
     public Rectangle getProyectilRectangulo(){
         return ProyectilRectangulo;
     }
@@ -367,10 +369,6 @@ public class Abner {
             sprite.setX(sprite.getX() - (float).1);
             camara.position.set(camara.position.x -(float) .1, sprite.getY(), 0);
         }
-    }
-
-    public boolean isDead(){
-        return muerte;
     }
 
     public void setInitialPosition(int i) {

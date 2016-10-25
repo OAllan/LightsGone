@@ -11,9 +11,17 @@ import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.utils.Array;
 
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+
+import javax.swing.Timer;
+
+
 /**
  * Created by allanruiz on 07/10/16.
  */
+
+
 public abstract class Enemigo  {
     protected Sprite sprite;
     protected float xInicial, yInicial;
@@ -21,6 +29,9 @@ public abstract class Enemigo  {
     boolean ataco=false;
     long startTime;
     long startTime1;
+
+
+
 
 
     public Enemigo(Texture texture, float x, float y){
@@ -47,6 +58,9 @@ public abstract class Enemigo  {
         ATAQUE,
         DANO
     }
+
+
+
 
     static class Sopa extends Enemigo{
         private static Texture neutral1, neutral2, neutral3, ataque1, ataque2, low;
@@ -124,10 +138,11 @@ public abstract class Enemigo  {
                 startTime=0;
             }
 
-            if(sprite.getBoundingRectangle().overlaps(abner.getProyectilRectangulo())) {
-                estado=Estado.DANO;
-                abner.borrarProyectiles();
-                startTime = System.currentTimeMillis();
+            if(!abner.getProyectiles().isEmpty()) {
+                if (sprite.getBoundingRectangle().overlaps(abner.getProyectiles().get(0).getRectangle())) {
+                    estado=Estado.DANO;
+                    abner.borrarProyectiles();
+                }
             }
 
 
@@ -225,7 +240,7 @@ public abstract class Enemigo  {
             right = true;
             timer = timerA=0;
             this.abner = abner;
-            vida = 150;
+            vida = 3;
             this.mapa=mapa;
         }
 
@@ -274,65 +289,89 @@ public abstract class Enemigo  {
                 ataco=false;
                 startTime=0;
             }
-
-            if(sprite.getBoundingRectangle().overlaps(abner.getProyectilRectangulo())) {
-                vida -= 1;
-                abner.borrarProyectiles();
+            if(!abner.getProyectiles().isEmpty()) {
+                if (sprite.getBoundingRectangle().overlaps(abner.getProyectiles().get(0).getRectangle())) {
+                    vida -= 1;
+                    abner.borrarProyectiles();
+                }
             }
 
             if(vida<=0)
-                sprite.setSize(10,10);
+                sprite.setX(10000);
+            if(sprite.getY()!=1620) {
+                if (sprite.getX() >= xInicial + 400)
 
+                    right = false;
+                if (sprite.getX() < xInicial - 400)
 
+                    right = true;
+            }
+            else{
+                if (sprite.getX() >= xInicial + 150)
 
-            switch (estado){
-                case NEUTRAL:
-                    caminar.setFrameDuration(0.2f);
-                    timer += Gdx.graphics.getDeltaTime();
-                    sprite.setTexture(caminar.getKeyFrame(timer).getTexture());
-                    if(right) {
-                        if(!sprite.isFlipX())
-                            sprite.flip(true, false);
-                        sprite.translate(velocidad, 0);
-                        if(sprite.getX()>(xInicial+200))
-                            right = false;
-                    }
-                    else{
-                        if(sprite.isFlipX())
-                            sprite.flip(true, false);
-                        sprite.translate(-velocidad, 0);
-                        if(sprite.getX()<(xInicial-200))
-                            right = true;
-                    }
-                    break;
-                case ATAQUE:
-                    if(!ata){
-                        caminar.setFrameDuration(0.1f);
+                    right = false;
+                if (sprite.getX() < xInicial - 150)
+
+                    right = true;
+            }
+
+            /*if(!mapa.colisionY(sprite.getX(),sprite.getY())){
+
+                if(sprite.getX()<xInicial) {
+                    right=true;
+                }
+                if(sprite.getX()>xInicial) {
+                    right = false;
+                }
+            }*/
+
+                switch (estado) {
+                    case NEUTRAL:
+                        caminar.setFrameDuration(0.2f);
                         timer += Gdx.graphics.getDeltaTime();
                         sprite.setTexture(caminar.getKeyFrame(timer).getTexture());
-                        if(right)
-                            sprite.translate(velocidad*2, 0);
-
-                        else
-                            sprite.translate(-velocidad*2, 0);
-
-                        if(Math.abs(sprite.getX()-abner.getX())<=10)
-                            ata = true;
-                    }
-                    else {
-                        timerA += Gdx.graphics.getDeltaTime();
-                        sprite.setTexture(ataque.getKeyFrame(timerA).getTexture());
-                        if(timerA > ataque.getAnimationDuration() && Math.abs(sprite.getX()-abner.getX())>10){
-                            timerA = 0;
-                            ata = false;
+                        if (right) {
+                            if (!sprite.isFlipX())
+                                sprite.flip(true, false);
+                            sprite.translate(velocidad, 0);
+                            if (sprite.getX() > (xInicial + 200))
+                                right = false;
+                        } else {
+                            if (sprite.isFlipX())
+                                sprite.flip(true, false);
+                            sprite.translate(-velocidad, 0);
+                            if (sprite.getX() < (xInicial - 200))
+                                right = true;
                         }
-                    }
-                    break;
-                case DANO:
-                    Gdx.app.log("Vida", vida+"");
-                    vida -= 1;
-                    estado = Estado.NEUTRAL;
-            }
+                        break;
+                    case ATAQUE:
+                        if (!ata) {
+                            caminar.setFrameDuration(0.1f);
+                            timer += Gdx.graphics.getDeltaTime();
+                            sprite.setTexture(caminar.getKeyFrame(timer).getTexture());
+                            if (right)
+                                sprite.translate(velocidad * 2, 0);
+
+                            else
+                                sprite.translate(-velocidad * 2, 0);
+
+                            if (Math.abs(sprite.getX() - abner.getX()) <= 10)
+                                ata = true;
+                        } else {
+                            timerA += Gdx.graphics.getDeltaTime();
+                            sprite.setTexture(ataque.getKeyFrame(timerA).getTexture());
+                            if (timerA > ataque.getAnimationDuration() && Math.abs(sprite.getX() - abner.getX()) > 10) {
+                                timerA = 0;
+                                ata = false;
+                            }
+                        }
+                        break;
+                    case DANO:
+                        Gdx.app.log("Vida", vida + "");
+                        vida -= 1;
+                        estado = Estado.NEUTRAL;
+                }
+
         }
 
 
@@ -475,6 +514,7 @@ public abstract class Enemigo  {
         private Abner abner;
         private Mapa mapa;
         private String direccion="arriba";
+        private float posicionInicial;
 
         static {
             cargarTexturas();
@@ -484,6 +524,8 @@ public abstract class Enemigo  {
             super(pan, x, y);
             this.abner = abner;
             this.mapa=mapa;
+            posicionInicial=sprite.getY();
+
 
         }
 
@@ -523,20 +565,17 @@ public abstract class Enemigo  {
                 startTime=0;
             }
 
+            direccion = "arriba";
 
-            if (sprite.getY()<=119){
-                direccion="arriba";
-                sprite.rotate(180);}
-            if (sprite.getY()>=700) {
-                direccion = "abajo";
-                sprite.rotate(180);
+            if (sprite.getY()>=posicionInicial+900) {
+                sprite.setY(posicionInicial);
             }
 
 
             if (direccion=="arriba")
-                sprite.setY(sprite.getY()+8);
+                sprite.setY(sprite.getY()+16);
             if (direccion=="abajo")
-                sprite.setY(sprite.getY()-8);
+                sprite.setY(sprite.getY()-16);
 
 
             }
@@ -590,7 +629,7 @@ public abstract class Enemigo  {
             right = true;
             timer = timerA=0;
             this.abner = abner;
-            vida = 3;
+            vida = 1;
             this.mapa=mapa;
         }
 
@@ -643,13 +682,15 @@ public abstract class Enemigo  {
                 startTime=0;
             }
 
-            if(sprite.getBoundingRectangle().overlaps(abner.getProyectilRectangulo())) {
-                vida -= 1;
-                abner.borrarProyectiles();
+            if(!abner.getProyectiles().isEmpty()) {
+                if (sprite.getBoundingRectangle().overlaps(abner.getProyectiles().get(0).getRectangle())) {
+                    vida -= 1;
+                    abner.borrarProyectiles();
+                }
             }
 
             if(vida<=0)
-                sprite.setSize(10,10);
+                sprite.setX(10000);
 
             switch (estado){
                 case NEUTRAL:
@@ -690,6 +731,9 @@ public abstract class Enemigo  {
         }
     }
 
+
+
+
     static class Fuego extends Enemigo{
         private static Texture fuegoAtaque1, fuegoAtaque2, fuegoAtaque3, fuegoPrepara1, fuegoPrepara2, fuegoTransicion;
         private static Animation neutral, ataque;
@@ -702,12 +746,15 @@ public abstract class Enemigo  {
         private int tama=10;
         private boolean ataq=false;
         private Mapa mapa;
+        int contador=1;
 
 
         static {
             cargarTexturas();
             cargarAnimacion();
         }
+
+
 
         private static void cargarAnimacion() {
             neutral = new Animation(0.3f, new TextureRegion(fuegoPrepara1), new TextureRegion(fuegoPrepara2), new TextureRegion(fuegoTransicion));
@@ -725,7 +772,23 @@ public abstract class Enemigo  {
             this.abner = abner;
             this.mapa=mapa;
             vida = 3;
+
         }
+
+       /* Timer timerFuego = new Timer (2000, new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                   if(contador%2==0) {
+                       estado = Estado.NEUTRAL;
+                       contador++;
+                   }
+                    else {
+                       estado = Estado.ATAQUE;
+                       contador++;
+                   }
+            }
+        });*/
+
+
 
         @Override
         public void attack() {
@@ -742,12 +805,8 @@ public abstract class Enemigo  {
         @Override
         public void draw(SpriteBatch batch) {
             sprite.draw(batch);
-            if (estado == Estado.NEUTRAL)
-                startTime = System.currentTimeMillis();
-            if (System.currentTimeMillis() - startTime >= 2000) {
-                estado = Estado.ATAQUE;
-                startTime = System.currentTimeMillis();
-            }
+            //timerFuego.start();
+
 
                 actualizar();
 
@@ -913,4 +972,6 @@ public abstract class Enemigo  {
         }
     }
 
-}
+
+
+    }

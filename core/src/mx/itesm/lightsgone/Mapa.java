@@ -215,6 +215,8 @@ public class Mapa {
         return false;
     }
 
+
+
     public Array<Enemigo> getEnemigos(){
         return enemigos;
     }
@@ -234,6 +236,13 @@ public class Mapa {
             mapa.getLayers().get("Capita").setVisible(false);
         if(gameInfo.isLanzapapas()&&mapa.getLayers().get("Lanzapapas")!=null)
             mapa.getLayers().get("Lanzapapas").setVisible(false);
+
+    }
+
+    public boolean getPosEnemigo(int x,int y){
+        if(((TiledMapTileLayer)mapa.getLayers().get("Plataformas")).getCell(x,y+1).getTile().getProperties().get("final").equals(true))
+            return true;
+        return false;
 
     }
 }

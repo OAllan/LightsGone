@@ -411,7 +411,7 @@ public class Nivel0 implements Screen, InputProcessor{
             mapa.draw();
             batch.begin();
             abner.draw(batch, right);
-            for(Sprite sprite:malteadas) {
+            /*for(Sprite sprite:malteadas) {
                 if(abner.getBoundingRectangle().overlaps(sprite.getBoundingRectangle())){
                     abner.setCantVida(abner.getcantVida()+10);
                     malteadas.removeIndex(malteadas.indexOf(sprite, true));
@@ -421,7 +421,7 @@ public class Nivel0 implements Screen, InputProcessor{
                         sprite.translate(0,-10);
                     sprite.draw(batch);
                 }
-            }
+            }*/
             for (int i=0;i<proyectiles.size();i++) {
                 if(proyectiles.get(i).out())
                     proyectiles.remove(i);

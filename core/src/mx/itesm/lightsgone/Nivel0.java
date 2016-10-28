@@ -32,6 +32,10 @@ public class Nivel0 implements Screen, InputProcessor{
     public static final float YCOCINA3 = 361.0f;
     public static final int YCOCINA2 = 1950;
     public static final float YCOCINA1 = 2039.0f;
+    public static final int YJARDIN1 = 1320;
+    public static final int YJARDIN2 = 2200;
+    public static final int YJARDIN3 = 700;
+    public static final int YSALA = 1142;
     private final int LATAX = 4871;
     private OrthographicCamera camara;
     private OrthographicCamera camaraHUD;
@@ -41,7 +45,7 @@ public class Nivel0 implements Screen, InputProcessor{
     private Juego juego;
     private AssetManager assetManager = new AssetManager();
     private Texture malteada, dano, nivelVida, gameOver,habilidadDes, habilidadPogo,save,pausaTex,quitTex, opciones, neutral, salto1, salto2, correr1, correr2, botonSalto, JLeft, JRight, JFondo, botonVida, habilidad, texPausa, resortera1, resortera2, resortera3, pResortera, plataforma;
-    private Sprite transicionNivel, pausaActual;
+    private Sprite transicionNivel, pausaActual, fondoCielo;
     private Abner abner;
     private Texto vida;
     private Pad pad;
@@ -95,16 +99,20 @@ public class Nivel0 implements Screen, InputProcessor{
 
     private void crearMapas() {
         mapas = new Array<Mapa>(6);
-        abner = new Abner(neutral, correr1, correr2, salto1, salto2, resortera1, resortera2, resortera3, pResortera,pPogo1,pPogo2,dano, camara, mapa, gameInfo);
+        abner = new Abner(neutral, correr1, correr2, salto1, salto2, resortera1, resortera2, resortera3, pResortera,pPogo1,pPogo2,dano, camara, mapa, gameInfo, fondoCielo);
+        float[] cuartoAbnerX ={530, 2295}, pasilloX = {270, 4140}, salaX = {450,450,2280,2280}, cocina1X = {315,1305}, cocina2X = {5895,5895}, cocina3X = {630}, jardin1X = {1395, 20745,2170}, jardin2X ={540,18360}, jardin3X = {7740,495};
         boolean[] cuartoAbnerB = {true, false}, pasilloB = {true, false}, salaB={true, true, false, false}, cocina1B = {true, true},
-                cocina2B = {false,false}, cocina3B = {true};
-        int[] cuartoAbner = {0,1}, pasillo = {0,2}, sala = {1,0,0,3}, cocina1 = {2,4}, cocina2 = {3,5}, cocina3 = {4};
-        mapas.add(new Mapa("CuartoAbner.tmx", batch, camara, cuartoAbner, cuartoAbnerB, YBAJA, YBAJA));
-        mapas.add(new Mapa("Pasillo.tmx", batch, camara, pasillo, pasilloB, YBAJA, YBAJA));
-        mapas.add(new Mapa("Sala.tmx", batch, camara, sala, salaB, YALTA, YBAJA, YALTA, YMEDIA));
-        mapas.add(new Mapa("Cocina1.tmx", batch, camara, cocina1, cocina1B, YBAJA, YCOCINA1));
-        mapas.add(new Mapa("Cocina2.tmx", batch, camara, cocina2, cocina2B, YBAJA, YCOCINA2));
-        mapas.add(new Mapa("Cocina3.tmx", batch, camara, cocina3, cocina3B, YCOCINA3));
+                cocina2B = {false,false}, cocina3B = {true}, jardin1B = {true, false, false}, jardin2B = {true, true}, jardin3B = {true, true};
+        int[] cuartoAbner = {0,1}, pasillo = {0,2}, sala = {1,0,6,3}, cocina1 = {2,4}, cocina2 = {3,5}, cocina3 = {4}, jardin1 = {2,7,8}, jardin2 = {6,8}, jardin3 = {6,7};
+        mapas.add(new Mapa("CuartoAbner.tmx", batch, camara, cuartoAbner, cuartoAbnerB,cuartoAbnerX ,YBAJA, YBAJA));
+        mapas.add(new Mapa("Pasillo.tmx", batch, camara, pasillo, pasilloB, pasilloX,YBAJA, YBAJA));
+        mapas.add(new Mapa("Sala.tmx", batch, camara, sala, salaB, salaX,YALTA, YBAJA, YSALA, YMEDIA));
+        mapas.add(new Mapa("Cocina1.tmx", batch, camara, cocina1, cocina1B,cocina1X, YBAJA, YCOCINA1));
+        mapas.add(new Mapa("Cocina2.tmx", batch, camara, cocina2, cocina2B,cocina2X ,YBAJA, YCOCINA2));
+        mapas.add(new Mapa("Cocina3.tmx", batch, camara, cocina3, cocina3B, cocina3X,YCOCINA3));
+        mapas.add(new Mapa("Jardin1.tmx", batch, camara, jardin1, jardin1B, jardin1X,YCOCINA2, YJARDIN1,YBAJA));
+        mapas.add(new Mapa("Jardin2.tmx", batch, camara, jardin2, jardin2B, jardin2X,YJARDIN2, YJARDIN2));
+        mapas.add(new Mapa("Jardin3.tmx", batch, camara, jardin3, jardin3B, jardin3X,YBAJA, YJARDIN3));
         for(Mapa mapa: mapas)
             mapa.reiniciar(gameInfo);
         for(Mapa mapa: mapas)
@@ -154,7 +162,7 @@ public class Nivel0 implements Screen, InputProcessor{
         malteadas = new Array<Sprite>();
         imgVida.setPosition(0, 780 - imgVida.getHeight());
         vida = new Texto("tipo.fnt", imgVida.getWidth(),690);
-        abner = new Abner(neutral, correr1, correr2, salto1, salto2, resortera1, resortera2, resortera3, pResortera,pPogo1,pPogo2,dano, camara, mapa, gameInfo);
+        abner = new Abner(neutral, correr1, correr2, salto1, salto2, resortera1, resortera2, resortera3, pResortera,pPogo1,pPogo2,dano, camara, mapa, gameInfo,fondoCielo);
 
         //Moscas
         enemigos.add(new Enemigo.Mosca(2295,293,abner,mapa));
@@ -277,6 +285,7 @@ public class Nivel0 implements Screen, InputProcessor{
         assetManager.load("BotonNivelVida.png", Texture.class);
         assetManager.load("PDaño.png", Texture.class);
         assetManager.load("MalteadaMundo.png", Texture.class);
+        assetManager.load("FondoCielo.png", Texture.class);
         assetManager.load("ambiente.mp3", Music.class);
         assetManager.load("risa.mp3", Music.class);
         assetManager.finishLoading();
@@ -311,6 +320,8 @@ public class Nivel0 implements Screen, InputProcessor{
         gameover = assetManager.get("risa.mp3");
         dano = assetManager.get("PDaño.png");
         malteada = assetManager.get("MalteadaMundo.png");
+        fondoCielo = new Sprite((Texture)assetManager.get("FondoCielo.png"));
+        fondoCielo.setPosition(0,0);
     }
 
     @Override
@@ -357,6 +368,11 @@ public class Nivel0 implements Screen, InputProcessor{
             if(Gdx.input.isKeyPressed(Input.Keys.S)&&!abner.isAttacking())
                 botonArma.setEstado(Boton.Estado.PRESIONADO);
 
+            if(Gdx.input.isKeyPressed(Input.Keys.D)&&!abner.isJumping()&&!abner.isAttacking()&&abner.getPogo()){
+                botonHabilidad.setEstado(Boton.Estado.PRESIONADO);
+            }
+
+
             if(botonSaltar.isPressed()) {
                 abner.setEstadoVertical(Abner.Vertical.ACTIVADO);
                 abner.setSalto(Abner.Salto.SUBIENDO);
@@ -381,9 +397,10 @@ public class Nivel0 implements Screen, InputProcessor{
                 abner.setEstadoHorizontal(Abner.Horizontal.ACTIVADO);
             }
 
-
             int cambio= abner.cambioNivel();
             if(cambio>=0){
+                if(mapaActual<=6)
+                    abner.setEstadoVertical(Abner.Vertical.DESACTIVADO);
                 int tempMapa = mapaActual;
                 transicion = Transicion.AUMENTANDO;
                 mapaActual = cambio;
@@ -408,6 +425,9 @@ public class Nivel0 implements Screen, InputProcessor{
             }
             proyectiles = abner.getProyectiles();
             batch.setProjectionMatrix(camara.combined);
+            batch.begin();
+            fondoCielo.draw(batch);
+            batch.end();
             mapa.draw();
             batch.begin();
             abner.draw(batch, right);

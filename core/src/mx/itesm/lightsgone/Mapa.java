@@ -23,15 +23,15 @@ public class Mapa {
     private TiledMapRenderer renderer;
     private static AssetManager manager = new AssetManager();
     private static OrthographicCamera camara;
-    private Array<TiledMapTileLayer> puertas,plataformaY, plataformaX,encima, items, guardado, muerte;
+    private Array<TiledMapTileLayer> puertas,plataformaY, plataformaX,encima, items, guardado, muerte, dano;
     private Array<Enemigo> enemigos, enemigosActuales;
     private SpriteBatch batch;
     private int[] numPuertas;
-    private float[] posicionY;
+    private float[] posicionY, posicionX;
     private boolean[] right;
     private String nombre;
     private Array<Sprite> plataformasInclinada;
-    public Mapa(String mapa, SpriteBatch batch, OrthographicCamera camara, int[] numPuertas,boolean[] right,float... posicionY){
+    public Mapa(String mapa, SpriteBatch batch, OrthographicCamera camara, int[] numPuertas,boolean[] right,float[] posicionX ,float... posicionY){
         this.mapa = cargarMapa(mapa);
         this.nombre = mapa;
         Mapa.camara = camara;
@@ -39,6 +39,7 @@ public class Mapa {
         renderer = new OrthogonalTiledMapRenderer(this.mapa, batch);
         this.numPuertas = numPuertas;
         this.posicionY = posicionY;
+        this.posicionX = posicionX;
         this.right = right;
         cargarCapas();
     }
@@ -46,11 +47,12 @@ public class Mapa {
     private void cargarCapas() {
         plataformaY = new Array<TiledMapTileLayer>(3);
         plataformaX = new Array<TiledMapTileLayer>(2);
-        items = new Array<TiledMapTileLayer>(3);
+        items = new Array<TiledMapTileLayer>(5);
         encima = new Array<TiledMapTileLayer>(1);
         puertas = new Array<TiledMapTileLayer>(5);
         guardado = new Array<TiledMapTileLayer>(1);
-        muerte = new Array<TiledMapTileLayer>(1);
+        muerte = new Array<TiledMapTileLayer>(2);
+        dano = new Array<TiledMapTileLayer>(1);
         plataformaY.add((TiledMapTileLayer)mapa.getLayers().get("PlataformaPiso"));
         plataformaY.add((TiledMapTileLayer)mapa.getLayers().get("Plataformas"));
         plataformaY.add((TiledMapTileLayer)mapa.getLayers().get("Plataformas2"));
@@ -60,6 +62,8 @@ public class Mapa {
         items.add((TiledMapTileLayer)mapa.getLayers().get("Malteada"));
         items.add((TiledMapTileLayer)mapa.getLayers().get("Pogo"));
         items.add((TiledMapTileLayer)mapa.getLayers().get("VidaExtra"));
+        items.add((TiledMapTileLayer)mapa.getLayers().get("LanzaPapa"));
+        items.add((TiledMapTileLayer)mapa.getLayers().get("Capita"));
         puertas.add((TiledMapTileLayer)mapa.getLayers().get("PuertaCerrada"));
         puertas.add((TiledMapTileLayer)mapa.getLayers().get("Puerta1"));
         puertas.add((TiledMapTileLayer)mapa.getLayers().get("Puerta2"));
@@ -67,6 +71,8 @@ public class Mapa {
         puertas.add((TiledMapTileLayer) mapa.getLayers().get("Puerta4"));
         guardado.add((TiledMapTileLayer)mapa.getLayers().get("Guardado"));
         muerte.add((TiledMapTileLayer)mapa.getLayers().get("SopaMortal"));
+        muerte.add((TiledMapTileLayer)mapa.getLayers().get("ZonaMuerte"));
+        dano.add((TiledMapTileLayer)mapa.getLayers().get("ZonaDaño"));
     }
 
 
@@ -122,7 +128,6 @@ public class Mapa {
     public void draw(){
         renderer.setView(camara);
         renderer.render();
-
         batch.begin();
         if(plataformasInclinada != null) {
             for (Sprite sprite: plataformasInclinada)
@@ -172,8 +177,12 @@ public class Mapa {
         return layer.getHeight()*layer.getTileHeight();
     }
 
-    public float getPosition(int i) {
+    public float getPositionY(int i) {
         return posicionY[index(i)];
+    }
+
+    public float getPositionX(int i){
+        return posicionX[index(i)];
     }
 
     public void setEnemigos(Array<Enemigo> enemigos){
@@ -256,6 +265,10 @@ public class Mapa {
         if(gameInfo.isLanzapapas()&&mapa.getLayers().get("Lanzapapas")!=null)
             mapa.getLayers().get("Lanzapapas").setVisible(false);
 
+    }
+
+    public boolean colisionDano(float x, float y){
+        return colision(x,y,dano);
     }
 
     public boolean getPosEnemigo(int x,int y){

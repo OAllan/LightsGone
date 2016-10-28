@@ -18,6 +18,7 @@ public class Abner {
     public static final int X = 450;
     public static final int SALTOMAX = 280;
     public static final int CAMARAINICIAL = 640;
+    private final Sprite fondo;
     private float xOriginal, yOriginal;
     private Sprite sprite;
     private int cont = 8;
@@ -44,7 +45,7 @@ public class Abner {
     private float movPiso;
 
     public Abner(Texture texture, Texture correr1, Texture correr2, Texture saltar1, Texture saltar2, Texture resortera1,
-                 Texture resortera2, Texture resortera3, Texture pResortera,Texture saltarPogo1,Texture saltarPogo2,Texture dano,OrthographicCamera camara, Mapa mapa, GameInfo gameInfo){
+                 Texture resortera2, Texture resortera3, Texture pResortera,Texture saltarPogo1,Texture saltarPogo2,Texture dano,OrthographicCamera camara, Mapa mapa, GameInfo gameInfo, Sprite fondo){
         this.neutral = texture;
         xOriginal = texture.getWidth();
         yOriginal = texture.getHeight();
@@ -80,6 +81,7 @@ public class Abner {
         danoA = false;
         timerDano = 0.5f;
         timerDanoAlpha =3;
+        this.fondo = fondo;
     }
 
 
@@ -90,12 +92,15 @@ public class Abner {
 
     private void actualizar(boolean right) {
 
+        Gdx.app.log("Abner: ", sprite.getY()+" Camara: "+ camara.position.x);
+
 
         if(sprite.getY()<=0||mapa.colisionMuerte(sprite.getX(),sprite.getY()))
             muerte = true;
 
         if(cantVida<=0&&vidas<=0)
             muerte =true;
+
         else if(cantVida<=0&&vidas>=1) {
             vidas--;
             cantVida = 99;
@@ -130,6 +135,12 @@ public class Abner {
                 sprite.setAlpha(1);
             }
         }
+
+        if(mapa.colisionDano(sprite.getX()+sprite.getWidth()/2, sprite.getY()+20)&&!danoA&!danoB){
+            cantVida-=5;
+            danoA = true;
+        }
+
 
         if(mapa.colisionItem(sprite.getX()+sprite.getWidth(),sprite.getY(),"VidaExtra")){
             mapa.remove("VidaExtra");
@@ -243,8 +254,9 @@ public class Abner {
             }
         }
 
-        if(limiteCamara())
+        if(limiteCamara()){
             camara.position.set(camara.position.x, 265 + sprite.getY(), 0);
+        }
         camara.update();
     }
 
@@ -270,8 +282,10 @@ public class Abner {
             if (!mapa.colisionX((sprite.getX() + (sprite.getWidth() / 2)) + mov, sprite.getY()+20)&&!mapa.colisionInclinada((sprite.getX() + (sprite.getWidth() / 2)) + mov, sprite.getY())&&!arrastrado&&!arrastradoPiso){
                 if(mapa.colisionY(sprite.getX() + sprite.getWidth() / 2, sprite.getY() - (saltoMov + gravedad)) || estadoSalto != Vertical.DESACTIVADO|| mapa.colisionInclinada(sprite.getX() + sprite.getWidth() / 2, sprite.getY() - (saltoMov + gravedad))||pisoLata){
                     sprite.translate(mov, 0);
-                    if(limiteCamaraX())
+                    if(limiteCamaraX()){
                         camara.translate(mov,0);
+                        fondo.translate(mov, 0);
+                    }
                     else if(sprite.getX()<=530)
                         camara.position.x = Nivel0.ANCHO_MUNDO/2;
                 }
@@ -288,8 +302,10 @@ public class Abner {
             if (!mapa.colisionX((sprite.getX() + (sprite.getWidth() / 2)) - mov, sprite.getY()+20)&&!mapa.colisionInclinada((sprite.getX() + (sprite.getWidth() / 2))- mov, sprite.getY())&&!arrastrado&&!arrastradoPiso) {
                 if (mapa.colisionY(sprite.getX() + sprite.getWidth() / 2, sprite.getY() - (saltoMov + gravedad)) || estadoSalto != Vertical.DESACTIVADO|| mapa.colisionInclinada(sprite.getX() + sprite.getWidth() / 2, sprite.getY() - (saltoMov + gravedad))||pisoLata){
                     sprite.translate(-mov, 0);
-                    if(limiteCamaraX())
+                    if(limiteCamaraX()){
                         camara.translate(-mov,0);
+                        fondo.translate(-mov, 0);
+                    }
                 }
                 else {
                     estadoSalto = Vertical.ACTIVADO;
@@ -353,6 +369,8 @@ public class Abner {
         switch (salto){
             case SUBIENDO:
                 sprite.setY(sprite.getY() + saltoMov);
+                if(limiteCamara())
+                    fondo.translate(0,saltoMov);
                 if(sprite.getY()>= alturaMax){
                     sprite.setY(alturaMax);
                     salto = Salto.BAJANDO;
@@ -365,8 +383,11 @@ public class Abner {
                     this.alturaMax = sprite.getY() + SALTOMAX;
                     sprite.setSize(xOriginal, yOriginal);
                 }
-                else
+                else{
                     sprite.setY(sprite.getY() - (saltoMov + gravedad));
+                    if(limiteCamara())
+                        fondo.translate(0,-(saltoMov+gravedad));
+                }
                 break;
 
         }
@@ -391,7 +412,6 @@ public class Abner {
     private boolean limiteCamara(){
         if(mapa.getHeight()<= 1260)
             return false;
-        Gdx.app.log("Mapa: ", mapa.getHeight()+" Abner: "+ sprite.getX()+ " y: "+y);
         return sprite.getY()<mapa.getHeight()-810 && sprite.getY()>=135;
     }
 
@@ -459,22 +479,34 @@ public class Abner {
     }
 
     public void setInitialPosition(int i) {
-        float y = mapa.getPosition(i);
-        boolean right = mapa.getRight(i);
-        if(right){
-            if(mapa.getName().equals("Cocina1.tmx")) {
-                sprite.setPosition(X + Nivel0.ANCHO_MUNDO-200, y);
-                camara.position.set(CAMARAINICIAL+Nivel0.ANCHO_MUNDO-200, 275+sprite.getY(), 0);
-            }
-            else {
-                sprite.setPosition(X, y);
-                camara.position.set(CAMARAINICIAL, 275 + sprite.getY(), 0);
-            }
+        float y = mapa.getPositionY(i);
+        float x = mapa.getPositionX(i);
+        sprite.setSize(xOriginal, yOriginal);
+        sprite.setPosition(x,y);
+        if(x<530){
+            fondo.setPosition(0,0);
+            camara.position.set(Nivel0.ANCHO_MUNDO/2, camara.position.y, 0);
+        }
+        else if(x>mapa.getWidth()-770) {
+            fondo.setPosition(mapa.getWidth()-fondo.getWidth(), 0);
+            camara.position.set(mapa.getWidth() - Nivel0.ANCHO_MUNDO / 2, camara.position.y, 0);
+        }
+        else {
+            fondo.setPosition(x-530,0);
+            camara.position.set(110 + x, camara.position.y, 0);
+        }
+
+        if(y>mapa.getHeight()-810){
+            camara.position.set(camara.position.x, mapa.getHeight()-Nivel0.ALTO_MUNDO/2, 0);
+            fondo.setPosition(fondo.getX(), mapa.getHeight()-fondo.getHeight());
+        }
+        else if(y<=135) {
+            camara.position.set(camara.position.x, Nivel0.ALTO_MUNDO / 2, 0);
+            fondo.setPosition(fondo.getX(), 0);
         }
         else{
-
-            sprite.setPosition(mapa.getWidth()-450, y);
-            camara.position.set(mapa.getWidth()- CAMARAINICIAL, 275+sprite.getY(),0);
+            camara.position.set(camara.position.x, 265+y, 0);
+            fondo.setPosition(fondo.getX(), y-135);
         }
         alturaMax = sprite.getY() + SALTOMAX;
         this.y = y;

@@ -375,6 +375,9 @@ public class Abner {
                     sprite.setY(alturaMax);
                     salto = Salto.BAJANDO;
                 }
+                if(mapa.colisionX(sprite.getX()+sprite.getWidth()/2, sprite.getY()+getBoundingRectangle().getHeight()+saltoMov)){
+                    salto = Salto.BAJANDO;
+                }
                 break;
             case BAJANDO:
 

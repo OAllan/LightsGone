@@ -28,7 +28,7 @@ public class Abner {
     private final float MOVY = (0.2125f)*mov;
     private Salto salto;
     private int cantVida, vidas;
-    private Animation caminar, atacar;
+    private Animation caminar, atacar, atacarLanzaPapas;
     private OrthographicCamera camara;
     private ArrayList<Proyectil> proyectiles;
     private Mapa mapa;
@@ -38,14 +38,15 @@ public class Abner {
     private Horizontal estadoHorizontal;
     private Rectangle ProyectilRectangulo=new Rectangle();
     public boolean pogo, capita, lanzapapas, danoA, danoB, pisoLata;
-    private boolean muerte;
+    private boolean muerte, escaleras;
     private Texture saltarPogo1, saltarPogo2;
     private boolean arrastrado, arrastradoPiso;
     private  int direccion;
     private float movPiso;
+    private int papas;
 
     public Abner(Texture texture, Texture correr1, Texture correr2, Texture saltar1, Texture saltar2, Texture resortera1,
-                 Texture resortera2, Texture resortera3, Texture pResortera,Texture saltarPogo1,Texture saltarPogo2,Texture dano,OrthographicCamera camara, Mapa mapa, GameInfo gameInfo, Sprite fondo){
+                 Texture resortera2, Texture resortera3,Texture saltarPogo1,Texture saltarPogo2,Texture dano, Texture lanzapapas1, Texture lanzapapas2,OrthographicCamera camara, Mapa mapa, GameInfo gameInfo, Sprite fondo){
         this.neutral = texture;
         xOriginal = texture.getWidth();
         yOriginal = texture.getHeight();
@@ -56,6 +57,7 @@ public class Abner {
         caminar.setPlayMode(Animation.PlayMode.LOOP);
         this.atacar = new Animation(0.2f, new TextureRegion(resortera1),new TextureRegion(resortera2),new TextureRegion(resortera3));
         this.atacar.setPlayMode(Animation.PlayMode.NORMAL);
+        this.atacarLanzaPapas = new Animation(0.2f, new TextureRegion(lanzapapas1), new TextureRegion(lanzapapas2));
         sprite = new Sprite(neutral);
         sprite.setPosition(gameInfo.getX(), gameInfo.getY());
         timerAnimation = 0;
@@ -82,6 +84,7 @@ public class Abner {
         timerDano = 0.5f;
         timerDanoAlpha =3;
         this.fondo = fondo;
+        this.papas = 10;
     }
 
 
@@ -91,9 +94,6 @@ public class Abner {
     }
 
     private void actualizar(boolean right) {
-
-        Gdx.app.log("Abner: ", sprite.getY()+" Camara: "+ camara.position.x);
-
 
         if(sprite.getY()<=0||mapa.colisionMuerte(sprite.getX(),sprite.getY()))
             muerte = true;
@@ -105,6 +105,11 @@ public class Abner {
             vidas--;
             cantVida = 99;
         }
+
+        if(mapa.colisionEscalera(sprite.getX() + sprite.getWidth() / 2, sprite.getY() - (saltoMov + gravedad)))
+            escaleras = true;
+        else if(mapa.colisionY(sprite.getX() + sprite.getWidth() / 2, sprite.getY() - (saltoMov + gravedad)))
+            escaleras = false;
 
         if(danoA){
             sprite.setTexture(dano);
@@ -159,6 +164,11 @@ public class Abner {
             pogo = true;
         }
 
+        if(mapa.colisionItem(sprite.getX()+(3*sprite.getWidth()/4), sprite.getY()+20,"LanzaPapa")){
+            mapa.remove("LanzaPapa");
+            lanzapapas = true;
+        }
+
         if(mapa.colisionInclinada(sprite.getX() + sprite.getWidth() / 2, sprite.getY() - (saltoMov + gravedad))&&estadoHorizontal == Horizontal.ACTIVADO)
             estadoHorizontal = Horizontal.INCLINADO;
 
@@ -197,7 +207,7 @@ public class Abner {
 
         else if(estadoHorizontal == Horizontal.ACTIVADO){
             sprite.setRotation(0);
-            if(estadoSalto==Vertical.DESACTIVADO&&estadoAtaque!= Ataque.ACTIVADO&&!danoA){
+            if((estadoSalto==Vertical.DESACTIVADO&&estadoAtaque!= Ataque.ACTIVADO&&!danoA)||escaleras){
                 timerAnimation += Gdx.graphics.getDeltaTime();
                 sprite.setTexture(caminar.getKeyFrame(timerAnimation).getTexture());
                 walk(right);
@@ -227,7 +237,8 @@ public class Abner {
                     cont--;
                 }
                 else {
-                    sprite.setTexture(saltar2);
+                    if(!escaleras)
+                        sprite.setTexture(saltar2);
                     jump(alturaMax);
                 }
             }
@@ -242,11 +253,17 @@ public class Abner {
             else
                 estadoAtaque = Ataque.DESACTIVADO;
         }
+        else if(estadoAtaque==Ataque.LANZAPAPAS&&estadoSalto==Vertical.DESACTIVADO){
+            if(!danoA)
+                attack(right);
+            else
+                estadoAtaque = Ataque.DESACTIVADO;
+        }
         else{
             estadoAtaque = Ataque.DESACTIVADO;
         }
 
-        if(estadoAtaque != Ataque.ACTIVADO && estadoSalto == Vertical.DESACTIVADO && estadoHorizontal==Horizontal.DESACTIVADO&&!danoA){
+        if(estadoAtaque == Ataque.DESACTIVADO && estadoSalto == Vertical.DESACTIVADO && estadoHorizontal==Horizontal.DESACTIVADO&&!danoA){
             if(mapa.colisionY(sprite.getX()+sprite.getWidth()/2,sprite.getY()-(saltoMov+gravedad))||mapa.colisionInclinada(sprite.getX() + sprite.getWidth() / 2, sprite.getY() - (saltoMov + gravedad))||pisoLata)sprite.setTexture(neutral);
             else{
                 estadoSalto = Vertical.ACTIVADO;
@@ -261,14 +278,32 @@ public class Abner {
     }
 
     private void attack(boolean right){
-        timerAnimationA += Gdx.graphics.getDeltaTime();
-        sprite.setTexture(atacar.getKeyFrame(timerAnimationA).getTexture());
-        if(timerAnimationA>=0.1&&timerAnimationA<(0.1+Gdx.graphics.getDeltaTime())){
-            proyectiles.add(new Proyectil(pResortera, sprite.getX() + 142, sprite.getY()+138, right));
-        }
-        else if (timerAnimationA>atacar.getAnimationDuration()) {
-            estadoAtaque = Ataque.DESACTIVADO;
-            timerAnimationA = 0;
+        switch (estadoAtaque){
+            case ACTIVADO:
+                timerAnimationA += Gdx.graphics.getDeltaTime();
+                sprite.setTexture(atacar.getKeyFrame(timerAnimationA).getTexture());
+                if(timerAnimationA>=0.1&&timerAnimationA<(0.1+Gdx.graphics.getDeltaTime())){
+                    proyectiles.add(new Proyectil.Canica(sprite.getX() + 142, sprite.getY()+138, right));
+                }
+                else if (timerAnimationA>atacar.getAnimationDuration()) {
+                    estadoAtaque = Ataque.DESACTIVADO;
+                    timerAnimationA = 0;
+                }
+                break;
+            case LANZAPAPAS:
+                timerAnimationA += Gdx.graphics.getDeltaTime();
+                sprite.setTexture(atacarLanzaPapas.getKeyFrame(timerAnimationA).getTexture());
+                sprite.setSize(atacarLanzaPapas.getKeyFrame(timerAnimationA).getTexture().getWidth(), atacarLanzaPapas.getKeyFrame(timerAnimationA).getTexture().getHeight());
+                if(timerAnimationA>0&&timerAnimationA<=(0+Gdx.graphics.getDeltaTime())&&papas>0){
+                    proyectiles.add(new Proyectil.Papa(!right?sprite.getX():sprite.getX()+sprite.getWidth(), sprite.getY()+100, right, mapa));
+                    papas--;
+                }
+                else if(timerAnimationA>atacar.getAnimationDuration()){
+                    estadoAtaque = Ataque.DESACTIVADO;
+                    timerAnimationA = 0;
+                    sprite.setSize(xOriginal, yOriginal);
+                }
+                break;
         }
     }
 
@@ -368,6 +403,7 @@ public class Abner {
 
         switch (salto){
             case SUBIENDO:
+                escaleras = false;
                 sprite.setY(sprite.getY() + saltoMov);
                 if(limiteCamara())
                     fondo.translate(0,saltoMov);
@@ -560,6 +596,10 @@ public class Abner {
         return vidas;
     }
 
+    public int getMunicion() {
+        return papas;
+    }
+
     public enum Salto{
         SUBIENDO,
         BAJANDO
@@ -573,6 +613,7 @@ public class Abner {
 
     public enum Ataque{
         ACTIVADO,
+        LANZAPAPAS,
         DESACTIVADO
     }
 

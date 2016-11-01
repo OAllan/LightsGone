@@ -18,6 +18,8 @@ import com.badlogic.gdx.utils.viewport.StretchViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import com.sun.scenario.effect.impl.sw.sse.SSEBlend_ADDPeer;
 
+import org.omg.CORBA.portable.ValueInputStream;
+
 import java.util.ArrayList;
 import java.util.Random;
 
@@ -36,6 +38,11 @@ public class Nivel0 implements Screen, InputProcessor{
     public static final int YJARDIN2 = 2200;
     public static final int YJARDIN3 = 700;
     public static final int YSALA = 1142;
+    public static final float TRANSICIONNIVEL = 0.005f;
+    public static final float TRANSICIONNEUTRAL = 0.01f;
+    public static final int MUNICIONX = 264;
+    public static final int MUNICIONY = 706;
+    private float velocidadTransicion = TRANSICIONNEUTRAL;
     private final int LATAX = 4871;
     private OrthographicCamera camara;
     private OrthographicCamera camaraHUD;
@@ -44,12 +51,12 @@ public class Nivel0 implements Screen, InputProcessor{
     private Music ambiente, gameover;
     private Juego juego;
     private AssetManager assetManager = new AssetManager();
-    private Texture malteada, dano, nivelVida, gameOver,habilidadDes, habilidadPogo,save,pausaTex,quitTex, opciones, neutral, salto1, salto2, correr1, correr2, botonSalto, JLeft, JRight, JFondo, botonVida, habilidad, texPausa, resortera1, resortera2, resortera3, pResortera, plataforma;
+    private Texture  municion,lanzapapas1, lanzapapas2, habilidadLanzaPapas, transicionCocina,transicionJardin, transicionArmario, transicionSotano, transicionCoco, transicionNeutral,  malteada, dano, nivelVida, gameOver,habilidadDes, habilidadPogo,save,pausaTex,quitTex, opciones, neutral, salto1, salto2, correr1, correr2, botonSalto, JFondo, botonVida, habilidad, texPausa, resortera1, resortera2, resortera3, plataforma;
     private Sprite transicionNivel, pausaActual, fondoCielo;
     private Abner abner;
-    private Texto vida;
+    private Texto vida, municionTex;
     private Pad pad;
-    private Sprite imgVida, menuGameOver;
+    private Sprite imgVida, menuGameOver, imgMunicion;
     private boolean right, saveB;
     public static boolean musica;
     private Boton botonBack, botonOn, botonOff, botonTry, botonMain,botonSaltar, botonArma, pausa, botonResume, botonOpciones,botonQuit, botonYes,botonNo, botonSave, botonHabilidad;
@@ -65,6 +72,7 @@ public class Nivel0 implements Screen, InputProcessor{
     private final float YBAJA = 135f, YMEDIA = 800f, YALTA =1100f;
     private Texture pPogo1, pPogo2;
     private float alphaGame;
+    private Habilidad habilidadActual;
     private Array<Sprite> vidas;
     private Array<Sprite> malteadas;
     Array<Enemigo> enemigos = new Array<Enemigo>(3);
@@ -99,7 +107,7 @@ public class Nivel0 implements Screen, InputProcessor{
 
     private void crearMapas() {
         mapas = new Array<Mapa>(6);
-        abner = new Abner(neutral, correr1, correr2, salto1, salto2, resortera1, resortera2, resortera3, pResortera,pPogo1,pPogo2,dano, camara, mapa, gameInfo, fondoCielo);
+        abner = new Abner(neutral, correr1, correr2, salto1, salto2, resortera1, resortera2, resortera3,pPogo1,pPogo2,dano, lanzapapas1,lanzapapas2,camara, mapa, gameInfo, fondoCielo);
         float[] cuartoAbnerX ={530, 2295}, pasilloX = {270, 4140}, salaX = {450,450,2280,2280}, cocina1X = {315,1305}, cocina2X = {5895,5895}, cocina3X = {630}, jardin1X = {1395, 20745,2170}, jardin2X ={540,18360}, jardin3X = {7740,495};
         boolean[] cuartoAbnerB = {true, false}, pasilloB = {true, false}, salaB={true, true, false, false}, cocina1B = {true, true},
                 cocina2B = {false,false}, cocina3B = {true}, jardin1B = {true, false, false}, jardin2B = {true, true}, jardin3B = {true, true};
@@ -161,41 +169,52 @@ public class Nivel0 implements Screen, InputProcessor{
         imgVida = new Sprite(botonVida);
         malteadas = new Array<Sprite>();
         imgVida.setPosition(0, 780 - imgVida.getHeight());
+        imgMunicion = new Sprite(municion);
+        imgMunicion.setPosition(MUNICIONX, MUNICIONY);
         vida = new Texto("tipo.fnt", imgVida.getWidth(),690);
-        abner = new Abner(neutral, correr1, correr2, salto1, salto2, resortera1, resortera2, resortera3, pResortera,pPogo1,pPogo2,dano, camara, mapa, gameInfo,fondoCielo);
+        municionTex = new Texto("tipo.fnt", imgMunicion.getX(), MUNICIONY+60);
+        transicionNivel = new Sprite(transicionNeutral);
+        if(gameInfo.isPogo())
+            habilidadActual = Habilidad.POGO;
+        else if(gameInfo.isLanzapapas())
+            habilidadActual = Habilidad.LANZAPAPAS;
+        else
+            habilidadActual = Habilidad.VACIA;
+        transicionNivel.setSize(Nivel0.ANCHO_MUNDO, Nivel0.ALTO_MUNDO);
+        abner = new Abner(neutral, correr1, correr2, salto1, salto2, resortera1, resortera2, resortera3,pPogo1,pPogo2,dano,lanzapapas1,lanzapapas2, camara, mapa, gameInfo,fondoCielo);
 
         //Moscas
-        enemigos.add(new Enemigo.Mosca(2295,293,abner,mapa));
-        enemigos.add(new Enemigo.Mosca(2745,2295,abner,mapa));
-        enemigos.add(new Enemigo.Mosca(3420,2295,abner,mapa));
+        enemigos.add(new Enemigo.Mosca(2295, 293, abner, mapa));
+        enemigos.add(new Enemigo.Mosca(2745, 2295, abner, mapa));
+        enemigos.add(new Enemigo.Mosca(3420, 2295, abner, mapa));
 
 
         //Flamas
-        enemigos.add(new Enemigo.Fuego(7650,1010,abner,mapa));
-        enemigos.add(new Enemigo.Fuego(8300,1010,abner,mapa));
-        enemigos.add(new Enemigo.Fuego(8660,1010,abner,mapa));
-        enemigos.add(new Enemigo.Fuego(9020,1010,abner,mapa));
-        enemigos.add(new Enemigo.Fuego(9110,1010,abner,mapa));
-        enemigos.add(new Enemigo.Fuego(9200,1010,abner,mapa));
-        enemigos.add(new Enemigo.Fuego(9290,1010,abner,mapa));
+        enemigos.add(new Enemigo.Fuego(7650, 1010, abner, mapa));
+        enemigos.add(new Enemigo.Fuego(8300, 1010, abner, mapa));
+        enemigos.add(new Enemigo.Fuego(8660, 1010, abner, mapa));
+        enemigos.add(new Enemigo.Fuego(9020, 1010, abner, mapa));
+        enemigos.add(new Enemigo.Fuego(9110, 1010, abner, mapa));
+        enemigos.add(new Enemigo.Fuego(9200, 1010, abner, mapa));
+        enemigos.add(new Enemigo.Fuego(9290, 1010, abner, mapa));
 
         //Panes tostadores
-        enemigos.add(new Enemigo.PanTostadora(7635,2035,abner,mapa));
-        enemigos.add(new Enemigo.PanTostadora(5873,1995,abner,mapa));
-        enemigos.add(new Enemigo.PanTostadora(4703,1995,abner,mapa));
+        enemigos.add(new Enemigo.PanTostadora(7635, 2035, abner, mapa));
+        enemigos.add(new Enemigo.PanTostadora(5873, 1995, abner, mapa));
+        enemigos.add(new Enemigo.PanTostadora(4703, 1995, abner, mapa));
 
         //Tostadores
-        enemigos.add(new Enemigo.Tostadora(7612,2025,abner,mapa));
-        enemigos.add(new Enemigo.Tostadora(5850,1980,abner,mapa));
-        enemigos.add(new Enemigo.Tostadora(4680,1980,abner,mapa));
+        enemigos.add(new Enemigo.Tostadora(7612, 2025, abner, mapa));
+        enemigos.add(new Enemigo.Tostadora(5850, 1980, abner, mapa));
+        enemigos.add(new Enemigo.Tostadora(4680, 1980, abner, mapa));
 
         //Brocolis
-        enemigos.add(new Enemigo.Brocoli(3285,500,abner,mapa));
-        enemigos.add(new Enemigo.Brocoli(4410,90,abner,mapa));
-        enemigos.add(new Enemigo.Brocoli(5085,90,abner,mapa));
-        enemigos.add(new Enemigo.Brocoli(6435,900,abner,mapa));
-        enemigos.add(new Enemigo.Brocoli(9900,1620,abner,mapa));
-        enemigos.add(new Enemigo.Brocoli(8865,2025,abner,mapa));
+        enemigos.add(new Enemigo.Brocoli(3285, 500, abner, mapa));
+        enemigos.add(new Enemigo.Brocoli(4410, 90, abner, mapa));
+        enemigos.add(new Enemigo.Brocoli(5085, 90, abner, mapa));
+        enemigos.add(new Enemigo.Brocoli(6435, 900, abner, mapa));
+        enemigos.add(new Enemigo.Brocoli(9900, 1620, abner, mapa));
+        enemigos.add(new Enemigo.Brocoli(8865, 2025, abner, mapa));
 
 
         //Enemigos cocina 2
@@ -231,7 +250,7 @@ public class Nivel0 implements Screen, InputProcessor{
 
         gameInfo.setAbner(abner);
         estado = Estado.JUGANDO;
-        botonHabilidad = new Boton(abner.getPogo() ?habilidadPogo:habilidadDes, ANCHO_MUNDO-habilidadDes.getWidth()-10,YBOTON,false);
+        botonHabilidad = new Boton(habilidadDes, ANCHO_MUNDO-habilidadDes.getWidth()-10,YBOTON,false);
         estadoPausa = EstadoPausa.PRINCIPAL;
         menuGameOver = new Sprite(gameOver);
         pausaActual = new Sprite(pausaTex);
@@ -270,7 +289,6 @@ public class Nivel0 implements Screen, InputProcessor{
         assetManager.load("PResortera1.png", Texture.class);
         assetManager.load("PResortera2.png", Texture.class);
         assetManager.load("PResortera3.png", Texture.class);
-        assetManager.load("MunicionResortera.png", Texture.class);
         assetManager.load("nivel.png", Texture.class);
         assetManager.load("PlataformaInclinada.png", Texture.class);
         assetManager.load("menuPausa.png", Texture.class);
@@ -286,6 +304,15 @@ public class Nivel0 implements Screen, InputProcessor{
         assetManager.load("PDaño.png", Texture.class);
         assetManager.load("MalteadaMundo.png", Texture.class);
         assetManager.load("FondoCielo.png", Texture.class);
+        assetManager.load("cocina.png", Texture.class);
+        assetManager.load("coco.png", Texture.class);
+        assetManager.load("jardin.png", Texture.class);
+        assetManager.load("ropero.png", Texture.class);
+        assetManager.load("sotano.png", Texture.class);
+        assetManager.load("PLanzaPapa1.png", Texture.class);
+        assetManager.load("PLanzaPapa2.png", Texture.class);
+        assetManager.load("BotonHabLanzaPapa.png", Texture.class);
+        assetManager.load("BotonMunicion.png", Texture.class);
         assetManager.load("ambiente.mp3", Music.class);
         assetManager.load("risa.mp3", Music.class);
         assetManager.finishLoading();
@@ -302,9 +329,12 @@ public class Nivel0 implements Screen, InputProcessor{
         resortera1 =  assetManager.get("PResortera1.png");
         resortera2 =  assetManager.get("PResortera2.png");
         resortera3 =  assetManager.get("PResortera3.png");
-        pResortera = assetManager.get("MunicionResortera.png");
-        transicionNivel = new Sprite((Texture)assetManager.get("nivel.png"));
-        transicionNivel.setSize(ANCHO_MUNDO,ALTO_MUNDO);
+        transicionNeutral = assetManager.get("nivel.png");
+        transicionCocina = assetManager.get("cocina.png");
+        transicionCoco = assetManager.get("coco.png");
+        transicionJardin = assetManager.get("jardin.png");
+        transicionArmario = assetManager.get("ropero.png");
+        transicionSotano = assetManager.get("sotano.png");
         plataforma = assetManager.get("PlataformaInclinada.png");
         pausaTex = assetManager.get("menuPausa.png");
         opciones = assetManager.get("opciones.png");
@@ -322,6 +352,10 @@ public class Nivel0 implements Screen, InputProcessor{
         malteada = assetManager.get("MalteadaMundo.png");
         fondoCielo = new Sprite((Texture)assetManager.get("FondoCielo.png"));
         fondoCielo.setPosition(0,0);
+        habilidadLanzaPapas = assetManager.get("BotonHabLanzaPapa.png");
+        lanzapapas1 = assetManager.get("PLanzaPapa1.png");
+        lanzapapas2 = assetManager.get("PLanzaPapa2.png");
+        municion = assetManager.get("BotonMunicion.png");
     }
 
     @Override
@@ -332,7 +366,6 @@ public class Nivel0 implements Screen, InputProcessor{
 
         botonHabilidad.setTexture(abner.getPogo() ? habilidadPogo : habilidadDes);
         estado = abner.isDead()?Estado.MUERTE:estado;
-
 
         if(musica){
             switch(mapaActual){
@@ -350,6 +383,18 @@ public class Nivel0 implements Screen, InputProcessor{
 
         if(estado != Estado.PAUSA&&estado!=Estado.MUERTE){
 
+            switch (habilidadActual){
+                case POGO:
+                    botonHabilidad.setTexture(habilidadPogo);
+                    break;
+                case LANZAPAPAS:
+                    botonHabilidad.setTexture(habilidadLanzaPapas);
+                    break;
+                case VACIA:
+                    botonHabilidad.setTexture(habilidadDes);
+                    break;
+            }
+
             if(Gdx.input.isKeyPressed(Input.Keys.DPAD_LEFT))
                 pad.getLeft().setEstado(Boton.Estado.PRESIONADO);
             else{
@@ -363,12 +408,16 @@ public class Nivel0 implements Screen, InputProcessor{
                 abner.setEstadoHorizontal(Abner.Horizontal.DESACTIVADO);
             }
 
-            if(Gdx.input.isKeyPressed(Input.Keys.A)&&!abner.isJumping()&&!abner.isAttacking())
+            if(Gdx.input.isKeyJustPressed(Input.Keys.DPAD_UP)||Gdx.input.isKeyJustPressed(Input.Keys.DPAD_DOWN)){
+                habilidadSiguiente();
+            }
+
+            if(Gdx.input.isKeyJustPressed(Input.Keys.A)&&!abner.isJumping()&&!abner.isAttacking())
                 botonSaltar.setEstado(Boton.Estado.PRESIONADO);
-            if(Gdx.input.isKeyPressed(Input.Keys.S)&&!abner.isAttacking())
+            if(Gdx.input.isKeyJustPressed(Input.Keys.S)&&!abner.isAttacking())
                 botonArma.setEstado(Boton.Estado.PRESIONADO);
 
-            if(Gdx.input.isKeyPressed(Input.Keys.D)&&!abner.isJumping()&&!abner.isAttacking()&&abner.getPogo()){
+            if(Gdx.input.isKeyJustPressed(Input.Keys.D)&&!abner.isJumping()&&!abner.isAttacking()&&abner.getPogo()){
                 botonHabilidad.setEstado(Boton.Estado.PRESIONADO);
             }
 
@@ -383,8 +432,15 @@ public class Nivel0 implements Screen, InputProcessor{
             }
 
             if(botonHabilidad.isPressed()){
-                abner.setEstadoVertical(Abner.Vertical.POGO);
-                abner.setSalto(Abner.Salto.SUBIENDO);
+                switch (habilidadActual){
+                    case POGO:
+                        abner.setEstadoVertical(Abner.Vertical.POGO);
+                        abner.setSalto(Abner.Salto.SUBIENDO);
+                        break;
+                    case LANZAPAPAS:
+                        abner.setEstadoAtaque(Abner.Ataque.LANZAPAPAS);
+                        break;
+                }
             }
 
             if(pad.getRight().isPressed()) {
@@ -404,6 +460,29 @@ public class Nivel0 implements Screen, InputProcessor{
                 int tempMapa = mapaActual;
                 transicion = Transicion.AUMENTANDO;
                 mapaActual = cambio;
+                switch (mapaActual){
+                    case 3:
+                        if(tempMapa==2){
+                            transicionNivel.setTexture(transicionCocina);
+                            velocidadTransicion = TRANSICIONNIVEL;
+                        }
+                        break;
+                    case 6:
+                        if(tempMapa==2){
+                            transicionNivel.setTexture(transicionJardin);
+                            velocidadTransicion = TRANSICIONNIVEL;
+                        }
+                        break;
+                    case 9:
+                        if(tempMapa ==2){
+                            transicionNivel.setTexture(transicionSotano);
+                            velocidadTransicion = TRANSICIONNIVEL;
+                        }
+                        break;
+                    default:
+                        transicionNivel.setTexture(transicionNeutral);
+                        velocidadTransicion = TRANSICIONNEUTRAL;
+                }
                 mapa = mapas.get(mapaActual);
                 abner.setMapa(mapa);
                 abner.setInitialPosition(tempMapa);
@@ -447,7 +526,6 @@ public class Nivel0 implements Screen, InputProcessor{
                     proyectiles.remove(i);
                 else{
                     proyectiles.get(i).draw(batch);
-                    proyectiles.get(i).update();
                 }
             }
 
@@ -468,7 +546,7 @@ public class Nivel0 implements Screen, InputProcessor{
                         transicion = Transicion.DISMINUYENDO;
                         break;
                     case DISMINUYENDO:
-                        alpha-=0.01f;
+                        alpha-= velocidadTransicion;
                         if (alpha<=0) {
                             estado = Estado.JUGANDO;
                             alpha = 0;
@@ -493,6 +571,10 @@ public class Nivel0 implements Screen, InputProcessor{
             botonArma.draw(batch);
             pausa.draw(batch);
             imgVida.draw(batch);
+            if(abner.getLanzapapas()){
+                imgMunicion.draw(batch);
+                municionTex.mostrarMensaje(batch, abner.getMunicion()+"");
+            }
             vida.mostrarMensaje(batch, "" + abner.getcantVida());
             for(int i = 0;i<abner.getVidas();i++)
                 vidas.get(i).draw(batch);
@@ -528,7 +610,7 @@ public class Nivel0 implements Screen, InputProcessor{
                 gameover.play();
             batch.setProjectionMatrix(camara.combined);
             mapa.draw();
-            alphaGame+=0.01f;
+            alphaGame+= TRANSICIONNEUTRAL;
             if(alphaGame>=1)
                 alphaGame=1;
             menuGameOver.setAlpha(alphaGame);
@@ -541,6 +623,20 @@ public class Nivel0 implements Screen, InputProcessor{
 
 
 
+    }
+
+    private void habilidadSiguiente() {
+        if(habilidadActual!= Habilidad.VACIA){
+            switch (habilidadActual){
+                case POGO:
+                    if(abner.lanzapapas)
+                        habilidadActual = Habilidad.LANZAPAPAS;
+                    break;
+                case LANZAPAPAS:
+                    habilidadActual = Habilidad.POGO;
+                    break;
+            }
+        }
     }
 
     @Override
@@ -754,6 +850,12 @@ public class Nivel0 implements Screen, InputProcessor{
     private enum Transicion{
         AUMENTANDO,
         DISMINUYENDO
+    }
+
+    private enum Habilidad{
+        VACIA,
+        POGO,
+        LANZAPAPAS
     }
 
 }

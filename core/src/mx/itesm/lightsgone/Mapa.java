@@ -23,7 +23,7 @@ public class Mapa {
     private TiledMapRenderer renderer;
     private static AssetManager manager = new AssetManager();
     private static OrthographicCamera camara;
-    private Array<TiledMapTileLayer> puertas,plataformaY, plataformaX,encima, items, guardado, muerte, dano;
+    private Array<TiledMapTileLayer> puertas,plataformaY, plataformaX,encima, items, guardado, muerte, dano, escaleras;
     private Array<Enemigo> enemigos, enemigosActuales;
     private SpriteBatch batch;
     private int[] numPuertas;
@@ -53,6 +53,7 @@ public class Mapa {
         guardado = new Array<TiledMapTileLayer>(1);
         muerte = new Array<TiledMapTileLayer>(2);
         dano = new Array<TiledMapTileLayer>(1);
+        escaleras = new Array<TiledMapTileLayer>(2);
         plataformaY.add((TiledMapTileLayer)mapa.getLayers().get("PlataformaPiso"));
         plataformaY.add((TiledMapTileLayer)mapa.getLayers().get("Plataformas"));
         plataformaY.add((TiledMapTileLayer)mapa.getLayers().get("Plataformas2"));
@@ -73,6 +74,8 @@ public class Mapa {
         muerte.add((TiledMapTileLayer)mapa.getLayers().get("SopaMortal"));
         muerte.add((TiledMapTileLayer)mapa.getLayers().get("ZonaMuerte"));
         dano.add((TiledMapTileLayer)mapa.getLayers().get("ZonaDaño"));
+        escaleras.add((TiledMapTileLayer)mapa.getLayers().get("Escalera"));
+        escaleras.add((TiledMapTileLayer)mapa.getLayers().get("Escalera1"));
     }
 
 
@@ -150,6 +153,10 @@ public class Mapa {
 
     public void remove(String layer){
         mapa.getLayers().get(layer).setVisible(false);
+    }
+
+    public boolean colisionEscalera(float x, float y){
+        return colision(x,y,escaleras);
     }
 
     public int colisionPuerta(float x, float y) {
@@ -263,7 +270,7 @@ public class Mapa {
         if(gameInfo.isCapita()&&mapa.getLayers().get("Capita")!=null)
             mapa.getLayers().get("Capita").setVisible(false);
         if(gameInfo.isLanzapapas()&&mapa.getLayers().get("Lanzapapas")!=null)
-            mapa.getLayers().get("Lanzapapas").setVisible(false);
+            mapa.getLayers().get("Lanzapapa").setVisible(false);
 
     }
 

@@ -163,7 +163,6 @@ public class CargarJuego implements Screen {
         try {
             String fileHandle = Gdx.files.getLocalStoragePath();
             FileHandle directorio = new FileHandle(fileHandle);
-            Gdx.app.log("Directorio", fileHandle);
             files = new ArrayList<FileHandle>(directorio.list().length);
             for(FileHandle file: directorio.list())
                 files.add(file);

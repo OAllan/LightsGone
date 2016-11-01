@@ -363,8 +363,9 @@ public class Nivel0 implements Screen, InputProcessor{
         Gdx.gl.glClearColor(1, 1, 1, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
+        if(abner.getPogo()&&habilidadActual == Habilidad.VACIA)
+            habilidadActual = Habilidad.POGO;
 
-        botonHabilidad.setTexture(abner.getPogo() ? habilidadPogo : habilidadDes);
         estado = abner.isDead()?Estado.MUERTE:estado;
 
         if(musica){

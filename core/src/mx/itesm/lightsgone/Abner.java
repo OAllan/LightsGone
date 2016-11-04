@@ -509,7 +509,7 @@ public class Abner {
     public void ajusteCamara(int direccion){
 
             //sprite.setX(sprite.getX() - (float).1);
-            camara.position.set(camara.position.x - (float) 1 * direccion, sprite.getY(), 0);
+            camara.position.set(camara.position.x - (float) 10 * direccion, sprite.getY(), 0);
 
     }
 

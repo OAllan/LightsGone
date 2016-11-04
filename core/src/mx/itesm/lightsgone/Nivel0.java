@@ -54,7 +54,7 @@ public class Nivel0 implements Screen, InputProcessor{
     private AssetManager assetManager = new AssetManager();
     private Texture  encendida, encendidaOscuridad,municion,lanzapapas1, lanzapapas2, habilidadLanzaPapas, transicionCocina,transicionJardin, transicionArmario, transicionSotano, transicionCoco, transicionNeutral,  malteada, dano, nivelVida, gameOver,habilidadDes, habilidadPogo,save,pausaTex,quitTex, opciones, neutral, salto1, salto2, correr1, correr2, botonSalto, JFondo, botonVida, habilidad, texPausa, resortera1, resortera2, resortera3, plataforma;
     private Sprite transicionNivel, pausaActual, fondoCielo;
-    private Abner abner;
+    private static Abner abner;
     private Texto vida, municionTex;
     private Pad pad;
     private Sprite imgVida, menuGameOver, imgMunicion;
@@ -63,7 +63,7 @@ public class Nivel0 implements Screen, InputProcessor{
     private Boton botonBack, botonOn, botonOff, botonTry, botonMain,botonSaltar, botonArma, pausa, botonResume, botonOpciones,botonQuit, botonYes,botonNo, botonSave, botonHabilidad;
     private float alpha = 0;
     private Array<Mapa> mapas;
-    private Mapa mapa;
+    private static Mapa mapa;
     static int mapaActual;
     private ArrayList<Proyectil> proyectiles;
     private Transicion transicion;
@@ -76,6 +76,9 @@ public class Nivel0 implements Screen, InputProcessor{
     public static Habilidad habilidadActual;
     private Array<Sprite> vidas;
     private Array<Sprite> malteadas;
+
+    static Array<Enemigo> enemigosPrueba= new Array<Enemigo>(9);
+
     Array<Enemigo> enemigos = new Array<Enemigo>(3);
     Array<Enemigo> enemigosC1 = new Array<Enemigo>(3);
     Array<Enemigo> enemigosC2 = new Array<Enemigo>(9);
@@ -252,6 +255,15 @@ public class Nivel0 implements Screen, InputProcessor{
         enemigosC2.add(new Enemigo.Tostadora(4275,765,abner,mapa));
         enemigosC2.add(new Enemigo.Tostadora(6120,1305,abner,mapa));
 
+        //Enemigos prueba
+        //enemigosPrueba.add(new Enemigo.Brocoli(450,150,abner,mapa));
+        //enemigosPrueba.add(new Enemigo.Mosca(1100,150,abner,mapa));
+        //enemigosPrueba.add(new Enemigo.Serpiente(800,150,abner,mapa));
+        //enemigosPrueba.add(new Enemigo.ProyectilHongo(1360,220,abner,mapa));
+        //enemigosPrueba.add(new Enemigo.Hongo(1300,150,abner,mapa));
+        //enemigosPrueba.add(new Enemigo.Gnomo(1300,150,abner,mapa));
+        //enemigosPrueba.add(new Enemigo.Cucarachon(1100,0,abner,mapa));
+
 
 
         gameInfo.setAbner(abner);
@@ -275,9 +287,16 @@ public class Nivel0 implements Screen, InputProcessor{
         mapas.get(3).setEnemigos(enemigos);
         mapas.get(4).setEnemigos(enemigosC1);
         mapas.get(5).setEnemigos(enemigosC2);
+        mapas.get(0).setEnemigos(enemigosPrueba);
         enemigos = mapa.getEnemigos();
         ambiente.setVolume(0.5f);
 
+    }
+
+    public static void crearNuevaMosca(float x,float y,Enemigo ene){
+        if(enemigosPrueba.contains(ene,true)){
+            enemigosPrueba.add(new Enemigo.Mosca(x,y,abner,mapa));
+        }
     }
 
     private void cargarTexturas() {
@@ -736,6 +755,15 @@ public class Nivel0 implements Screen, InputProcessor{
             mapa.dispose();
         batch.dispose();
 
+    }
+
+    public static void quitarEnemigo(Enemigo ene){
+        if (enemigosPrueba.contains(ene,true)){
+            if(ene.getClass().getSimpleName().equals("Hongo")){
+                enemigosPrueba.removeIndex(enemigosPrueba.indexOf(ene,true)-1);
+            }
+            enemigosPrueba.removeIndex(enemigosPrueba.indexOf(ene,true));
+        }
     }
 
     @Override

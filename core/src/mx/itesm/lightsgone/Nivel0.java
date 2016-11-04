@@ -52,7 +52,7 @@ public class Nivel0 implements Screen, InputProcessor{
     private Music ambiente, gameover;
     private Juego juego;
     private AssetManager assetManager = new AssetManager();
-    private Texture  municion,lanzapapas1, lanzapapas2, habilidadLanzaPapas, transicionCocina,transicionJardin, transicionArmario, transicionSotano, transicionCoco, transicionNeutral,  malteada, dano, nivelVida, gameOver,habilidadDes, habilidadPogo,save,pausaTex,quitTex, opciones, neutral, salto1, salto2, correr1, correr2, botonSalto, JFondo, botonVida, habilidad, texPausa, resortera1, resortera2, resortera3, plataforma;
+    private Texture  encendida, encendidaOscuridad,municion,lanzapapas1, lanzapapas2, habilidadLanzaPapas, transicionCocina,transicionJardin, transicionArmario, transicionSotano, transicionCoco, transicionNeutral,  malteada, dano, nivelVida, gameOver,habilidadDes, habilidadPogo,save,pausaTex,quitTex, opciones, neutral, salto1, salto2, correr1, correr2, botonSalto, JFondo, botonVida, habilidad, texPausa, resortera1, resortera2, resortera3, plataforma;
     private Sprite transicionNivel, pausaActual, fondoCielo;
     private Abner abner;
     private Texto vida, municionTex;
@@ -73,7 +73,7 @@ public class Nivel0 implements Screen, InputProcessor{
     private final float YBAJA = 135f, YMEDIA = 800f, YALTA =1100f;
     private Texture pPogo1, pPogo2;
     private float alphaGame;
-    private Habilidad habilidadActual;
+    public static Habilidad habilidadActual;
     private Array<Sprite> vidas;
     private Array<Sprite> malteadas;
     Array<Enemigo> enemigos = new Array<Enemigo>(3);
@@ -81,6 +81,7 @@ public class Nivel0 implements Screen, InputProcessor{
     Array<Enemigo> enemigosC2 = new Array<Enemigo>(9);
     private Texture caja;
     private Lampara estadoLampara;
+    private Texture lamparaOff, lamparaOn;
 
     public Nivel0(Juego juego) {
         this.juego = juego;
@@ -110,7 +111,7 @@ public class Nivel0 implements Screen, InputProcessor{
 
     private void crearMapas() {
         mapas = new Array<Mapa>(6);
-        abner = new Abner(neutral, correr1, correr2, salto1, salto2, resortera1, resortera2, resortera3,pPogo1,pPogo2,dano, lanzapapas1,lanzapapas2,camara, mapa, gameInfo);
+        abner = new Abner(camara, mapa, gameInfo);
         float[] cuartoAbnerX ={530, 2295}, pasilloX = {270, 4140}, salaX = {450, 450,2280,2280}, cocina1X = {315,1305}, cocina2X = {5895,5895}, cocina3X = {630}, jardin1X = {1395, 20745,2170}, jardin2X ={540,18360}, jardin3X = {7740,495}, armario1X = {12510, 315};
         boolean[] cuartoAbnerB = {true, false}, pasilloB = {true, false}, salaB={true, true, false, false}, cocina1B = {true, true},
                 cocina2B = {false,false}, cocina3B = {true}, jardin1B = {true, false, false}, jardin2B = {true, true}, jardin3B = {true, true}, armario1B = {false, true};
@@ -178,6 +179,7 @@ public class Nivel0 implements Screen, InputProcessor{
         vida = new Texto("tipo.fnt", imgVida.getWidth(),690);
         municionTex = new Texto("tipo.fnt", imgMunicion.getX(), MUNICIONY+60);
         transicionNivel = new Sprite(transicionNeutral);
+        estadoLampara = Lampara.APAGADA;
         if(gameInfo.isPogo())
             habilidadActual = Habilidad.POGO;
         else if(gameInfo.isLanzapapas())
@@ -185,7 +187,7 @@ public class Nivel0 implements Screen, InputProcessor{
         else
             habilidadActual = Habilidad.VACIA;
         transicionNivel.setSize(Nivel0.ANCHO_MUNDO, Nivel0.ALTO_MUNDO);
-        abner = new Abner(neutral, correr1, correr2, salto1, salto2, resortera1, resortera2, resortera3,pPogo1,pPogo2,dano,lanzapapas1,lanzapapas2, camara, mapa, gameInfo);
+        abner = new Abner(camara, mapa, gameInfo);
 
         //Moscas
         enemigos.add(new Enemigo.Mosca(2295, 293, abner, mapa));
@@ -284,7 +286,6 @@ public class Nivel0 implements Screen, InputProcessor{
         assetManager.load("PNeutral.png", Texture.class);
         assetManager.load("PSalto1.png", Texture.class);
         assetManager.load("PSalto2.png", Texture.class);
-        assetManager.load("PSalto2.png", Texture.class);
         assetManager.load("BotonSalto.png", Texture.class);
         assetManager.load("JoystickBoton.png", Texture.class);
         assetManager.load("BotonPausa.png", Texture.class);
@@ -318,6 +319,10 @@ public class Nivel0 implements Screen, InputProcessor{
         assetManager.load("BotonHabLanzaPapa.png", Texture.class);
         assetManager.load("BotonMunicion.png", Texture.class);
         assetManager.load("CajaMovilDer.png", Texture.class);
+        assetManager.load("BotonHabLamparaOff.png", Texture.class);
+        assetManager.load("BotonHabLamparaOn.png", Texture.class);
+        assetManager.load("LuzConLampara.png", Texture.class);
+        assetManager.load("OscuridadConLampara.png", Texture.class);
         assetManager.load("ambiente.mp3", Music.class);
         assetManager.load("risa.mp3", Music.class);
         assetManager.finishLoading();
@@ -362,6 +367,10 @@ public class Nivel0 implements Screen, InputProcessor{
         lanzapapas2 = assetManager.get("PLanzaPapa2.png");
         municion = assetManager.get("BotonMunicion.png");
         caja = assetManager.get("CajaMovilDer.png");
+        lamparaOff = assetManager.get("BotonHabLamparaOff.png");
+        lamparaOn = assetManager.get("BotonHabLamparaOn.png");
+        encendida = assetManager.get("LuzConLampara.png");
+        encendidaOscuridad = assetManager.get("OscuridadConLampara.png");
     }
 
     @Override
@@ -400,12 +409,24 @@ public class Nivel0 implements Screen, InputProcessor{
                 case LAMPARA:
                     switch (estadoLampara){
                         case ENCENDIDA:
+                            if(!sotano()){
+                                abner.setLampara(Lampara.ENCENDIDALUZ);
+                                estadoLampara = Lampara.ENCENDIDALUZ;
+                            }
+                            botonHabilidad.setTexture(lamparaOn);
                             break;
                         case ENCENDIDALUZ:
+                            if(sotano()){
+                                abner.setLampara(Lampara.ENCENDIDA);
+                                estadoLampara = Lampara.ENCENDIDA;
+                            }
+                            botonHabilidad.setTexture(lamparaOn);
                             break;
                         case APAGADA:
+                            botonHabilidad.setTexture(lamparaOff);
                             break;
                     }
+                    break;
                 case VACIA:
                     botonHabilidad.setTexture(habilidadDes);
                     break;
@@ -456,6 +477,17 @@ public class Nivel0 implements Screen, InputProcessor{
                     case LANZAPAPAS:
                         abner.setEstadoAtaque(Abner.Ataque.LANZAPAPAS);
                         break;
+                    case LAMPARA:
+                        switch (estadoLampara){
+                            case ENCENDIDA: case ENCENDIDALUZ:
+                                estadoLampara = Lampara.APAGADA;
+                                abner.setLampara(Lampara.APAGADA);
+                                break;
+                            case APAGADA:
+                                abner.setLampara(sotano()?Lampara.ENCENDIDA:Lampara.ENCENDIDALUZ);
+                                estadoLampara = sotano()?Lampara.ENCENDIDA:Lampara.ENCENDIDALUZ;
+                                break;
+                        }
                 }
             }
 
@@ -651,6 +683,10 @@ public class Nivel0 implements Screen, InputProcessor{
 
     }
 
+    private boolean sotano() {
+        return mapaActual == 12 || mapaActual ==13||mapaActual == 14;
+    }
+
     private void habilidadSiguiente() {
         if(habilidadActual!= Habilidad.VACIA){
             switch (habilidadActual){
@@ -659,6 +695,10 @@ public class Nivel0 implements Screen, InputProcessor{
                         habilidadActual = Habilidad.LANZAPAPAS;
                     break;
                 case LANZAPAPAS:
+                    if(abner.lampara)
+                        habilidadActual = Habilidad.LAMPARA;
+                    break;
+                case LAMPARA:
                     habilidadActual = Habilidad.POGO;
                     break;
             }
@@ -881,14 +921,14 @@ public class Nivel0 implements Screen, InputProcessor{
         DISMINUYENDO
     }
 
-    private enum Habilidad{
+    public enum Habilidad{
         VACIA,
         POGO,
         LANZAPAPAS,
         LAMPARA
     }
 
-    private enum Lampara{
+    public enum Lampara{
         ENCENDIDA,
         ENCENDIDALUZ,
         APAGADA

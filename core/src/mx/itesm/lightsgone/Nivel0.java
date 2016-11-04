@@ -32,16 +32,17 @@ public class Nivel0 implements Screen, InputProcessor{
     public static final int ALTO_MUNDO = 800;
     public static final int YBOTON = 30;
     public static final float YCOCINA3 = 361.0f;
-    public static final int YCOCINA2 = 1950;
+    public static final float YCOCINA2 = 1950;
     public static final float YCOCINA1 = 2039.0f;
-    public static final int YJARDIN1 = 1320;
-    public static final int YJARDIN2 = 2200;
-    public static final int YJARDIN3 = 700;
-    public static final int YSALA = 1142;
+    public static final float YJARDIN1 = 1320;
+    public static final float YJARDIN2 = 2200;
+    public static final float YJARDIN3 = 700;
+    public static final float YSALA = 1142;
     public static final float TRANSICIONNIVEL = 0.005f;
     public static final float TRANSICIONNEUTRAL = 0.01f;
     public static final int MUNICIONX = 264;
     public static final int MUNICIONY = 706;
+    private final float YARMARIO = 450;
     private float velocidadTransicion = TRANSICIONNEUTRAL;
     private final int LATAX = 4871;
     private OrthographicCamera camara;
@@ -75,11 +76,14 @@ public class Nivel0 implements Screen, InputProcessor{
     private Habilidad habilidadActual;
     private Array<Sprite> vidas;
     private Array<Sprite> malteadas;
-    static Array<Enemigo> enemigos = new Array<Enemigo>(3);
-    static Array<Enemigo> enemigosC1 = new Array<Enemigo>(3);
-    static Array<Enemigo> enemigosC2 = new Array<Enemigo>(9);
+
     static Array<Enemigo> enemigosPrueba= new Array<Enemigo>(9);
 
+    Array<Enemigo> enemigos = new Array<Enemigo>(3);
+    Array<Enemigo> enemigosC1 = new Array<Enemigo>(3);
+    Array<Enemigo> enemigosC2 = new Array<Enemigo>(9);
+    private Texture caja;
+    private Lampara estadoLampara;
 
     public Nivel0(Juego juego) {
         this.juego = juego;
@@ -109,11 +113,11 @@ public class Nivel0 implements Screen, InputProcessor{
 
     private void crearMapas() {
         mapas = new Array<Mapa>(6);
-        abner = new Abner(neutral, correr1, correr2, salto1, salto2, resortera1, resortera2, resortera3,pPogo1,pPogo2,dano, lanzapapas1,lanzapapas2,camara, mapa, gameInfo, fondoCielo);
-        float[] cuartoAbnerX ={530, 2295}, pasilloX = {270, 4140}, salaX = {450,450,2280,2280}, cocina1X = {315,1305}, cocina2X = {5895,5895}, cocina3X = {630}, jardin1X = {1395, 20745,2170}, jardin2X ={540,18360}, jardin3X = {7740,495};
+        abner = new Abner(neutral, correr1, correr2, salto1, salto2, resortera1, resortera2, resortera3,pPogo1,pPogo2,dano, lanzapapas1,lanzapapas2,camara, mapa, gameInfo);
+        float[] cuartoAbnerX ={530, 2295}, pasilloX = {270, 4140}, salaX = {450, 450,2280,2280}, cocina1X = {315,1305}, cocina2X = {5895,5895}, cocina3X = {630}, jardin1X = {1395, 20745,2170}, jardin2X ={540,18360}, jardin3X = {7740,495}, armario1X = {12510, 315};
         boolean[] cuartoAbnerB = {true, false}, pasilloB = {true, false}, salaB={true, true, false, false}, cocina1B = {true, true},
-                cocina2B = {false,false}, cocina3B = {true}, jardin1B = {true, false, false}, jardin2B = {true, true}, jardin3B = {true, true};
-        int[] cuartoAbner = {0,1}, pasillo = {0,2}, sala = {1,0,6,3}, cocina1 = {2,4}, cocina2 = {3,5}, cocina3 = {4}, jardin1 = {2,7,8}, jardin2 = {6,8}, jardin3 = {6,7};
+                cocina2B = {false,false}, cocina3B = {true}, jardin1B = {true, false, false}, jardin2B = {true, true}, jardin3B = {true, true}, armario1B = {false, true};
+        int[] cuartoAbner = {9,1}, pasillo = {0,2}, sala = {1,0,6,3}, cocina1 = {2,4}, cocina2 = {3,5}, cocina3 = {4}, jardin1 = {2,7,8}, jardin2 = {6,8}, jardin3 = {6,7}, armario1 = {0,10};
         mapas.add(new Mapa("CuartoAbner.tmx", batch, camara, cuartoAbner, cuartoAbnerB,cuartoAbnerX ,YBAJA, YBAJA));
         mapas.add(new Mapa("Pasillo.tmx", batch, camara, pasillo, pasilloB, pasilloX,YBAJA, YBAJA));
         mapas.add(new Mapa("Sala.tmx", batch, camara, sala, salaB, salaX,YALTA, YBAJA, YSALA, YMEDIA));
@@ -123,8 +127,9 @@ public class Nivel0 implements Screen, InputProcessor{
         mapas.add(new Mapa("Jardin1.tmx", batch, camara, jardin1, jardin1B, jardin1X,YCOCINA2, YJARDIN1,YBAJA));
         mapas.add(new Mapa("Jardin2.tmx", batch, camara, jardin2, jardin2B, jardin2X,YJARDIN2, YJARDIN2));
         mapas.add(new Mapa("Jardin3.tmx", batch, camara, jardin3, jardin3B, jardin3X,YBAJA, YJARDIN3));
-        for(Mapa mapa: mapas)
-            mapa.reiniciar(gameInfo);
+        mapas.add(new Mapa("Armario1.tmx", batch, camara,armario1, armario1B, armario1X, YARMARIO, YSALA));
+        mapas.get(6).setCajas(new CajaMovil(14850, 1700, mapas.get(6)));
+        mapas.get(7).setCajas(new CajaMovil(13815, 315, mapas.get(7)));
         for(Mapa mapa: mapas)
             mapa.reiniciar(gameInfo);
         Sprite sprite = new Sprite(plataforma);
@@ -183,7 +188,7 @@ public class Nivel0 implements Screen, InputProcessor{
         else
             habilidadActual = Habilidad.VACIA;
         transicionNivel.setSize(Nivel0.ANCHO_MUNDO, Nivel0.ALTO_MUNDO);
-        abner = new Abner(neutral, correr1, correr2, salto1, salto2, resortera1, resortera2, resortera3,pPogo1,pPogo2,dano,lanzapapas1,lanzapapas2, camara, mapa, gameInfo,fondoCielo);
+        abner = new Abner(neutral, correr1, correr2, salto1, salto2, resortera1, resortera2, resortera3,pPogo1,pPogo2,dano,lanzapapas1,lanzapapas2, camara, mapa, gameInfo);
 
         //Moscas
         enemigos.add(new Enemigo.Mosca(2295, 293, abner, mapa));
@@ -331,6 +336,7 @@ public class Nivel0 implements Screen, InputProcessor{
         assetManager.load("PLanzaPapa2.png", Texture.class);
         assetManager.load("BotonHabLanzaPapa.png", Texture.class);
         assetManager.load("BotonMunicion.png", Texture.class);
+        assetManager.load("CajaMovilDer.png", Texture.class);
         assetManager.load("ambiente.mp3", Music.class);
         assetManager.load("risa.mp3", Music.class);
         assetManager.finishLoading();
@@ -374,6 +380,7 @@ public class Nivel0 implements Screen, InputProcessor{
         lanzapapas1 = assetManager.get("PLanzaPapa1.png");
         lanzapapas2 = assetManager.get("PLanzaPapa2.png");
         municion = assetManager.get("BotonMunicion.png");
+        caja = assetManager.get("CajaMovilDer.png");
     }
 
     @Override
@@ -409,6 +416,15 @@ public class Nivel0 implements Screen, InputProcessor{
                 case LANZAPAPAS:
                     botonHabilidad.setTexture(habilidadLanzaPapas);
                     break;
+                case LAMPARA:
+                    switch (estadoLampara){
+                        case ENCENDIDA:
+                            break;
+                        case ENCENDIDALUZ:
+                            break;
+                        case APAGADA:
+                            break;
+                    }
                 case VACIA:
                     botonHabilidad.setTexture(habilidadDes);
                     break;
@@ -493,8 +509,8 @@ public class Nivel0 implements Screen, InputProcessor{
                         }
                         break;
                     case 9:
-                        if(tempMapa ==2){
-                            transicionNivel.setTexture(transicionSotano);
+                        if(tempMapa ==0){
+                            transicionNivel.setTexture(transicionArmario);
                             velocidadTransicion = TRANSICIONNIVEL;
                         }
                         break;
@@ -522,10 +538,11 @@ public class Nivel0 implements Screen, InputProcessor{
                 }
             }
             proyectiles = abner.getProyectiles();
-            batch.setProjectionMatrix(camara.combined);
+            batch.setProjectionMatrix(camaraHUD.combined);
             batch.begin();
             fondoCielo.draw(batch);
             batch.end();
+            batch.setProjectionMatrix(camara.combined);
             mapa.draw();
             batch.begin();
             abner.draw(batch, right);
@@ -540,12 +557,21 @@ public class Nivel0 implements Screen, InputProcessor{
                     sprite.draw(batch);
                 }
             }*/
+
             for (int i=0;i<proyectiles.size();i++) {
-                if(proyectiles.get(i).out())
+                Proyectil proyectil = proyectiles.get(i);
+                if(proyectil instanceof Proyectil.Papa&&mapa.colisionPuertaCerrada(proyectil.getRectangle().getX()-proyectil.getRectangle().getWidth(), proyectil.getRectangle().getY())){
+                    mapa.remove("PuertaCerrada");
                     proyectiles.remove(i);
-                else{
-                    proyectiles.get(i).draw(batch);
+
                 }
+                else if(proyectil.out()) {
+                    proyectiles.remove(i);
+                }
+                else{
+                    proyectil.draw(batch);
+                }
+
             }
 
 
@@ -590,7 +616,7 @@ public class Nivel0 implements Screen, InputProcessor{
             botonArma.draw(batch);
             pausa.draw(batch);
             imgVida.draw(batch);
-            if(abner.getLanzapapas()){
+            if(habilidadActual == Habilidad.LANZAPAPAS){
                 imgMunicion.draw(batch);
                 municionTex.mostrarMensaje(batch, abner.getMunicion()+"");
             }
@@ -797,6 +823,9 @@ public class Nivel0 implements Screen, InputProcessor{
         mapaActual = gameInfo.getMapa();
         mapa = mapas.get(mapaActual);
         abner.setMapa(mapa);
+        if(!gameInfo.isPogo()){
+            habilidadActual = Habilidad.VACIA;
+        }
         for(Mapa mapa: mapas)
             mapa.reiniciar(gameInfo);
         botonHabilidad.setEstado(Boton.Estado.NOPRESIONADO);
@@ -883,7 +912,14 @@ public class Nivel0 implements Screen, InputProcessor{
     private enum Habilidad{
         VACIA,
         POGO,
-        LANZAPAPAS
+        LANZAPAPAS,
+        LAMPARA
+    }
+
+    private enum Lampara{
+        ENCENDIDA,
+        ENCENDIDALUZ,
+        APAGADA
     }
 
 }

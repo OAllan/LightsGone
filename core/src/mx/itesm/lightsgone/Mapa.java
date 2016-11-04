@@ -24,6 +24,7 @@ public class Mapa {
     private static AssetManager manager = new AssetManager();
     private static OrthographicCamera camara;
     private Array<TiledMapTileLayer> puertas,plataformaY, plataformaX,encima, items, guardado, muerte, dano, escaleras;
+    private Array<CajaMovil> cajas;
     private Array<Enemigo> enemigos, enemigosActuales;
     private SpriteBatch batch;
     private int[] numPuertas;
@@ -92,12 +93,35 @@ public class Mapa {
             plataformasInclinada.add(sprite);
     }
 
+    public void setCajas(CajaMovil... cajas){
+        this.cajas = new Array<CajaMovil>(cajas.length);
+        for(CajaMovil caja: cajas)
+            this.cajas.add(caja);
+    }
+
     public boolean colisionX(float x, float y){
         return colision(x, y, plataformaX);
     }
 
-    public boolean colisionY(float x, float y){
-        return colision(x,y,plataformaY);
+    public float colisionY(float x, float y){
+        if(cajas!=null){
+            for(CajaMovil caja:cajas){
+                if(caja.getRectangle().contains(x,y))
+                    return caja.getRectangle().getY()+caja.getRectangle().getHeight()-20;
+            }
+        }
+
+        for (TiledMapTileLayer capa: plataformaY){
+            if(capa!=null){
+                int celdaX = (int) (x / capa.getTileWidth());
+                int celdaY = (int) (y / capa.getTileHeight());
+                TiledMapTileLayer.Cell cell = capa.getCell(celdaX, celdaY);
+                if (cell != null) return (celdaY+1) * capa.getTileHeight();
+            }
+        }
+
+        return -1;
+
     }
 
     public boolean colision(float x, float y, Array<TiledMapTileLayer> capas){
@@ -140,6 +164,11 @@ public class Mapa {
             for(Enemigo enemigo: enemigos)
                 enemigo.draw(batch);
         }
+        if(cajas!=null){
+            for(CajaMovil caja: cajas){
+                caja.draw(batch);
+            }
+        }
         batch.end();
 
     }
@@ -161,7 +190,7 @@ public class Mapa {
 
     public int colisionPuerta(float x, float y) {
         for(TiledMapTileLayer capa: puertas){
-            if(capa!=null){
+            if(capa!=null&&capa.isVisible()){
                 TiledMapTileLayer.Cell cellDer = capa.getCell((int)(x/capa.getTileWidth()), (int)(y/capa.getTileHeight()));
                 TiledMapTileLayer.Cell cellIzq = capa.getCell((int)((x-125)/capa.getTileWidth()), (int)(y/capa.getTileHeight()));
                 if((cellDer != null||cellIzq!=null) && capa.getName().equals("PuertaCerrada"))
@@ -263,14 +292,19 @@ public class Mapa {
         MapLayers layers = mapa.getLayers();
         copiarEnemigos();
         for(MapLayer mapLayer: layers){
+            if(mapLayer.getName().equalsIgnoreCase("VidaExtra"))
+                continue;
             mapLayer.setVisible(true);
         }
-        if(gameInfo.isPogo()&&mapa.getLayers().get("Pogo")!=null)
-            mapa.getLayers().get("Pogo").setVisible(false);
-        if(gameInfo.isCapita()&&mapa.getLayers().get("Capita")!=null)
-            mapa.getLayers().get("Capita").setVisible(false);
-        if(gameInfo.isLanzapapas()&&mapa.getLayers().get("Lanzapapas")!=null)
-            mapa.getLayers().get("Lanzapapa").setVisible(false);
+        if(gameInfo.isPogo()&&layers.get("Pogo")!=null) {
+            layers.get("Pogo").setVisible(false);
+        }
+        if(gameInfo.isCapita()&&layers.get("Capita")!=null) {
+            layers.get("Capita").setVisible(false);
+        }
+        if(gameInfo.isLanzapapas()&&layers.get("LanzaPapa")!=null) {
+            mapa.getLayers().get("LanzaPapa").setVisible(false);
+        }
 
     }
 
@@ -287,5 +321,25 @@ public class Mapa {
 
     public String getName() {
         return nombre;
+    }
+
+    public void colisionCaja(float x, float y, boolean right, float velocidad){
+        if(cajas!=null){
+            for(CajaMovil caja: cajas){
+                caja.mover(x,y,right, velocidad);
+            }
+        }
+    }
+
+    public boolean colisionCaja(float x, float y) {
+        return colision(x,y,muerte) || colision(x,y,plataformaY);
+    }
+
+    public boolean colisionTecho(float x, float y) {
+        return colision(x,y,plataformaX, "PlataformasNoCruzar");
+    }
+
+    public boolean colisionPuertaCerrada(float x, float y) {
+        return colision(x,y,puertas, "PuertaCerrada");
     }
 }

@@ -1,6 +1,7 @@
 package mx.itesm.lightsgone;
 
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Sprite;
@@ -54,8 +55,6 @@ public abstract class Proyectil {
         proyectil.setY(y);
     }
 
-
-
     public Rectangle getRectangle(){
         return proyectil.getBoundingRectangle();
     }
@@ -106,7 +105,9 @@ public abstract class Proyectil {
 
         @Override
         public boolean out() {
-            return mapa.colisionX(proyectil.getX(), proyectil.getY()) || right? x + 1000 <= proyectil.getX() : proyectil.getX() <= x - 1000;
+            if(mapa.colisionX(proyectil.getX(), proyectil.getY()))
+                return true;
+            return right? x + 1000 <= proyectil.getX() : proyectil.getX() <= x - 1000;
         }
 
     }

@@ -1,6 +1,7 @@
 package mx.itesm.lightsgone;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Animation;
@@ -17,8 +18,6 @@ import java.util.ArrayList;
 public class Abner {
     public static final int X = 450;
     public static final int SALTOMAX = 280;
-    public static final int CAMARAINICIAL = 640;
-    private final Sprite fondo;
     private float xOriginal, yOriginal;
     private Sprite sprite;
     private int cont = 8;
@@ -37,16 +36,15 @@ public class Abner {
     private Vertical estadoSalto;
     private Horizontal estadoHorizontal;
     private Rectangle ProyectilRectangulo=new Rectangle();
-    public boolean pogo, capita, lanzapapas, danoA, danoB, pisoLata;
+    public boolean pogo, capita, lanzapapas, danoA, danoB, pisoLata,lampara;
     private boolean muerte, escaleras;
     private Texture saltarPogo1, saltarPogo2;
     private boolean arrastrado, arrastradoPiso;
-    private  int direccion;
     private float movPiso;
     private int papas;
 
     public Abner(Texture texture, Texture correr1, Texture correr2, Texture saltar1, Texture saltar2, Texture resortera1,
-                 Texture resortera2, Texture resortera3,Texture saltarPogo1,Texture saltarPogo2,Texture dano, Texture lanzapapas1, Texture lanzapapas2,OrthographicCamera camara, Mapa mapa, GameInfo gameInfo, Sprite fondo){
+                 Texture resortera2, Texture resortera3,Texture saltarPogo1,Texture saltarPogo2,Texture dano, Texture lanzapapas1, Texture lanzapapas2,OrthographicCamera camara, Mapa mapa, GameInfo gameInfo){
         this.neutral = texture;
         xOriginal = texture.getWidth();
         yOriginal = texture.getHeight();
@@ -83,7 +81,6 @@ public class Abner {
         danoA = false;
         timerDano = 0.5f;
         timerDanoAlpha =3;
-        this.fondo = fondo;
         this.papas = 10;
     }
 
@@ -106,9 +103,11 @@ public class Abner {
             cantVida = 99;
         }
 
-        if(mapa.colisionEscalera(sprite.getX() + sprite.getWidth() / 2, sprite.getY() - (saltoMov + gravedad)))
+        mapa.colisionCaja(sprite.getX()+sprite.getWidth()/2, sprite.getY()+35, right, mov);
+
+        if(mapa.colisionEscalera(sprite.getX() + sprite.getWidth() / 2, sprite.getY() - (saltoMov))&&salto != Salto.SUBIENDO)
             escaleras = true;
-        else if(mapa.colisionY(sprite.getX() + sprite.getWidth() / 2, sprite.getY() - (saltoMov + gravedad)))
+        else if(mapa.colisionY(sprite.getX() + sprite.getWidth() / 2, sprite.getY() - (saltoMov))!=-1)
             escaleras = false;
 
         if(danoA){
@@ -264,7 +263,7 @@ public class Abner {
         }
 
         if(estadoAtaque == Ataque.DESACTIVADO && estadoSalto == Vertical.DESACTIVADO && estadoHorizontal==Horizontal.DESACTIVADO&&!danoA){
-            if(mapa.colisionY(sprite.getX()+sprite.getWidth()/2,sprite.getY()-(saltoMov+gravedad))||mapa.colisionInclinada(sprite.getX() + sprite.getWidth() / 2, sprite.getY() - (saltoMov + gravedad))||pisoLata)sprite.setTexture(neutral);
+            if(mapa.colisionY(sprite.getX()+sprite.getWidth()/2,sprite.getY()-(saltoMov))!=-1||mapa.colisionInclinada(sprite.getX() + sprite.getWidth() / 2, sprite.getY() - (saltoMov + gravedad))||pisoLata)sprite.setTexture(neutral);
             else{
                 estadoSalto = Vertical.ACTIVADO;
                 salto = Salto.BAJANDO;
@@ -294,8 +293,8 @@ public class Abner {
                 timerAnimationA += Gdx.graphics.getDeltaTime();
                 sprite.setTexture(atacarLanzaPapas.getKeyFrame(timerAnimationA).getTexture());
                 sprite.setSize(atacarLanzaPapas.getKeyFrame(timerAnimationA).getTexture().getWidth(), atacarLanzaPapas.getKeyFrame(timerAnimationA).getTexture().getHeight());
-                if(timerAnimationA>0&&timerAnimationA<=(0+Gdx.graphics.getDeltaTime())&&papas>0){
-                    proyectiles.add(new Proyectil.Papa(!right?sprite.getX():sprite.getX()+sprite.getWidth(), sprite.getY()+100, right, mapa));
+                if(timerAnimationA>0.2f&&timerAnimationA<=(0.2f+Gdx.graphics.getDeltaTime())&&papas>0){
+                    proyectiles.add(new Proyectil.Papa(!right?sprite.getX():sprite.getX()+sprite.getWidth(), sprite.getY()+100, right, this.mapa));
                     papas--;
                 }
                 else if(timerAnimationA>atacar.getAnimationDuration()){
@@ -315,11 +314,10 @@ public class Abner {
                 sprite.flip(true, false);
             }
             if (!mapa.colisionX((sprite.getX() + (sprite.getWidth() / 2)) + mov, sprite.getY()+20)&&!mapa.colisionInclinada((sprite.getX() + (sprite.getWidth() / 2)) + mov, sprite.getY())&&!arrastrado&&!arrastradoPiso){
-                if(mapa.colisionY(sprite.getX() + sprite.getWidth() / 2, sprite.getY() - (saltoMov + gravedad)) || estadoSalto != Vertical.DESACTIVADO|| mapa.colisionInclinada(sprite.getX() + sprite.getWidth() / 2, sprite.getY() - (saltoMov + gravedad))||pisoLata){
+                if(mapa.colisionY(sprite.getX() + sprite.getWidth() / 2, sprite.getY() - (saltoMov))!=-1 || estadoSalto != Vertical.DESACTIVADO|| mapa.colisionInclinada(sprite.getX() + sprite.getWidth() / 2, sprite.getY() - (saltoMov + gravedad))||pisoLata){
                     sprite.translate(mov, 0);
                     if(limiteCamaraX()){
                         camara.translate(mov,0);
-                        fondo.translate(mov, 0);
                     }
                     else if(sprite.getX()<=530)
                         camara.position.x = Nivel0.ANCHO_MUNDO/2;
@@ -335,11 +333,10 @@ public class Abner {
                 sprite.flip(true, false);
             }
             if (!mapa.colisionX((sprite.getX() + (sprite.getWidth() / 2)) - mov, sprite.getY()+20)&&!mapa.colisionInclinada((sprite.getX() + (sprite.getWidth() / 2))- mov, sprite.getY())&&!arrastrado&&!arrastradoPiso) {
-                if (mapa.colisionY(sprite.getX() + sprite.getWidth() / 2, sprite.getY() - (saltoMov + gravedad)) || estadoSalto != Vertical.DESACTIVADO|| mapa.colisionInclinada(sprite.getX() + sprite.getWidth() / 2, sprite.getY() - (saltoMov + gravedad))||pisoLata){
+                if (mapa.colisionY(sprite.getX() + sprite.getWidth() / 2, sprite.getY() - (saltoMov))!=-1 || estadoSalto != Vertical.DESACTIVADO|| mapa.colisionInclinada(sprite.getX() + sprite.getWidth() / 2, sprite.getY() - (saltoMov))||pisoLata){
                     sprite.translate(-mov, 0);
                     if(limiteCamaraX()){
                         camara.translate(-mov,0);
-                        fondo.translate(-mov, 0);
                     }
                 }
                 else {
@@ -405,27 +402,24 @@ public class Abner {
             case SUBIENDO:
                 escaleras = false;
                 sprite.setY(sprite.getY() + saltoMov);
-                if(limiteCamara())
-                    fondo.translate(0,saltoMov);
                 if(sprite.getY()>= alturaMax){
                     sprite.setY(alturaMax);
                     salto = Salto.BAJANDO;
                 }
-                if(mapa.colisionX(sprite.getX()+sprite.getWidth()/2, sprite.getY()+getBoundingRectangle().getHeight()+saltoMov)){
+                if(mapa.colisionTecho(sprite.getX()+sprite.getWidth()/2, sprite.getY()+getBoundingRectangle().getHeight())){
                     salto = Salto.BAJANDO;
                 }
                 break;
             case BAJANDO:
-
-                if (mapa.colisionY(sprite.getX() + sprite.getWidth() / 2, sprite.getY() - (saltoMov + gravedad))||mapa.colisionInclinada(sprite.getX() + sprite.getWidth() / 2, sprite.getY() - (estadoSalto==Vertical.POGO?saltoMov + gravedad+10:saltoMov + gravedad))||pisoLata) {
+                float nuevaY= mapa.colisionY(sprite.getX() + sprite.getWidth() / 2, sprite.getY()-saltoMov);
+                if (nuevaY!=-1||mapa.colisionInclinada(sprite.getX() + sprite.getWidth() / 2, sprite.getY() - (estadoSalto==Vertical.POGO?saltoMov + gravedad+10:saltoMov + gravedad))||pisoLata) {
                     estadoSalto = Vertical.DESACTIVADO;
+                    sprite.setY(nuevaY);
                     this.alturaMax = sprite.getY() + SALTOMAX;
                     sprite.setSize(xOriginal, yOriginal);
                 }
                 else{
                     sprite.setY(sprite.getY() - (saltoMov + gravedad));
-                    if(limiteCamara())
-                        fondo.translate(0,-(saltoMov+gravedad));
                 }
                 break;
 
@@ -455,7 +449,7 @@ public class Abner {
     }
 
     public boolean isAttacking() {
-        return (estadoAtaque == Ataque.ACTIVADO);
+        return (estadoAtaque != Ataque.DESACTIVADO);
     }
 
     public Rectangle getBoundingRectangle(){
@@ -523,29 +517,23 @@ public class Abner {
         sprite.setSize(xOriginal, yOriginal);
         sprite.setPosition(x,y);
         if(x<530){
-            fondo.setPosition(0,0);
             camara.position.set(Nivel0.ANCHO_MUNDO/2, camara.position.y, 0);
         }
         else if(x>mapa.getWidth()-770) {
-            fondo.setPosition(mapa.getWidth()-fondo.getWidth(), 0);
             camara.position.set(mapa.getWidth() - Nivel0.ANCHO_MUNDO / 2, camara.position.y, 0);
         }
         else {
-            fondo.setPosition(x-530,0);
             camara.position.set(110 + x, camara.position.y, 0);
         }
 
         if(y>mapa.getHeight()-810){
             camara.position.set(camara.position.x, mapa.getHeight()-Nivel0.ALTO_MUNDO/2, 0);
-            fondo.setPosition(fondo.getX(), mapa.getHeight()-fondo.getHeight());
         }
         else if(y<=135) {
             camara.position.set(camara.position.x, Nivel0.ALTO_MUNDO / 2, 0);
-            fondo.setPosition(fondo.getX(), 0);
         }
         else{
             camara.position.set(camara.position.x, 265+y, 0);
-            fondo.setPosition(fondo.getX(), y-135);
         }
         alturaMax = sprite.getY() + SALTOMAX;
         this.y = y;
@@ -582,10 +570,16 @@ public class Abner {
         estadoHorizontal = Horizontal.DESACTIVADO;
         estadoAtaque = Ataque.DESACTIVADO;
         estadoSalto = Vertical.DESACTIVADO;
-        cantVida = 99;
         pogo = gameInfo.isPogo();
         capita = gameInfo.isCapita();
         lanzapapas = gameInfo.isLanzapapas();
+        if(muerte){
+            if(vidas>0)
+                vidas--;
+            else{
+                cantVida = 30;
+            }
+        }
         muerte = false;
         danoB = false;
         danoA = false;

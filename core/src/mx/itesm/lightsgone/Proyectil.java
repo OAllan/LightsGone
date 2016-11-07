@@ -27,7 +27,6 @@ public abstract class Proyectil {
         if(right)
             this.proyectil.flip(true, false);
 
-
     }
 
     public void draw(SpriteBatch batch){

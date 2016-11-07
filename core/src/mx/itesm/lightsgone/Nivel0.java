@@ -16,7 +16,6 @@ import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.viewport.StretchViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
-import com.sun.scenario.effect.impl.sw.sse.SSEBlend_ADDPeer;
 
 import org.omg.CORBA.portable.ValueInputStream;
 
@@ -52,7 +51,7 @@ public class Nivel0 implements Screen, InputProcessor{
     private Music ambiente, gameover;
     private Juego juego;
     private AssetManager assetManager = new AssetManager();
-    private Texture  encendida, encendidaOscuridad,municion,lanzapapas1, lanzapapas2, habilidadLanzaPapas, transicionCocina,transicionJardin, transicionArmario, transicionSotano, transicionCoco, transicionNeutral,  malteada, dano, nivelVida, gameOver,habilidadDes, habilidadPogo,save,pausaTex,quitTex, opciones, neutral, salto1, salto2, correr1, correr2, botonSalto, JFondo, botonVida, habilidad, texPausa, resortera1, resortera2, resortera3, plataforma;
+    private Texture  municion, habilidadLanzaPapas, transicionCocina,transicionJardin, transicionArmario, transicionSotano, transicionCoco, transicionNeutral,  malteada, dano, nivelVida, gameOver,habilidadDes, habilidadPogo,save,pausaTex,quitTex, opciones,  botonSalto, JFondo, botonVida, habilidad, texPausa, plataforma;
     private Sprite transicionNivel, pausaActual, fondoCielo;
     private static Abner abner;
     private Texto vida, municionTex;
@@ -60,7 +59,7 @@ public class Nivel0 implements Screen, InputProcessor{
     private Sprite imgVida, menuGameOver, imgMunicion;
     private boolean right, saveB;
     public static boolean musica;
-    private Boton botonBack, botonOn, botonOff, botonTry, botonMain,botonSaltar, botonArma, pausa, botonResume, botonOpciones,botonQuit, botonYes,botonNo, botonSave, botonHabilidad;
+    private Boton botonCambioUp, botonCambioDown, botonBack, botonOn, botonOff, botonTry, botonMain,botonSaltar, botonArma, pausa, botonResume, botonOpciones,botonQuit, botonYes,botonNo, botonSave, botonHabilidad;
     private float alpha = 0;
     private Array<Mapa> mapas;
     private static Mapa mapa;
@@ -115,7 +114,7 @@ public class Nivel0 implements Screen, InputProcessor{
     private void crearMapas() {
         mapas = new Array<Mapa>(6);
         abner = new Abner(camara, mapa, gameInfo);
-        float[] cuartoAbnerX ={530, 2295}, pasilloX = {270, 4140}, salaX = {450, 450,2280,2280}, cocina1X = {315,1305}, cocina2X = {5895,5895}, cocina3X = {630}, jardin1X = {1395, 20745,2170}, jardin2X ={540,18360}, jardin3X = {7740,495}, armario1X = {12510, 315};
+        float[] cuartoAbnerX ={530, 2295}, pasilloX = {270, 4140}, salaX = {450, 450,2280,2280}, cocina1X = {315,1305}, cocina2X = {5895,5895}, cocina3X = {630}, jardin1X = {1395, 20745,2170}, jardin2X ={540,18360}, jardin3X = {7740,400}, armario1X = {12510, 315};
         boolean[] cuartoAbnerB = {true, false}, pasilloB = {true, false}, salaB={true, true, false, false}, cocina1B = {true, true},
                 cocina2B = {false,false}, cocina3B = {true}, jardin1B = {true, false, false}, jardin2B = {true, true}, jardin3B = {true, true}, armario1B = {false, true};
         int[] cuartoAbner = {9,1}, pasillo = {0,2}, sala = {1,0,6,3}, cocina1 = {2,4}, cocina2 = {3,5}, cocina3 = {4}, jardin1 = {2,7,8}, jardin2 = {6,8}, jardin3 = {6,7}, armario1 = {0,10};
@@ -300,19 +299,11 @@ public class Nivel0 implements Screen, InputProcessor{
     }
 
     private void cargarTexturas() {
-        assetManager.load("PCorrer1.png",Texture.class);
-        assetManager.load("PCorrer2.png", Texture.class );
-        assetManager.load("PNeutral.png", Texture.class);
-        assetManager.load("PSalto1.png", Texture.class);
-        assetManager.load("PSalto2.png", Texture.class);
         assetManager.load("BotonSalto.png", Texture.class);
         assetManager.load("JoystickBoton.png", Texture.class);
         assetManager.load("BotonPausa.png", Texture.class);
         assetManager.load("BotonVida.png", Texture.class);
         assetManager.load("BotonResortera.png", Texture.class);
-        assetManager.load("PResortera1.png", Texture.class);
-        assetManager.load("PResortera2.png", Texture.class);
-        assetManager.load("PResortera3.png", Texture.class);
         assetManager.load("nivel.png", Texture.class);
         assetManager.load("PlataformaInclinada.png", Texture.class);
         assetManager.load("menuPausa.png", Texture.class);
@@ -321,11 +312,8 @@ public class Nivel0 implements Screen, InputProcessor{
         assetManager.load("Save6.png", Texture.class);
         assetManager.load("BotonHabilidadDesactivado.png", Texture.class);
         assetManager.load("BotonHabPogo.png", Texture.class);
-        assetManager.load("PPogo1.png", Texture.class);
-        assetManager.load("PPogo2.png", Texture.class);
         assetManager.load("gameOver.png", Texture.class);
         assetManager.load("BotonNivelVida.png", Texture.class);
-        assetManager.load("PDaño.png", Texture.class);
         assetManager.load("MalteadaMundo.png", Texture.class);
         assetManager.load("FondoCielo.png", Texture.class);
         assetManager.load("cocina.png", Texture.class);
@@ -333,8 +321,6 @@ public class Nivel0 implements Screen, InputProcessor{
         assetManager.load("jardin.png", Texture.class);
         assetManager.load("ropero.png", Texture.class);
         assetManager.load("sotano.png", Texture.class);
-        assetManager.load("PLanzaPapa1.png", Texture.class);
-        assetManager.load("PLanzaPapa2.png", Texture.class);
         assetManager.load("BotonHabLanzaPapa.png", Texture.class);
         assetManager.load("BotonMunicion.png", Texture.class);
         assetManager.load("CajaMovilDer.png", Texture.class);
@@ -345,19 +331,11 @@ public class Nivel0 implements Screen, InputProcessor{
         assetManager.load("ambiente.mp3", Music.class);
         assetManager.load("risa.mp3", Music.class);
         assetManager.finishLoading();
-        neutral = assetManager.get("PNeutral.png");
-        salto1 = assetManager.get("PSalto1.png");
-        salto2 = assetManager.get("PSalto2.png");
-        correr1 = assetManager.get("PCorrer1.png");
-        correr2 = assetManager.get("PCorrer2.png");
         botonSalto = assetManager.get("BotonSalto.png");
         JFondo = assetManager.get("JoystickBoton.png");
         texPausa = assetManager.get("BotonPausa.png");
         habilidad = assetManager.get("BotonResortera.png");
         botonVida  =assetManager.get("BotonVida.png");
-        resortera1 =  assetManager.get("PResortera1.png");
-        resortera2 =  assetManager.get("PResortera2.png");
-        resortera3 =  assetManager.get("PResortera3.png");
         transicionNeutral = assetManager.get("nivel.png");
         transicionCocina = assetManager.get("cocina.png");
         transicionCoco = assetManager.get("coco.png");
@@ -371,25 +349,18 @@ public class Nivel0 implements Screen, InputProcessor{
         save = assetManager.get("Save6.png");
         habilidadDes = assetManager.get("BotonHabilidadDesactivado.png");
         habilidadPogo = assetManager.get("BotonHabPogo.png");
-        pPogo1 = assetManager.get("PPogo1.png");
-        pPogo2 = assetManager.get("PPogo2.png");
         gameOver = assetManager.get("gameOver.png");
         nivelVida = assetManager.get("BotonNivelVida.png");
         ambiente = assetManager.get("ambiente.mp3");
         gameover = assetManager.get("risa.mp3");
-        dano = assetManager.get("PDaño.png");
         malteada = assetManager.get("MalteadaMundo.png");
         fondoCielo = new Sprite((Texture)assetManager.get("FondoCielo.png"));
         fondoCielo.setPosition(0,0);
         habilidadLanzaPapas = assetManager.get("BotonHabLanzaPapa.png");
-        lanzapapas1 = assetManager.get("PLanzaPapa1.png");
-        lanzapapas2 = assetManager.get("PLanzaPapa2.png");
         municion = assetManager.get("BotonMunicion.png");
         caja = assetManager.get("CajaMovilDer.png");
         lamparaOff = assetManager.get("BotonHabLamparaOff.png");
         lamparaOn = assetManager.get("BotonHabLamparaOn.png");
-        encendida = assetManager.get("LuzConLampara.png");
-        encendidaOscuridad = assetManager.get("OscuridadConLampara.png");
     }
 
     @Override
@@ -702,8 +673,8 @@ public class Nivel0 implements Screen, InputProcessor{
 
     }
 
-    private boolean sotano() {
-        return mapaActual == 12 || mapaActual ==13||mapaActual == 14;
+    public static boolean sotano() {
+        return mapaActual == 2 || mapaActual ==13||mapaActual == 14;
     }
 
     private void habilidadSiguiente() {
@@ -746,11 +717,7 @@ public class Nivel0 implements Screen, InputProcessor{
 
     @Override
     public void dispose() {
-        neutral.dispose();
-        salto1.dispose();
-        salto2.dispose();
-        correr1.dispose();
-        correr2.dispose();
+
         for(Mapa mapa: mapas)
             mapa.dispose();
         batch.dispose();

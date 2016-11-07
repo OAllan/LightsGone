@@ -212,6 +212,7 @@ public class Abner {
 
         if(mapa.colisionItem(sprite.getX()+sprite.getWidth(),sprite.getY(),"VidaExtra")){
             mapa.remove("VidaExtra");
+
             if(vidas<3)
                 vidas++;
         }
@@ -724,6 +725,10 @@ public class Abner {
 
     public void setLampara(Nivel0.Lampara lampara) {
         this.estadoLampara = lampara;
+    }
+
+    public boolean getLampara() {
+        return lampara;
     }
 
     public enum Salto{

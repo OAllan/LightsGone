@@ -291,11 +291,6 @@ public class Mapa {
     public void reiniciar(GameInfo gameInfo) {
         MapLayers layers = mapa.getLayers();
         copiarEnemigos();
-        for(MapLayer mapLayer: layers){
-            if(mapLayer.getName().equalsIgnoreCase("VidaExtra"))
-                continue;
-            mapLayer.setVisible(true);
-        }
         if(gameInfo.isPogo()&&layers.get("Pogo")!=null) {
             layers.get("Pogo").setVisible(false);
         }
@@ -304,6 +299,28 @@ public class Mapa {
         }
         if(gameInfo.isLanzapapas()&&layers.get("LanzaPapa")!=null) {
             mapa.getLayers().get("LanzaPapa").setVisible(false);
+        }
+        if(gameInfo.isLamparaTemp()&&layers.get("Lampara")!=null){
+            mapa.getLayers().get("Lampara").setVisible(false);
+        }
+
+    }
+
+    public void reiniciarTemp(GameInfo gameInfo) {
+        MapLayers layers = mapa.getLayers();
+        copiarEnemigos();
+
+        if(gameInfo.isPogoTemp()&&layers.get("Pogo")!=null) {
+            layers.get("Pogo").setVisible(false);
+        }
+        if(gameInfo.isCapitaTemp()&&layers.get("Capita")!=null) {
+            layers.get("Capita").setVisible(false);
+        }
+        if(gameInfo.isLanzapapasTemp()&&layers.get("LanzaPapa")!=null) {
+            mapa.getLayers().get("LanzaPapa").setVisible(false);
+        }
+        if(gameInfo.isLamparaTemp()&&layers.get("Lampara")!=null){
+            mapa.getLayers().get("Lampara").setVisible(false);
         }
 
     }

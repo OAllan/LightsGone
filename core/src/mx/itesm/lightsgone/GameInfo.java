@@ -16,7 +16,8 @@ import java.util.Scanner;
  */
 public class GameInfo {
     private int vida, vidas;
-    private boolean pogo, capita, lanzapapas;
+    private boolean pogo, capita, lanzapapas, lampara;
+    private boolean pogoTemp, capitaTemp, lanzapapasTemp, lamparaTemp;
     private int mapa;
     private float x, y, camaraX, camaraY;
     private String nombre;
@@ -26,7 +27,8 @@ public class GameInfo {
     public GameInfo(){
         vidas = 0;
         vida = 99;
-        pogo = capita = lanzapapas = false;
+        pogo = capita = lanzapapas = lampara = false;
+        pogoTemp = capitaTemp = lanzapapasTemp = lamparaTemp=false;
         mapa = 0;
         x = 530;
         y=135;
@@ -55,12 +57,13 @@ public class GameInfo {
             x = Float.parseFloat(lineas[2].trim());
             y = Float.parseFloat(lineas[3].trim());
             vida = Integer.parseInt(lineas[4].trim());
-            pogo = Boolean.parseBoolean(lineas[5].trim());
-            lanzapapas = Boolean.parseBoolean(lineas[6].trim());
-            capita = Boolean.parseBoolean(lineas[7].trim());
+            pogo = pogoTemp=Boolean.parseBoolean(lineas[5].trim());
+            lanzapapas = lanzapapasTemp = Boolean.parseBoolean(lineas[6].trim());
+            capita = capitaTemp = Boolean.parseBoolean(lineas[7].trim());
             camaraX = Float.parseFloat(lineas[8].trim());
             camaraY = Float.parseFloat(lineas[9].trim());
             vidas = Integer.parseInt(lineas[10].trim());
+            lampara = lamparaTemp = Boolean.parseBoolean(lineas[11].trim());
 
         }
         catch (Exception e){
@@ -85,6 +88,7 @@ public class GameInfo {
             save.writeString(camaraX + "\n", true);
             save.writeString(camaraY + "\n", true);
             save.writeString(vidas + "\n", true);
+            save.writeString(lampara + "\n",true);
         }
         catch (Exception e){
             Gdx.app.log("Exception ", e.getMessage());
@@ -103,6 +107,7 @@ public class GameInfo {
         camaraX = abner.getCamaraX();
         camaraY = abner.getCamaraY();
         vidas = abner.getVidas();
+        lampara = abner.getLampara();
     }
 
     private String nombre(){
@@ -188,5 +193,21 @@ public class GameInfo {
 
     public int getVidas() {
         return vidas;
+    }
+
+    public boolean isPogoTemp() {
+        return pogoTemp;
+    }
+
+    public boolean isCapitaTemp() {
+        return capitaTemp;
+    }
+
+    public boolean isLanzapapasTemp() {
+        return lanzapapasTemp;
+    }
+
+    public boolean isLamparaTemp() {
+        return lamparaTemp;
     }
 }

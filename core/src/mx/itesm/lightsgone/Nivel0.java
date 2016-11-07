@@ -41,9 +41,10 @@ public class Nivel0 implements Screen, InputProcessor{
     public static final float TRANSICIONNEUTRAL = 0.01f;
     public static final int MUNICIONX = 264;
     public static final int MUNICIONY = 706;
-    private final float YARMARIO = 450;
+    public static final float YBAJA = 135f, YMEDIA = 800f, YALTA =1100f;
+    public static final float YARMARIO = 450;
     private float velocidadTransicion = TRANSICIONNEUTRAL;
-    private final int LATAX = 4871;
+    public static final int LATAX = 4871;
     private OrthographicCamera camara;
     private OrthographicCamera camaraHUD;
     private Viewport vista;
@@ -51,7 +52,8 @@ public class Nivel0 implements Screen, InputProcessor{
     private Music ambiente, gameover;
     private Juego juego;
     private AssetManager assetManager = new AssetManager();
-    private Texture  municion, habilidadLanzaPapas, transicionCocina,transicionJardin, transicionArmario, transicionSotano, transicionCoco, transicionNeutral,  malteada, dano, nivelVida, gameOver,habilidadDes, habilidadPogo,save,pausaTex,quitTex, opciones,  botonSalto, JFondo, botonVida, habilidad, texPausa, plataforma;
+    public static Texture plataforma;
+    private Texture  municion, habilidadLanzaPapas, transicionCocina,transicionJardin, transicionArmario, transicionSotano, transicionCoco, transicionNeutral,  malteada, dano, nivelVida, gameOver,habilidadDes, habilidadPogo,save,pausaTex,quitTex, opciones,  botonSalto, JFondo, botonVida, habilidad, texPausa;
     private Sprite transicionNivel, pausaActual, fondoCielo;
     private static Abner abner;
     private Texto vida, municionTex;
@@ -61,7 +63,7 @@ public class Nivel0 implements Screen, InputProcessor{
     public static boolean musica;
     private Boton botonCambioUp, botonCambioDown, botonBack, botonOn, botonOff, botonTry, botonMain,botonSaltar, botonArma, pausa, botonResume, botonOpciones,botonQuit, botonYes,botonNo, botonSave, botonHabilidad;
     private float alpha = 0;
-    private Array<Mapa> mapas;
+    private Array<String> mapas;
     private static Mapa mapa;
     static int mapaActual;
     private ArrayList<Proyectil> proyectiles;
@@ -69,9 +71,9 @@ public class Nivel0 implements Screen, InputProcessor{
     private Estado estado;
     private EstadoPausa estadoPausa;
     private GameInfo gameInfo;
-    private final float YBAJA = 135f, YMEDIA = 800f, YALTA =1100f;
     private Texture pPogo1, pPogo2;
     private float alphaGame;
+    private MapManager mapManager;
     public static Habilidad habilidadActual;
     private Array<Sprite> vidas;
     private Array<Sprite> malteadas;
@@ -79,8 +81,7 @@ public class Nivel0 implements Screen, InputProcessor{
     static Array<Enemigo> enemigosPrueba= new Array<Enemigo>(9);
 
     Array<Enemigo> enemigos = new Array<Enemigo>(3);
-    Array<Enemigo> enemigosC1 = new Array<Enemigo>(3);
-    Array<Enemigo> enemigosC2 = new Array<Enemigo>(9);
+
     private Texture caja;
     private Lampara estadoLampara;
     private Texture lamparaOff, lamparaOn;
@@ -112,40 +113,21 @@ public class Nivel0 implements Screen, InputProcessor{
     }
 
     private void crearMapas() {
-        mapas = new Array<Mapa>(6);
+        mapas = new Array<String>(6);
+        mapManager = new MapManager(camara, batch);
         abner = new Abner(camara, mapa, gameInfo);
-        float[] cuartoAbnerX ={530, 2295}, pasilloX = {270, 4140}, salaX = {450, 450,2280,2280}, cocina1X = {315,1305}, cocina2X = {5895,5895}, cocina3X = {630}, jardin1X = {1395, 20745,2170}, jardin2X ={540,18360}, jardin3X = {7740,400}, armario1X = {12510, 315};
-        boolean[] cuartoAbnerB = {true, false}, pasilloB = {true, false}, salaB={true, true, false, false}, cocina1B = {true, true},
-                cocina2B = {false,false}, cocina3B = {true}, jardin1B = {true, false, false}, jardin2B = {true, true}, jardin3B = {true, true}, armario1B = {false, true};
-        int[] cuartoAbner = {9,1}, pasillo = {0,2}, sala = {1,0,6,3}, cocina1 = {2,4}, cocina2 = {3,5}, cocina3 = {4}, jardin1 = {2,7,8}, jardin2 = {6,8}, jardin3 = {6,7}, armario1 = {0,10};
-        mapas.add(new Mapa("CuartoAbner.tmx", batch, camara, cuartoAbner, cuartoAbnerB,cuartoAbnerX ,YBAJA, YBAJA));
-        mapas.add(new Mapa("Pasillo.tmx", batch, camara, pasillo, pasilloB, pasilloX,YBAJA, YBAJA));
-        mapas.add(new Mapa("Sala.tmx", batch, camara, sala, salaB, salaX,YALTA, YBAJA, YSALA, YMEDIA));
-        mapas.add(new Mapa("Cocina1.tmx", batch, camara, cocina1, cocina1B,cocina1X, YBAJA, YCOCINA1));
-        mapas.add(new Mapa("Cocina2.tmx", batch, camara, cocina2, cocina2B,cocina2X ,YBAJA, YCOCINA2));
-        mapas.add(new Mapa("Cocina3.tmx", batch, camara, cocina3, cocina3B, cocina3X,YCOCINA3));
-        mapas.add(new Mapa("Jardin1.tmx", batch, camara, jardin1, jardin1B, jardin1X,YCOCINA2, YJARDIN1,YBAJA));
-        mapas.add(new Mapa("Jardin2.tmx", batch, camara, jardin2, jardin2B, jardin2X,YJARDIN2, YJARDIN2));
-        mapas.add(new Mapa("Jardin3.tmx", batch, camara, jardin3, jardin3B, jardin3X,YBAJA, YJARDIN3));
-        mapas.add(new Mapa("Armario1.tmx", batch, camara,armario1, armario1B, armario1X, YARMARIO, YSALA));
-        mapas.get(6).setCajas(new CajaMovil(14850, 1700, mapas.get(6)));
-        mapas.get(7).setCajas(new CajaMovil(13815, 315, mapas.get(7)));
-        for(Mapa mapa: mapas)
-            mapa.reiniciar(gameInfo);
-        Sprite sprite = new Sprite(plataforma);
-        sprite.setRotation(12);
-        sprite.setPosition(ANCHO_MUNDO + 470, ALTO_MUNDO * 3 - 850);
-        mapas.get(4).setPlataformasInclinada(sprite);
+        mapas.add("CuartoAbner.tmx");
+        mapas.add("Pasillo.tmx");
+        mapas.add("Sala.tmx");
+        mapas.add("Cocina1.tmx");
+        mapas.add("Cocina2.tmx");
+        mapas.add("Cocina3.tmx");
+        mapas.add("Jardin1.tmx");
+        mapas.add("Jardin2.tmx");
+        mapas.add("Jardin3.tmx");
+        mapas.add("Armario1.tmx");
         mapaActual = gameInfo.getMapa();
-        Array<Enemigo> enemigos = new Array<Enemigo>(3);
-        Array<Enemigo> enemigosC2 = new Array<Enemigo>(3);
-        mapa = mapas.get(mapaActual);
-        enemigosC1.add(new Enemigo.Lata(LATAX,mapas.get(4).getHeight(),mapas.get(4)));
-        enemigosC1.add(new Enemigo.Lata(LATAX, mapas.get(4).getHeight()+3300, mapas.get(4)));
-        enemigosC1.add(new Enemigo.Lata(LATAX, mapas.get(4).getHeight()+6600, mapas.get(4)));
-        enemigosC1.add(new Enemigo.Lata(2640, 160, mapas.get(4),""));
-        enemigosC1.add(new Enemigo.Lata(1110, 160, mapas.get(4),""));
-        mapas.get(4).setEnemigos(enemigos);
+        mapa = mapManager.getMapa(mapas.get(mapaActual),mapaActual,abner, gameInfo);
         transicion = Transicion.DISMINUYENDO;
         musica = true;
         musica = true;
@@ -191,68 +173,6 @@ public class Nivel0 implements Screen, InputProcessor{
         transicionNivel.setSize(Nivel0.ANCHO_MUNDO, Nivel0.ALTO_MUNDO);
         abner = new Abner(camara, mapa, gameInfo);
 
-        //Moscas
-        enemigos.add(new Enemigo.Mosca(2295, 293, abner, mapa));
-        enemigos.add(new Enemigo.Mosca(2745, 2295, abner, mapa));
-        enemigos.add(new Enemigo.Mosca(3420, 2295, abner, mapa));
-
-
-        //Flamas
-        enemigos.add(new Enemigo.Fuego(7650, 1010, abner, mapa));
-        enemigos.add(new Enemigo.Fuego(8300, 1010, abner, mapa));
-        enemigos.add(new Enemigo.Fuego(8660, 1010, abner, mapa));
-        enemigos.add(new Enemigo.Fuego(9020, 1010, abner, mapa));
-        enemigos.add(new Enemigo.Fuego(9110, 1010, abner, mapa));
-        enemigos.add(new Enemigo.Fuego(9200, 1010, abner, mapa));
-        enemigos.add(new Enemigo.Fuego(9290, 1010, abner, mapa));
-
-        //Panes tostadores
-        enemigos.add(new Enemigo.PanTostadora(7635, 2035, abner, mapa));
-        enemigos.add(new Enemigo.PanTostadora(5873, 1995, abner, mapa));
-        enemigos.add(new Enemigo.PanTostadora(4703, 1995, abner, mapa));
-
-        //Tostadores
-        enemigos.add(new Enemigo.Tostadora(7612, 2025, abner, mapa));
-        enemigos.add(new Enemigo.Tostadora(5850, 1980, abner, mapa));
-        enemigos.add(new Enemigo.Tostadora(4680, 1980, abner, mapa));
-
-        //Brocolis
-        enemigos.add(new Enemigo.Brocoli(3285, 500, abner, mapa));
-        enemigos.add(new Enemigo.Brocoli(4410, 90, abner, mapa));
-        enemigos.add(new Enemigo.Brocoli(5085, 90, abner, mapa));
-        enemigos.add(new Enemigo.Brocoli(6435, 900, abner, mapa));
-        enemigos.add(new Enemigo.Brocoli(9900, 1620, abner, mapa));
-        enemigos.add(new Enemigo.Brocoli(8865, 2025, abner, mapa));
-
-
-        //Enemigos cocina 2
-        //Sopas
-        enemigosC1.add(new Enemigo.Sopa(5265,180,abner,mapa));
-        enemigosC1.add(new Enemigo.Sopa(4005,225,abner,mapa));
-        enemigosC1.add(new Enemigo.Sopa(1395,1125,abner,mapa));
-
-        //Brocolis
-        enemigosC1.add(new Enemigo.Brocoli(765,495,abner,mapa));
-
-
-        //Enemigos cocina 3
-        //Moscas
-        enemigosC2.add(new Enemigo.Mosca(3330,765,abner,mapa));
-        enemigosC2.add(new Enemigo.Mosca(5355,1125,abner,mapa));
-
-
-        //Sopas
-        enemigosC2.add(new Enemigo.Sopa(2700,585,abner,mapa));
-        enemigosC2.add(new Enemigo.Sopa(4635,945,abner,mapa));
-        enemigosC2.add(new Enemigo.Sopa(5805,1530,abner,mapa));
-
-        //Panes Tostadores
-        enemigosC2.add(new Enemigo.PanTostadora(4298,780,abner,mapa));
-        enemigosC2.add(new Enemigo.PanTostadora(6143,1320,abner,mapa));
-
-        //Tostadores
-        enemigosC2.add(new Enemigo.Tostadora(4275,765,abner,mapa));
-        enemigosC2.add(new Enemigo.Tostadora(6120,1305,abner,mapa));
 
         //Enemigos prueba
         //enemigosPrueba.add(new Enemigo.Brocoli(450,150,abner,mapa));
@@ -283,10 +203,6 @@ public class Nivel0 implements Screen, InputProcessor{
         botonOff = new Boton(757,166,134,67);
         botonBack = new Boton(526, 53,209, 81);
         alphaGame = 0;
-        mapas.get(3).setEnemigos(enemigos);
-        mapas.get(4).setEnemigos(enemigosC1);
-        mapas.get(5).setEnemigos(enemigosC2);
-        mapas.get(0).setEnemigos(enemigosPrueba);
         enemigos = mapa.getEnemigos();
         ambiente.setVolume(0.5f);
 
@@ -315,7 +231,7 @@ public class Nivel0 implements Screen, InputProcessor{
         assetManager.load("gameOver.png", Texture.class);
         assetManager.load("BotonNivelVida.png", Texture.class);
         assetManager.load("MalteadaMundo.png", Texture.class);
-        assetManager.load("FondoCielo.png", Texture.class);
+        assetManager.load("FondoCielo.jpg", Texture.class);
         assetManager.load("cocina.png", Texture.class);
         assetManager.load("coco.png", Texture.class);
         assetManager.load("jardin.png", Texture.class);
@@ -354,7 +270,7 @@ public class Nivel0 implements Screen, InputProcessor{
         ambiente = assetManager.get("ambiente.mp3");
         gameover = assetManager.get("risa.mp3");
         malteada = assetManager.get("MalteadaMundo.png");
-        fondoCielo = new Sprite((Texture)assetManager.get("FondoCielo.png"));
+        fondoCielo = new Sprite((Texture)assetManager.get("FondoCielo.jpg"));
         fondoCielo.setPosition(0,0);
         habilidadLanzaPapas = assetManager.get("BotonHabLanzaPapa.png");
         municion = assetManager.get("BotonMunicion.png");
@@ -521,7 +437,7 @@ public class Nivel0 implements Screen, InputProcessor{
                         transicionNivel.setTexture(transicionNeutral);
                         velocidadTransicion = TRANSICIONNEUTRAL;
                 }
-                mapa = mapas.get(mapaActual);
+                mapa = mapManager.getMapa(mapas.get(mapaActual), mapaActual, abner, gameInfo);
                 abner.setMapa(mapa);
                 abner.setInitialPosition(tempMapa);
                 estado = Estado.CAMBIO;
@@ -717,9 +633,6 @@ public class Nivel0 implements Screen, InputProcessor{
 
     @Override
     public void dispose() {
-
-        for(Mapa mapa: mapas)
-            mapa.dispose();
         batch.dispose();
 
     }
@@ -828,13 +741,11 @@ public class Nivel0 implements Screen, InputProcessor{
     private void reiniciarEscena() {
         abner.reiniciar(gameInfo);
         mapaActual = gameInfo.getMapa();
-        mapa = mapas.get(mapaActual);
+        mapa = mapManager.getNewMapa(mapas.get(mapaActual),mapaActual, abner, gameInfo);
         abner.setMapa(mapa);
         if(!gameInfo.isPogo()){
             habilidadActual = Habilidad.VACIA;
         }
-        for(Mapa mapa: mapas)
-            mapa.reiniciar(gameInfo);
         botonHabilidad.setEstado(Boton.Estado.NOPRESIONADO);
         botonSaltar.setEstado(Boton.Estado.NOPRESIONADO);
         pad.getLeft().setEstado(Boton.Estado.NOPRESIONADO);

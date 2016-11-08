@@ -906,7 +906,7 @@ public abstract class Enemigo {
                     else {
                         direccion=1;
                     }
-                    abner.setX(abner.getX()-(float)1*direccion);
+                    abner.setX(abner.getX()-(float)10*direccion);
                     abner.ajusteCamara(direccion);
                 }
             }

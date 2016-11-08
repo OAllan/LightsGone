@@ -22,7 +22,7 @@ public class Abner {
     public static final int LAMPARAANCHO = 195;
     private static AssetManager assetManager;
     public static final int X = 450;
-    public static final int SALTOMAX = 280;
+    public static final int SALTOMAX = 285;
     private final int ANCHO = 224, ALTO = 321;
     private Sprite sprite, luz;
     private int cont = 8;

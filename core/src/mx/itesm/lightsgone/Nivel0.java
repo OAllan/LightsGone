@@ -340,7 +340,7 @@ public class Nivel0 implements Screen, InputProcessor{
                     break;
             }
 
-            /*
+
             if(Gdx.input.isKeyPressed(Input.Keys.DPAD_LEFT))
                 pad.getLeft().setEstado(Boton.Estado.PRESIONADO);
             else{
@@ -365,7 +365,7 @@ public class Nivel0 implements Screen, InputProcessor{
 
             if(Gdx.input.isKeyJustPressed(Input.Keys.D)&&!abner.isJumping()&&!abner.isAttacking()&&abner.getPogo()){
                 botonHabilidad.setEstado(Boton.Estado.PRESIONADO);
-            }*/
+            }
 
 
             if(botonSaltar.isPressed()) {

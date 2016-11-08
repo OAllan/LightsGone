@@ -325,6 +325,18 @@ public class Mapa {
 
     }
 
+    public float escaleraX(float x, float y){
+        for (TiledMapTileLayer capa: plataformaX){
+            if(capa!=null){
+                int celdaX = (int) (x / capa.getTileWidth());
+                int celdaY = (int) (y / capa.getTileHeight());
+                TiledMapTileLayer.Cell cell = capa.getCell(celdaX, celdaY);
+                if (cell != null) return (celdaY+1) * capa.getTileHeight();
+            }
+        }
+        return -1;
+    }
+
     public boolean colisionDano(float x, float y){
         return colision(x,y,dano);
     }

@@ -23,7 +23,7 @@ public class MapManager {
     private final int[][] numPuertas = {cuartoAbner, pasillo, sala, cocina1, cocina2, cocina3, jardin1, jardin2, jardin3, armario1};
     private final boolean[][] right= {cuartoAbnerB, pasilloB, salaB, cocina1B, cocina2B, cocina3B, jardin1B, jardin2B, jardin3B, armario1B};
     private final float[][] posicionY = {cuartoAbnerY, pasilloY, salaY, cocina1Y, cocina2Y, cocina3Y, jardin1Y, jardin2Y, jardin3Y, armario1Y};
-    private static Array<Enemigo> enemigos = new Array<Enemigo>();
+    private static Array<Enemigo> enemigos;
 
     public MapManager(OrthographicCamera camara, SpriteBatch batch){
         this.camara = camara;
@@ -45,7 +45,7 @@ public class MapManager {
     }
 
     public static void setExtras(Mapa mapa, int mapaActual, Abner abner) {
-
+        enemigos = new Array<Enemigo>();
         switch (mapaActual){
             case 3:
                 //Moscas
@@ -138,6 +138,7 @@ public class MapManager {
                 enemigos.add(new Enemigo.Serpiente(17505,1260,abner,mapa));
                 enemigos.add(new Enemigo.Espinas(19200,1260,abner,mapa));
                 enemigos.add(new Enemigo.Espinas(20610,1260,abner,mapa));
+                mapa.setEnemigos(enemigos);
                 break;
             case 7:
                 //Jardin 2
@@ -154,6 +155,7 @@ public class MapManager {
                 enemigos.add(new Enemigo.Hongo(14985,315,abner,mapa));
                 enemigos.add(new Enemigo.ProyectilHongo(16045,385,abner,mapa));
                 enemigos.add(new Enemigo.Hongo(15975,315,abner,mapa));
+                mapa.setEnemigos(enemigos);
                 break;
             case 8:
                 //Jardin 3
@@ -163,6 +165,7 @@ public class MapManager {
                 enemigos.add(new Enemigo.Gnomo(4275,1350,abner,mapa));
                 enemigos.add(new Enemigo.Gnomo(3645,1350,abner,mapa));
                 enemigos.add(new Enemigo.Gnomo(4995,1350,abner,mapa));
+                mapa.setEnemigos(enemigos);
                 break;
         }
     }

@@ -119,6 +119,8 @@ public class MapManager {
                 //Tostadores
                 enemigos.add(new Enemigo.Tostadora(4275,765,abner,mapa));
                 enemigos.add(new Enemigo.Tostadora(6120,1305,abner,mapa));
+                mapa.setEnemigos(enemigos);
+                break;
             case 6:
                 mapa.setCajas(new CajaMovil(14850, 1700, mapa));
                 break;

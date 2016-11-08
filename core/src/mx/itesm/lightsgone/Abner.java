@@ -230,6 +230,20 @@ public class Abner {
             gameInfo.actualizarDatosTemp();
         }
 
+        if(escaleras){
+            float y;
+            if(right) {
+                 y = mapa.escaleraX((sprite.getX() + (sprite.getWidth() / 2)) + mov, sprite.getY() + 20);
+            }
+            else{
+                y = mapa.escaleraX((sprite.getX() + (sprite.getWidth() / 2)) - mov, sprite.getY() + 20);
+            }
+            if(y!=-1){
+                sprite.setY(y);
+                alturaMax = sprite.getY()+ SALTOMAX;
+            }
+        }
+
         if(mapa.colisionItem(sprite.getX()+(3*sprite.getWidth()/4), sprite.getY()+20,"LanzaPapa")){
             mapa.remove("LanzaPapa");
             lanzapapas = true;

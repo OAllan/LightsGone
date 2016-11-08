@@ -170,6 +170,10 @@ public class GameInfo {
         return lanzapapas;
     }
 
+    public boolean isLampara(){
+        return lampara;
+    }
+
     public int getMapa() {
         return mapa;
     }
@@ -209,5 +213,11 @@ public class GameInfo {
 
     public boolean isLamparaTemp() {
         return lamparaTemp;
+    }
+
+    public void actualizarDatosTemp() {
+        lamparaTemp = abner.getLampara();
+        pogoTemp = abner.getPogo();
+        lanzapapasTemp = abner.getLanzapapas();
     }
 }

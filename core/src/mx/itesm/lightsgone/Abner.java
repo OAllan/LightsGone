@@ -45,6 +45,7 @@ public class Abner {
     private boolean arrastrado, arrastradoPiso;
     private float movPiso;
     private int papas;
+    private GameInfo gameInfo;
     private Nivel0.Lampara estadoLampara;
     private static TextureRegion caminarTex, saltoTex, pogoTex, caminarLamparaTex, lanzapapasTex, resorteraTex, capaTex,neutral, dano, neutralLampara, neutralCapa, saltar1,saltar2,saltarLampara1,saltarLampara2,saltoCapa, saltarPogo1, saltarPogo2;
     private static Texture encendida, encendidaOscuridad;
@@ -122,10 +123,11 @@ public class Abner {
         timerDano = 0.5f;
         timerDanoAlpha =3;
         this.papas = 10;
-        lampara = true;
+        lampara = gameInfo.isLampara();
         estadoLampara = Nivel0.Lampara.APAGADA;
         this.luz = new Sprite(encendida);
         this.luz.setPosition(sprite.getX()+ LAMPARAANCHO - LAMPARAX,sprite.getY()- LAMPARAY +120);
+        this.gameInfo = gameInfo;
     }
 
 
@@ -212,7 +214,6 @@ public class Abner {
 
         if(mapa.colisionItem(sprite.getX()+sprite.getWidth(),sprite.getY(),"VidaExtra")){
             mapa.remove("VidaExtra");
-
             if(vidas<3)
                 vidas++;
         }
@@ -226,16 +227,19 @@ public class Abner {
         if(mapa.colisionItem(sprite.getX()+(3*sprite.getWidth()/4), sprite.getY()+20,"Pogo")) {
             mapa.remove("Pogo");
             pogo = true;
+            gameInfo.actualizarDatosTemp();
         }
 
         if(mapa.colisionItem(sprite.getX()+(3*sprite.getWidth()/4), sprite.getY()+20,"LanzaPapa")){
             mapa.remove("LanzaPapa");
             lanzapapas = true;
+            gameInfo.actualizarDatosTemp();
         }
 
         if(mapa.colisionItem(sprite.getX()+(3*sprite.getWidth()/4), sprite.getY()+20,"Lampara")){
             mapa.remove("Lampara");
             lampara = true;
+            gameInfo.actualizarDatosTemp();
         }
 
         if(mapa.colisionInclinada(sprite.getX() + sprite.getWidth() / 2, sprite.getY() - (saltoMov + gravedad))&&estadoHorizontal == Horizontal.ACTIVADO)
@@ -716,6 +720,30 @@ public class Abner {
     public int getMunicion() {
         return papas;
     }
+
+    public void dispose(){
+        caminarTex.getTexture().dispose();
+        saltoTex.getTexture().dispose();
+        pogoTex.getTexture().dispose();
+        caminarLamparaTex.getTexture().dispose();
+        lanzapapasTex.getTexture().dispose();
+        resorteraTex.getTexture().dispose();
+        capaTex.getTexture().dispose();
+        neutral.getTexture().dispose();
+        dano.getTexture().dispose();
+        neutralLampara.getTexture().dispose();
+        neutralCapa.getTexture().dispose();
+        saltar1.getTexture().dispose();
+        saltar2.getTexture().dispose();
+        saltarLampara1.getTexture().dispose();
+        saltarLampara2.getTexture().dispose();
+        saltoCapa.getTexture().dispose();
+        saltarPogo1.getTexture().dispose();
+        saltarPogo2.getTexture().dispose();
+        encendida.dispose();
+        encendidaOscuridad.dispose();
+    }
+
 
     public void setLampara(Nivel0.Lampara lampara) {
         this.estadoLampara = lampara;

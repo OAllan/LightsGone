@@ -22,12 +22,12 @@ public class Abner {
     public static final int LAMPARAANCHO = 195;
     private static AssetManager assetManager;
     public static final int X = 450;
-    public static final int SALTOMAX = 280;
+    public static final int SALTOMAX = 500;
     private final int ANCHO = 224, ALTO = 321;
     private Sprite sprite, luz;
     private int cont = 8;
     private float y = 135f, saltoMov = 8f, gravedad = 13f, alturaMax, alpha = 1;
-    private float mov = 10f;
+    private float mov = 40;
     private final float MOVY = (0.2125f)*mov;
     private Salto salto;
     private int cantVida, vidas;
@@ -611,6 +611,7 @@ public class Abner {
     }
 
     public int cambioNivel() {
+
         return mapa.colisionPuerta(sprite.getX()+3*(sprite.getWidth()/4) + mov, sprite.getY());
     }
 

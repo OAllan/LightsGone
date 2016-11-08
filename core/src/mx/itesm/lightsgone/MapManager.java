@@ -23,6 +23,7 @@ public class MapManager {
     private final int[][] numPuertas = {cuartoAbner, pasillo, sala, cocina1, cocina2, cocina3, jardin1, jardin2, jardin3, armario1};
     private final boolean[][] right= {cuartoAbnerB, pasilloB, salaB, cocina1B, cocina2B, cocina3B, jardin1B, jardin2B, jardin3B, armario1B};
     private final float[][] posicionY = {cuartoAbnerY, pasilloY, salaY, cocina1Y, cocina2Y, cocina3Y, jardin1Y, jardin2Y, jardin3Y, armario1Y};
+    private static Array<Enemigo> enemigos = new Array<Enemigo>();
 
     public MapManager(OrthographicCamera camara, SpriteBatch batch){
         this.camara = camara;
@@ -43,8 +44,8 @@ public class MapManager {
         return mapa;
     }
 
-    public void setExtras(Mapa mapa, int mapaActual, Abner abner) {
-        Array<Enemigo> enemigos = new Array<Enemigo>();
+    public static void setExtras(Mapa mapa, int mapaActual, Abner abner) {
+
         switch (mapaActual){
             case 3:
                 //Moscas
@@ -120,11 +121,58 @@ public class MapManager {
                 enemigos.add(new Enemigo.Tostadora(4275,765,abner,mapa));
                 enemigos.add(new Enemigo.Tostadora(6120,1305,abner,mapa));
             case 6:
+                //Jardin 1
                 mapa.setCajas(new CajaMovil(14850, 1700, mapa));
+                enemigos.add(new Enemigo.Scarecrow(2745,1300,abner,mapa));
+                enemigos.add(new Enemigo.ProyectilHongo(5865,1370,abner,mapa));
+                enemigos.add(new Enemigo.Hongo(5805,1300,abner,mapa));
+                enemigos.add(new Enemigo.ProyectilHongo(7560,1370,abner,mapa));
+                enemigos.add(new Enemigo.Hongo(7470,1300,abner,mapa));
+                enemigos.add(new Enemigo.ProyectilHongo(11895,1870,abner,mapa));
+                enemigos.add(new Enemigo.Hongo(11835,1800,abner,mapa));
+                enemigos.add(new Enemigo.ProyectilHongo(12210,1870,abner,mapa));
+                enemigos.add(new Enemigo.Hongo(12150,1800,abner,mapa));
+                enemigos.add(new Enemigo.Serpiente(13095,1800,abner,mapa));
+                enemigos.add(new Enemigo.Serpiente(17505,1260,abner,mapa));
+                enemigos.add(new Enemigo.Espinas(19200,1260,abner,mapa));
+                enemigos.add(new Enemigo.Espinas(20610,1260,abner,mapa));
                 break;
             case 7:
+                //Jardin 2
                 mapa.setCajas(new CajaMovil(13815, 315, mapa));
+                enemigos.add(new Enemigo.Cucarachon(90,315,abner,mapa));
+                enemigos.add(new Enemigo.Serpiente(6165,540,abner,mapa));
+                enemigos.add(new Enemigo.ProyectilHongo(7260,610,abner,mapa));
+                enemigos.add(new Enemigo.Hongo(7200,540,abner,mapa));
+                enemigos.add(new Enemigo.Serpiente(8190,540,abner,mapa));
+                enemigos.add(new Enemigo.ProyectilHongo(9645,835,abner,mapa));
+                enemigos.add(new Enemigo.Hongo(9585,765,abner,mapa));
+                enemigos.add(new Enemigo.Cucarachon(9990,315,abner,mapa));
+                enemigos.add(new Enemigo.ProyectilHongo(15045,385,abner,mapa));
+                enemigos.add(new Enemigo.Hongo(14985,315,abner,mapa));
+                enemigos.add(new Enemigo.ProyectilHongo(16045,385,abner,mapa));
+                enemigos.add(new Enemigo.Hongo(15975,315,abner,mapa));
+                break;
+            case 8:
+                //Jardin 3
+                enemigos.add(new Enemigo.Scarecrow(855,1350,abner,mapa));
+                enemigos.add(new Enemigo.Gnomo(2925,1350,abner,mapa));
+                enemigos.add(new Enemigo.Gnomo(3645,1350,abner,mapa));
+                enemigos.add(new Enemigo.Gnomo(4275,1350,abner,mapa));
+                enemigos.add(new Enemigo.Gnomo(3645,1350,abner,mapa));
+                enemigos.add(new Enemigo.Gnomo(4995,1350,abner,mapa));
                 break;
         }
     }
+
+    public static void quitarEnemigo(Enemigo ene){
+        if (enemigos.contains(ene,true)){
+            if(ene.getClass().getSimpleName().equals("Hongo")){
+                enemigos.removeIndex(enemigos.indexOf(ene,true)-1);
+            }
+            enemigos.removeIndex(enemigos.indexOf(ene,true));
+        }
+    }
+
+
 }

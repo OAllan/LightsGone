@@ -340,7 +340,7 @@ public class Nivel0 implements Screen, InputProcessor{
                     break;
             }
 
-            /*if(Gdx.input.isKeyPressed(Input.Keys.DPAD_LEFT))
+            if(Gdx.input.isKeyPressed(Input.Keys.DPAD_LEFT))
                 pad.getLeft().setEstado(Boton.Estado.PRESIONADO);
             else{
                 pad.getLeft().setEstado(Boton.Estado.NOPRESIONADO);
@@ -364,7 +364,7 @@ public class Nivel0 implements Screen, InputProcessor{
 
             if(Gdx.input.isKeyJustPressed(Input.Keys.D)&&!abner.isJumping()&&!abner.isAttacking()&&abner.getPogo()){
                 botonHabilidad.setEstado(Boton.Estado.PRESIONADO);
-            }*/
+            }
 
 
             if(botonSaltar.isPressed()) {
@@ -639,14 +639,7 @@ public class Nivel0 implements Screen, InputProcessor{
 
     }
 
-    public static void quitarEnemigo(Enemigo ene){
-        if (enemigosPrueba.contains(ene,true)){
-            if(ene.getClass().getSimpleName().equals("Hongo")){
-                enemigosPrueba.removeIndex(enemigosPrueba.indexOf(ene,true)-1);
-            }
-            enemigosPrueba.removeIndex(enemigosPrueba.indexOf(ene,true));
-        }
-    }
+
 
     @Override
     public boolean keyDown(int keycode) {

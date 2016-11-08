@@ -493,22 +493,18 @@ public class Abner {
             if(lata.getBoundingRectangle().contains(sprite.getX() + (3 * sprite.getWidth() / 4), sprite.getY() + 10)&&!lata.piso()) {
                 arrastrado = true;
             }
-            else{
-                arrastrado=false;
-            }
             if((lata.getBoundingRectangle().contains(sprite.getX()+(sprite.getWidth()/2)-mov, sprite.getY()+10)||lata.getBoundingRectangle().contains(sprite.getX()+(3*sprite.getWidth()/4)+mov, sprite.getY()+10))&&lata.piso()){
                 arrastradoPiso = true;
                 movPiso = lata.getMov();
             }
-            else{
-                arrastradoPiso = false;
-            }
             if(lata.getBoundingRectangle().contains(sprite.getX()+(3*sprite.getWidth()/6), sprite.getY()-(saltoMov))){
                 pisoLata = true;
             }
-            else{
-                pisoLata = false;
-            }
+        }
+        else{
+            pisoLata = false;
+            arrastradoPiso = false;
+            arrastrado = false;
         }
         return arrastrado||pisoLata;
 
@@ -536,10 +532,8 @@ public class Abner {
                 break;
             case BAJANDO:
                 float nuevaY = mapa.colisionY(sprite.getX() + sprite.getWidth() / 2, sprite.getY()-saltoMov);
-
                 if (nuevaY!=-1||mapa.colisionInclinada(sprite.getX() + sprite.getWidth() / 2, sprite.getY() - (estadoSalto==Vertical.POGO?saltoMov + gravedad+10:saltoMov + gravedad))||pisoLata) {
                     estadoSalto = Vertical.DESACTIVADO;
-
                     if(nuevaY!=-1){
                         sprite.setY(nuevaY);
                         luz.setY(sprite.getY()- LAMPARAY +120);

@@ -281,7 +281,7 @@ public class Mapa {
 
 
     public Array<Enemigo> getEnemigos(){
-        return enemigosActuales;
+        return enemigos;
     }
 
     public void dispose() {

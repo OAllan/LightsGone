@@ -14,7 +14,7 @@ public class Pad {
     public Pad(Texture fondo){
         this.fondo = new Sprite(fondo);
         this.left = new Boton(100,30,75,240, true);
-        this.right = new Boton( 270,30,75,240, true);
+        this.right = new Boton(270,30,75,240, true);
         this.fondo.setPosition(100,30);
     }
 

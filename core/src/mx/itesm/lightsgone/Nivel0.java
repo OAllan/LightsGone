@@ -202,6 +202,8 @@ public class Nivel0 implements Screen, InputProcessor{
         botonOn = new Boton(378,166,134,67);
         botonOff = new Boton(757,166,134,67);
         botonBack = new Boton(526, 53,209, 81);
+        botonCambioUp = new Boton(175,214,111,30);
+        botonCambioDown = new Boton(175, 30, 111,30);
         alphaGame = 0;
         enemigos = mapa.getEnemigos();
         ambiente.setVolume(0.5f);
@@ -338,7 +340,7 @@ public class Nivel0 implements Screen, InputProcessor{
                     break;
             }
 
-            if(Gdx.input.isKeyPressed(Input.Keys.DPAD_LEFT))
+            /*if(Gdx.input.isKeyPressed(Input.Keys.DPAD_LEFT))
                 pad.getLeft().setEstado(Boton.Estado.PRESIONADO);
             else{
                 pad.getLeft().setEstado(Boton.Estado.NOPRESIONADO);
@@ -362,7 +364,7 @@ public class Nivel0 implements Screen, InputProcessor{
 
             if(Gdx.input.isKeyJustPressed(Input.Keys.D)&&!abner.isJumping()&&!abner.isAttacking()&&abner.getPogo()){
                 botonHabilidad.setEstado(Boton.Estado.PRESIONADO);
-            }
+            }*/
 
 
             if(botonSaltar.isPressed()) {
@@ -684,7 +686,9 @@ public class Nivel0 implements Screen, InputProcessor{
                     botonSave.setEstado(Boton.Estado.PRESIONADO);
                 }
             }
-
+            if(botonCambioDown.contiene(x,y)||botonCambioUp.contiene(x,y)){
+                habilidadSiguiente();
+            }
             if(abner.getPogo()){
                 if(botonHabilidad.contiene(x,y)&&!abner.isJumping()&&!abner.isAttacking())
                     botonHabilidad.setEstado(Boton.Estado.PRESIONADO);

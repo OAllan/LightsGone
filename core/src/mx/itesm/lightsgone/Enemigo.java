@@ -9,6 +9,7 @@ import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Rectangle;
+import com.badlogic.gdx.utils.Array;
 
 
 /**
@@ -25,13 +26,16 @@ public abstract class Enemigo {
     long startTime;
     long startTime1;
 
+    public Enemigo(){
 
+    }
 
     public Enemigo(Texture texture, float x, float y){
         xInicial = x;
         yInicial = y;
         sprite = new Sprite(texture);
         sprite.setPosition(x, y);
+        muerte = false;
 
     }
 
@@ -711,7 +715,7 @@ public abstract class Enemigo {
             }
             if(sprite.getX()>22000 || sprite.getX()<18000 && sprite.getX()>16000){
                 MapManager.quitarEnemigo(this);
-               // Nivel0.crearNuevaMosca(xInicial,yInicial,this);
+               // LightsGone.crearNuevaMosca(xInicial,yInicial,this);
 
             }
 
@@ -2134,6 +2138,278 @@ public abstract class Enemigo {
         public String toString() {
             return "espinas";
         }
-    }
 
     }
+
+    static class CajaPayaso extends Enemigo {
+        private Abner abner;
+        private Mapa mapa;
+        private static Texture neutral;
+        private EstadoCaja estadoCaja;
+        private float timer;
+        private static Animation cajaMovil, cajaAtaque, cajaPayaso;
+        private static TextureRegion[] cajaMovilTex, cajaAtaqueTex, cajaPayasoTex;
+
+        static{
+            cargarTexturas();
+            cargarAnimaciones();
+        }
+
+        private static void cargarAnimaciones() {
+            cajaMovil = new Animation(0.22f, cajaMovilTex);
+            cajaMovil.setPlayMode(Animation.PlayMode.LOOP);
+            cajaAtaque = new Animation(0.1f, cajaAtaqueTex);
+            cajaAtaque.setPlayMode(Animation.PlayMode.NORMAL);
+            cajaPayaso = new Animation(0.1f, cajaPayasoTex);
+        }
+
+        private static void cargarTexturas() {
+            manager.load("cajapayaso1.png",Texture.class);
+            manager.load("cajapayaso2.png", Texture.class);
+            manager.load("cajapayaso3.png", Texture.class);
+            manager.load("Cajapayaso4.png", Texture.class);
+            manager.load("cajapayasosaliendo1.png", Texture.class);
+            manager.load("cajapayasosaliendo2-min.png",Texture.class);
+            manager.load("cajapayasosaliendo3.png", Texture.class);
+            manager.load("cajapayasosaliendo4.png",Texture.class);
+            manager.load("payasoexplotando1.png",Texture.class);
+            manager.load("payasoexplotando2.png",Texture.class);
+            manager.load("payasoexplotando4.png", Texture.class);
+            manager.load("payasoexplotando5.png", Texture.class);
+            manager.load("payasoexplotando6.png", Texture.class);
+            manager.finishLoading();
+            neutral = manager.get("cajapayaso1.png");
+            cajaMovilTex = new TextureRegion[]{new TextureRegion((Texture) manager.get("cajapayaso1.png")),new TextureRegion((Texture) manager.get("cajapayaso2.png")),
+                    new TextureRegion((Texture) manager.get("cajapayaso3.png")), new TextureRegion((Texture) manager.get("Cajapayaso4.png"))};
+            cajaPayasoTex = new TextureRegion[]{new TextureRegion((Texture) manager.get("cajapayasosaliendo1.png")),new TextureRegion((Texture) manager.get("cajapayasosaliendo2-min.png")),
+                    new TextureRegion((Texture) manager.get("cajapayasosaliendo3.png")),new TextureRegion((Texture) manager.get("cajapayasosaliendo4.png"))
+            };
+            cajaAtaqueTex = new TextureRegion[]{
+                    new TextureRegion((Texture) manager.get("payasoexplotando1.png")),
+                    new TextureRegion((Texture) manager.get("payasoexplotando2.png")),new TextureRegion((Texture) manager.get("payasoexplotando4.png")), new TextureRegion((Texture) manager.get("payasoexplotando5.png")),
+                    new TextureRegion((Texture) manager.get("payasoexplotando6.png"))
+            };
+
+
+
+        }
+        public CajaPayaso(float x, float y, Abner abner, Mapa mapa){
+            super(neutral, x,y);
+            this.mapa = mapa;
+            this.abner = abner;
+            this.estadoCaja = EstadoCaja.NEUTRAL;
+            timer = 0;
+        }
+
+        @Override
+        public void attack() {
+            if(abner.getBoundingRectangle().overlaps(getAttackRectangle())&&estadoCaja==EstadoCaja.CAJAATAQUE){
+                if(!abner.getDano()){
+                    abner.setDano(true);
+                    abner.setCantVida(abner.getcantVida()-10);
+                }
+            }
+        }
+
+        @Override
+        public void setEstado(Estado estado) {
+
+        }
+
+        @Override
+        public void draw(SpriteBatch batch) {
+            sprite.draw(batch);
+            actualizar();
+        }
+
+        private void actualizar(){
+            switch (estadoCaja){
+                case NEUTRAL:
+                    if(Math.abs(abner.getX()-sprite.getX())<=530){
+                        estadoCaja = EstadoCaja.CAJAMOVIL;
+                    }
+                    break;
+                case CAJAMOVIL:
+                    timer += Gdx.graphics.getDeltaTime();
+                    sprite.setTexture(cajaMovil.getKeyFrame(timer).getTexture());
+                    if(timer>=7){
+                        estadoCaja = EstadoCaja.PAYASOFUERA;
+                        timer = 0;
+                    }
+                    break;
+                case PAYASOFUERA:
+                    timer += Gdx.graphics.getDeltaTime();
+                    sprite.setTexture(cajaPayaso.getKeyFrame(timer).getTexture());
+                    if(timer>=cajaPayaso.getAnimationDuration()){
+                        estadoCaja = EstadoCaja.NEUTRALPAYASO;
+                        timer = 0;
+                    }
+                    break;
+                case NEUTRALPAYASO:
+                    timer+= Gdx.graphics.getDeltaTime();
+                    if(timer>=2){
+                        estadoCaja = EstadoCaja.CAJAATAQUE;
+                        timer = 0;
+                    }
+                    break;
+                case CAJAATAQUE:
+                    timer += Gdx.graphics.getDeltaTime();
+                    sprite.setTexture(cajaAtaque.getKeyFrame(timer).getTexture());
+                    if(timer>=cajaAtaque.getAnimationDuration()){
+                        muerte = true;
+                        timer = 0;
+                    }
+            }
+        }
+
+        @Override
+        public boolean muerte() {
+            return muerte;
+        }
+
+        public boolean isAttacking(){
+            return estadoCaja==EstadoCaja.CAJAATAQUE && timer>=0.4f;
+        }
+
+        public boolean floor(float x, float y){
+            if(estadoCaja==EstadoCaja.CAJAMOVIL)
+                return getBoxRectangle().contains(x,y);
+            return false;
+        }
+
+        public void move(float x,float y, boolean right, float velocidad){
+            if(estadoCaja==EstadoCaja.CAJAMOVIL){
+                if(getBoxRectangle().contains(x,y)){
+                    if(!mapa.colisionX(sprite.getX()+sprite.getWidth(), sprite.getY())){
+                        if(right){
+                            sprite.translate(velocidad, 0);
+                        }
+                        else{
+                            sprite.translate(-velocidad,0);
+                        }
+                    }
+                }
+                if(!mapa.colisionCaja(sprite.getX()+sprite.getWidth()/2, sprite.getY(), true, -1)){
+                    caer();
+                }
+            }
+        }
+
+        private void caer() {
+            sprite.translate(0,-18f);
+        }
+
+        Rectangle getBoxRectangle(){
+            return new Rectangle(sprite.getX()+35, sprite.getY(), 199,165);
+        }
+
+        public Rectangle getAttackRectangle() {
+            return new Rectangle(sprite.getX() - sprite.getWidth(), sprite.getY(), sprite.getWidth()*2.5f, sprite.getHeight());
+        }
+
+        private enum EstadoCaja{
+            NEUTRAL,
+            CAJAMOVIL,
+            CAJAATAQUE,
+            NEUTRALPAYASO,
+            PAYASOFUERA
+        }
+
+        @Override
+        public String toString(){
+            return "CajaPayaso";
+        }
+    }
+
+    static class GeneradorCajasPayaso extends Enemigo{
+        private CajaPayaso cajaPayaso;
+        private float x,y;
+        private Abner abner;
+        private Mapa mapa;
+        private float timer;
+
+        public GeneradorCajasPayaso(float x, float y, Mapa mapa, Abner abner){
+            super();
+            this.x = x;
+            this.y = y;
+            this.mapa = mapa;
+            this.abner = abner;
+            cajaPayaso = new CajaPayaso(x,y, abner, mapa);
+            timer = 0;
+        }
+
+        @Override
+        public void attack() {
+            if(cajaPayaso!=null)
+                cajaPayaso.attack();
+        }
+
+        @Override
+        public void setEstado(Estado estado) {
+
+        }
+
+
+        public boolean isAttacking(){
+            if(cajaPayaso!=null){
+                return cajaPayaso.isAttacking();
+            }
+            return false;
+        }
+
+        @Override
+        public void draw(SpriteBatch batch) {
+            if(cajaPayaso!= null && cajaPayaso.muerte()){
+                cajaPayaso= null;
+            }
+
+            if(cajaPayaso!=null){
+                cajaPayaso.draw(batch);
+            }
+            else {
+                actualizar();
+            }
+
+        }
+
+        private void actualizar() {
+            timer += Gdx.graphics.getDeltaTime();
+            if(timer>=10){
+                cajaPayaso = new CajaPayaso(x,y,abner,mapa);
+                timer = 0;
+            }
+
+        }
+
+        @Override
+        public boolean muerte() {
+            return false;
+        }
+
+        public void move(float x, float y, boolean right, float velocidad) {
+            if(cajaPayaso!=null){
+                cajaPayaso.move(x,y,right,velocidad);
+            }
+        }
+
+        public Rectangle getAttackRectangle(){
+            return cajaPayaso.getAttackRectangle();
+        }
+
+        public Rectangle getBoxRectangle(){
+            return cajaPayaso.getBoxRectangle();
+        }
+
+        public boolean floor(float x, float y) {
+            if(cajaPayaso!=null){
+                return cajaPayaso.floor(x,y);
+            }
+            return false;
+        }
+
+        public String toString(){
+            return "CajaPayaso";
+        }
+    }
+
+}

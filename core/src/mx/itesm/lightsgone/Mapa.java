@@ -13,7 +13,10 @@ import com.badlogic.gdx.maps.tiled.TiledMapRenderer;
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
 import com.badlogic.gdx.maps.tiled.TmxMapLoader;
 import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
+import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.utils.Array;
+
+import java.util.Iterator;
 
 /**
  * Created by allanruiz on 13/10/16.
@@ -31,7 +34,9 @@ public class Mapa {
     private float[] posicionY, posicionX;
     private boolean[] right;
     private String nombre;
+    private Array<Caja> cajasFijas;
     private Array<Sprite> plataformasInclinada;
+    TiledMapTileLayer detallesFondo;
     public Mapa(String mapa, SpriteBatch batch, OrthographicCamera camara, int[] numPuertas,boolean[] right,float[] posicionX ,float... posicionY){
         this.mapa = cargarMapa(mapa);
         this.nombre = mapa;
@@ -43,6 +48,10 @@ public class Mapa {
         this.posicionX = posicionX;
         this.right = right;
         cargarCapas();
+        detallesFondo = (TiledMapTileLayer)this.mapa.getLayers().get("DetallesFondo2");
+        if(LightsGone.sotano()){
+            this.mapa.getLayers().get("DetallesFondo2").setVisible(false);
+        }
     }
 
     private void cargarCapas() {
@@ -55,6 +64,7 @@ public class Mapa {
         muerte = new Array<TiledMapTileLayer>(2);
         dano = new Array<TiledMapTileLayer>(1);
         escaleras = new Array<TiledMapTileLayer>(2);
+
         plataformaY.add((TiledMapTileLayer)mapa.getLayers().get("PlataformaPiso"));
         plataformaY.add((TiledMapTileLayer)mapa.getLayers().get("Plataformas"));
         plataformaY.add((TiledMapTileLayer)mapa.getLayers().get("Plataformas2"));
@@ -100,16 +110,52 @@ public class Mapa {
     }
 
     public boolean colisionX(float x, float y){
+
+        if(cajasFijas!=null){
+            for(Caja caja:cajasFijas){
+                if(caja.getColisionRectangle().contains(x,y))
+                    return true;
+            }
+        }
+
         return colision(x, y, plataformaX);
     }
 
+    public void setCajasFijas(Caja... cajasFijas){
+        this.cajasFijas = new Array<Caja>(cajasFijas.length);
+        for(Caja caja : cajasFijas){
+            this.cajasFijas.add(caja);
+        }
+    }
+
     public float colisionY(float x, float y){
+
+        if(enemigos!=null){
+            for(Enemigo enemigo:enemigos){
+                if(enemigo.toString().equalsIgnoreCase("CajaPayaso")){
+                    if(((Enemigo.GeneradorCajasPayaso)enemigo).floor(x,y)){
+                        return ((Enemigo.GeneradorCajasPayaso) enemigo).getBoxRectangle().getY()+((Enemigo.GeneradorCajasPayaso) enemigo).getBoxRectangle().getHeight();
+                    }
+                }
+            }
+        }
+
+        if(cajasFijas!=null){
+            for (Caja caja:cajasFijas){
+                Rectangle rectangle = caja.getColisionRectangle();
+                if(rectangle.contains(x,y)){
+                    return rectangle.getY() + rectangle.getHeight();
+                }
+            }
+        }
+
         if(cajas!=null){
             for(CajaMovil caja:cajas){
                 if(caja.getRectangle().contains(x,y))
                     return caja.getRectangle().getY()+caja.getRectangle().getHeight()-20;
             }
         }
+
 
         for (TiledMapTileLayer capa: plataformaY){
             if(capa!=null){
@@ -160,15 +206,41 @@ public class Mapa {
             for (Sprite sprite: plataformasInclinada)
                 sprite.draw(batch);
         }
+
+        if(cajasFijas!=null){
+            for(int i=0;i<cajasFijas.size;i++){
+                Caja caja = cajasFijas.get(i);
+                if(caja.rota()){
+                    cajasFijas.removeIndex(i);
+                }
+                else{
+                    caja.draw(batch);
+                }
+            }
+        }
+
         if(enemigos!=null){
-            for(Enemigo enemigo: enemigos)
+            for(Enemigo enemigo: enemigos) {
+                if(enemigo.toString().equalsIgnoreCase("CajaPayaso")){
+                    Enemigo.GeneradorCajasPayaso cajasPayaso = (Enemigo.GeneradorCajasPayaso)enemigo;
+                    if(cajasPayaso.isAttacking()&&cajasFijas!=null){
+                        Rectangle cajaPayaso = cajasPayaso.getAttackRectangle();
+                        for(Caja caja:cajasFijas){
+                            if(caja.getBoundingRectangle().overlaps(cajaPayaso)){
+                                caja.romper();
+                            }
+                        }
+                    }
+                }
                 enemigo.draw(batch);
+            }
         }
         if(cajas!=null){
             for(CajaMovil caja: cajas){
                 caja.draw(batch);
             }
         }
+
         batch.end();
 
     }
@@ -354,14 +426,52 @@ public class Mapa {
 
     public void colisionCaja(float x, float y, boolean right, float velocidad){
         if(cajas!=null){
-            for(CajaMovil caja: cajas){
-                caja.mover(x,y,right, velocidad);
+            for(int i=0;i<cajas.size;i++){
+                cajas.get(i).mover(x,y,right, velocidad, i);
             }
         }
     }
 
-    public boolean colisionCaja(float x, float y) {
-        return colision(x,y,muerte) || colision(x,y,plataformaY);
+    public boolean colisionCaja(float x, float y, boolean enem, int index) {
+        if(enemigos!=null&&!enem){
+            for(Enemigo enemigo:enemigos){
+                if(enemigo.toString().equalsIgnoreCase("CajaPayaso")){
+                    if(((Enemigo.GeneradorCajasPayaso)enemigo).floor(x,y)){
+                        return true;
+                    }
+                }
+            }
+        }
+
+        if(cajasFijas!=null){
+            for (int i=0;i<cajasFijas.size;i++){
+                if(index==i){
+                    continue;
+                }
+                Rectangle rectangle = cajasFijas.get(i).getColisionRectangle();
+                if(rectangle.contains(x,y)){
+                    return true;
+                }
+            }
+        }
+
+        if(cajas!=null){
+            for(CajaMovil caja:cajas){
+                if(caja.getRectangle().contains(x,y))
+                    return true;
+            }
+        }
+
+        for (TiledMapTileLayer capa: plataformaY){
+            if(capa!=null){
+                int celdaX = (int) (x / capa.getTileWidth());
+                int celdaY = (int) (y / capa.getTileHeight());
+                TiledMapTileLayer.Cell cell = capa.getCell(celdaX, celdaY);
+                if (cell != null) return true;
+            }
+        }
+
+        return colision(x,y,muerte);
     }
 
     public boolean colisionTecho(float x, float y) {
@@ -370,5 +480,11 @@ public class Mapa {
 
     public boolean colisionPuertaCerrada(float x, float y) {
         return colision(x,y,puertas, "PuertaCerrada");
+    }
+
+    public void drawDetallefondo() {
+        if(detallesFondo!=null){
+            renderer.renderTileLayer(detallesFondo);
+        }
     }
 }

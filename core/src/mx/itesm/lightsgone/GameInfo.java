@@ -3,13 +3,10 @@ package mx.itesm.lightsgone;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.files.FileHandle;
 
-import java.io.File;
-import java.io.FileWriter;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
 import java.util.Iterator;
-import java.util.Scanner;
 
 /**
  * Created by allanruiz on 21/10/16.
@@ -97,7 +94,7 @@ public class GameInfo {
     }
 
     private void actualizarDatos() {
-        mapa = Nivel0.mapaActual;
+        mapa = LightsGone.mapaActual;
         vida = abner.getcantVida();
         pogo = abner.getPogo();
         capita = abner.getCapita();

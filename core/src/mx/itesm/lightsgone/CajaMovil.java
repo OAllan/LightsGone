@@ -36,7 +36,7 @@ public class CajaMovil {
         caja.draw(batch);
     }
 
-    public void mover(float x, float y, boolean right, float velocidad) {
+    public void mover(float x, float y, boolean right, float velocidad, int index) {
         if(caja.getBoundingRectangle().contains(x,y)){
             if(!mapa.colisionX(caja.getX()+caja.getWidth(), caja.getY())){
                 if(right){
@@ -47,7 +47,7 @@ public class CajaMovil {
                 }
             }
         }
-        if(!mapa.colisionCaja(caja.getX()+caja.getWidth()/2, caja.getY())){
+        if(!mapa.colisionCaja(caja.getX()+caja.getWidth()/2, caja.getY(), false,index)){
             caer();
         }
     }

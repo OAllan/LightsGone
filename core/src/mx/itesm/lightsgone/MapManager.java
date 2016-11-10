@@ -13,16 +13,18 @@ import com.badlogic.gdx.utils.Array;
 public class MapManager {
     private OrthographicCamera camara;
     private SpriteBatch batch;
-    private final float[] cuartoAbnerX ={530, 2295}, pasilloX = {270, 4140}, salaX = {450, 450,2280,2280}, cocina1X = {315,1305}, cocina2X = {5895,5895}, cocina3X = {630}, jardin1X = {1395, 20745,2170}, jardin2X ={540,18360}, jardin3X = {7740,400}, armario1X = {12510, 315};
+    private final float[] cuartoAbnerX ={530, 2295}, pasilloX = {270, 4140}, salaX = {450, 450,2280,2280}, cocina1X = {315,1305}, cocina2X = {5895,5895}, cocina3X = {630}, jardin1X = {1395, 20745,2170}, jardin2X ={540,18360}, jardin3X = {7740,400}, armario1X = {12510, 315},
+                armario2X = {14400, 270}, armario3X = {9450, 270}, armario4X = {1710}, sotano1X = {8900,990}, sotano2X = {630,8100};
     private final boolean[] cuartoAbnerB = {true, false}, pasilloB = {true, false}, salaB={true, true, false, false}, cocina1B = {true, true},
-            cocina2B = {false,false}, cocina3B = {true}, jardin1B = {true, false, false}, jardin2B = {true, true}, jardin3B = {true, true}, armario1B = {false, true};
-    private final int[] cuartoAbner = {9,1}, pasillo = {0,2}, sala = {1,0,6,3}, cocina1 = {2,4}, cocina2 = {3,5}, cocina3 = {4}, jardin1 = {2,7,8}, jardin2 = {6,8}, jardin3 = {6,7}, armario1 = {0,10};
-    private final float[] cuartoAbnerY = {Nivel0.YBAJA, Nivel0.YBAJA}, pasilloY = {Nivel0.YBAJA, Nivel0.YBAJA}, salaY = {Nivel0.YALTA, Nivel0.YBAJA, Nivel0.YSALA, Nivel0.YMEDIA}, cocina1Y = {Nivel0.YBAJA, Nivel0.YCOCINA1}, cocina2Y ={Nivel0.YBAJA, Nivel0.YCOCINA2},cocina3Y = {Nivel0.YCOCINA3},
-            jardin1Y = {Nivel0.YCOCINA2, Nivel0.YJARDIN1,Nivel0.YBAJA}, jardin2Y = {Nivel0.YJARDIN2, Nivel0.YJARDIN2},jardin3Y={Nivel0.YBAJA, Nivel0.YJARDIN3}, armario1Y = {Nivel0.YARMARIO, Nivel0.YSALA};
-    private final float[][] posicionX= {cuartoAbnerX, pasilloX, salaX, cocina1X, cocina2X, cocina3X, jardin1X, jardin2X, jardin3X, armario1X};
-    private final int[][] numPuertas = {cuartoAbner, pasillo, sala, cocina1, cocina2, cocina3, jardin1, jardin2, jardin3, armario1};
-    private final boolean[][] right= {cuartoAbnerB, pasilloB, salaB, cocina1B, cocina2B, cocina3B, jardin1B, jardin2B, jardin3B, armario1B};
-    private final float[][] posicionY = {cuartoAbnerY, pasilloY, salaY, cocina1Y, cocina2Y, cocina3Y, jardin1Y, jardin2Y, jardin3Y, armario1Y};
+            cocina2B = {false,false}, cocina3B = {true}, jardin1B = {true, false, false}, jardin2B = {true, true}, jardin3B = {true, true}, armario1B = {false, true}, armario2B = {false, true}, armario3B ={false, true}, armario4B = {false},
+            sotano1B = {false, true}, sotano2B = {true, false};
+    private final int[] cuartoAbner = {9,1}, pasillo = {0,2}, sala = {1,13,6,3}, cocina1 = {2,4}, cocina2 = {3,5}, cocina3 = {4}, jardin1 = {2,7,8}, jardin2 = {6,8}, jardin3 = {6,7}, armario1 = {0,10}, armario2 = {9,11}, armario3 = {10,12}, armario4 = {11}, sotano1 = {2,14}, sotano2 = {13,15};
+    private final float[] cuartoAbnerY = {LightsGone.YBAJA, LightsGone.YBAJA}, pasilloY = {LightsGone.YBAJA, LightsGone.YBAJA}, salaY = {LightsGone.YALTA, LightsGone.YBAJA, LightsGone.YSALA, LightsGone.YMEDIA}, cocina1Y = {LightsGone.YBAJA, LightsGone.YCOCINA1}, cocina2Y ={LightsGone.YBAJA, LightsGone.YCOCINA2},cocina3Y = {LightsGone.YCOCINA3},
+            jardin1Y = {LightsGone.YCOCINA2, LightsGone.YJARDIN1, LightsGone.YBAJA}, jardin2Y = {LightsGone.YJARDIN2, LightsGone.YJARDIN2},jardin3Y={LightsGone.YBAJA, LightsGone.YJARDIN3}, armario1Y = {LightsGone.YARMARIO, LightsGone.YSALA}, armario2Y = {945,1035}, armario3Y = {945,945}, armario4Y = {LightsGone.YBAJA}, sotano1Y = {405,585}, sotano2Y = {4005,450};
+    private final float[][] posicionX= {cuartoAbnerX, pasilloX, salaX, cocina1X, cocina2X, cocina3X, jardin1X, jardin2X, jardin3X, armario1X, armario2X, armario3X, armario4X, sotano1X, sotano2X};
+    private final int[][] numPuertas = {cuartoAbner, pasillo, sala, cocina1, cocina2, cocina3, jardin1, jardin2, jardin3, armario1, armario2, armario3, armario4, sotano1, sotano2};
+    private final boolean[][] right= {cuartoAbnerB, pasilloB, salaB, cocina1B, cocina2B, cocina3B, jardin1B, jardin2B, jardin3B, armario1B, armario2B, armario3B, armario4B, sotano1B, sotano2B};
+    private final float[][] posicionY = {cuartoAbnerY, pasilloY, salaY, cocina1Y, cocina2Y, cocina3Y, jardin1Y, jardin2Y, jardin3Y, armario1Y, armario2Y, armario3Y, armario4Y, sotano1Y, sotano2Y};
     private static Array<Enemigo> enemigos;
 
     public MapManager(OrthographicCamera camara, SpriteBatch batch){
@@ -90,15 +92,15 @@ public class MapManager {
                 enemigos.add(new Enemigo.Sopa(1395,1125,abner,mapa));
                 //Brocolis
                 enemigos.add(new Enemigo.Brocoli(765,495,abner,mapa));
-                enemigos.add(new Enemigo.Lata(Nivel0.LATAX,mapa.getHeight(),mapa));
-                enemigos.add(new Enemigo.Lata(Nivel0.LATAX, mapa.getHeight()+3300, mapa));
-                enemigos.add(new Enemigo.Lata(Nivel0.LATAX, mapa.getHeight()+6600, mapa));
+                enemigos.add(new Enemigo.Lata(LightsGone.LATAX,mapa.getHeight(),mapa));
+                enemigos.add(new Enemigo.Lata(LightsGone.LATAX, mapa.getHeight()+3300, mapa));
+                enemigos.add(new Enemigo.Lata(LightsGone.LATAX, mapa.getHeight()+6600, mapa));
                 enemigos.add(new Enemigo.Lata(2640, 160, mapa,""));
                 enemigos.add(new Enemigo.Lata(1110, 160, mapa,""));
                 mapa.setEnemigos(enemigos);
-                Sprite sprite = new Sprite(Nivel0.plataforma);
+                Sprite sprite = new Sprite(LightsGone.plataforma);
                 sprite.setRotation(12);
-                sprite.setPosition(Nivel0.ANCHO_MUNDO + 470, Nivel0.ALTO_MUNDO * 3 - 850);
+                sprite.setPosition(LightsGone.ANCHO_MUNDO + 470, LightsGone.ALTO_MUNDO * 3 - 850);
                 mapa.setPlataformasInclinada(sprite);
                 break;
             case 5:
@@ -166,6 +168,29 @@ public class MapManager {
                 enemigos.add(new Enemigo.Gnomo(3645,1350,abner,mapa));
                 enemigos.add(new Enemigo.Gnomo(4995,1350,abner,mapa));
                 mapa.setEnemigos(enemigos);
+                break;
+            case 9:
+                //Armario 1
+                enemigos.add(new Enemigo.GeneradorCajasPayaso(2385,315,mapa, abner));
+                enemigos.add(new Enemigo.GeneradorCajasPayaso(6075, 315, mapa, abner));
+                mapa.setEnemigos(enemigos);
+                mapa.setCajas(new CajaMovil(8055,270,mapa), new CajaMovil(8055, 400, mapa));
+                mapa.setCajasFijas(new Caja(6255, 315), new Caja(6255, 315 + 164), new Caja(5850, 315),new Caja(5850, 315+164));
+                break;
+            case 10:
+                //Armario2
+                enemigos.add(new Enemigo.GeneradorCajasPayaso(12465,540,mapa,abner));
+                enemigos.add(new Enemigo.GeneradorCajasPayaso(7920,1170,mapa,abner));
+                enemigos.add(new Enemigo.GeneradorCajasPayaso(7470,585,mapa,abner));
+                enemigos.add(new Enemigo.GeneradorCajasPayaso(7110,1215,mapa,abner));
+                enemigos.add(new Enemigo.GeneradorCajasPayaso(4680,500,mapa,abner));
+                enemigos.add(new Enemigo.GeneradorCajasPayaso(4970,315,mapa,abner));
+                mapa.setEnemigos(enemigos);
+                mapa.setCajasFijas(new Caja(8400, 765), new Caja(4680, 315));
+                break;
+            case 13:
+                break;
+            case 14:
                 break;
         }
     }

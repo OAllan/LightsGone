@@ -6,7 +6,6 @@ import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.audio.Music;
-import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
@@ -17,15 +16,12 @@ import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.viewport.StretchViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 
-import org.omg.CORBA.portable.ValueInputStream;
-
 import java.util.ArrayList;
-import java.util.Random;
 
 /**
  * Created by allanruiz on 19/09/16.
  */
-public class Nivel0 implements Screen, InputProcessor{
+public class LightsGone implements Screen, InputProcessor{
 
     public static final int ANCHO_MUNDO = 1280;
     public static final int ALTO_MUNDO = 800;
@@ -86,14 +82,14 @@ public class Nivel0 implements Screen, InputProcessor{
     private Lampara estadoLampara;
     private Texture lamparaOff, lamparaOn;
 
-    public Nivel0(Juego juego) {
+    public LightsGone(Juego juego) {
         this.juego = juego;
         right = true;
         saveB = false;
         gameInfo = new GameInfo();
     }
 
-    public Nivel0(Juego juego, String nombre){
+    public LightsGone(Juego juego, String nombre){
         this.juego = juego;
         right = true;
         saveB = false;
@@ -126,6 +122,11 @@ public class Nivel0 implements Screen, InputProcessor{
         mapas.add("Jardin2.tmx");
         mapas.add("Jardin3.tmx");
         mapas.add("Armario1.tmx");
+        mapas.add("Armario2.tmx");
+        mapas.add("Armario3.tmx");
+        mapas.add("Armario4.tmx");
+        mapas.add("Sotano1.tmx");
+        mapas.add("Sotano2.tmx");
         mapaActual = gameInfo.getMapa();
         mapa = mapManager.getMapa(mapas.get(mapaActual),mapaActual,abner, gameInfo);
         transicion = Transicion.DISMINUYENDO;
@@ -170,20 +171,8 @@ public class Nivel0 implements Screen, InputProcessor{
             habilidadActual = Habilidad.LANZAPAPAS;
         else
             habilidadActual = Habilidad.VACIA;
-        transicionNivel.setSize(Nivel0.ANCHO_MUNDO, Nivel0.ALTO_MUNDO);
+        transicionNivel.setSize(LightsGone.ANCHO_MUNDO, LightsGone.ALTO_MUNDO);
         abner = new Abner(camara, mapa, gameInfo);
-
-
-        //Enemigos prueba
-        //enemigosPrueba.add(new Enemigo.Brocoli(450,150,abner,mapa));
-        //enemigosPrueba.add(new Enemigo.Mosca(1100,150,abner,mapa));
-        //enemigosPrueba.add(new Enemigo.Serpiente(800,150,abner,mapa));
-        //enemigosPrueba.add(new Enemigo.ProyectilHongo(1360,220,abner,mapa));
-        //enemigosPrueba.add(new Enemigo.Hongo(1300,150,abner,mapa));
-        //enemigosPrueba.add(new Enemigo.Gnomo(1300,150,abner,mapa));
-        //enemigosPrueba.add(new Enemigo.Cucarachon(1100,0,abner,mapa));
-
-
 
         gameInfo.setAbner(abner);
         estado = Estado.JUGANDO;
@@ -234,11 +223,11 @@ public class Nivel0 implements Screen, InputProcessor{
         assetManager.load("BotonNivelVida.png", Texture.class);
         assetManager.load("MalteadaMundo.png", Texture.class);
         assetManager.load("FondoCielo.jpg", Texture.class);
-        assetManager.load("cocina.png", Texture.class);
-        assetManager.load("coco.png", Texture.class);
-        assetManager.load("jardin.png", Texture.class);
-        assetManager.load("ropero.png", Texture.class);
-        assetManager.load("sotano.png", Texture.class);
+        assetManager.load("cocina.jpg", Texture.class);
+        assetManager.load("coco.jpg", Texture.class);
+        assetManager.load("jardin.jpg", Texture.class);
+        assetManager.load("ropero.jpg", Texture.class);
+        assetManager.load("sotano.jpg", Texture.class);
         assetManager.load("BotonHabLanzaPapa.png", Texture.class);
         assetManager.load("BotonMunicion.png", Texture.class);
         assetManager.load("CajaMovilDer.png", Texture.class);
@@ -255,11 +244,11 @@ public class Nivel0 implements Screen, InputProcessor{
         habilidad = assetManager.get("BotonResortera.png");
         botonVida  =assetManager.get("BotonVida.png");
         transicionNeutral = assetManager.get("nivel.png");
-        transicionCocina = assetManager.get("cocina.png");
-        transicionCoco = assetManager.get("coco.png");
-        transicionJardin = assetManager.get("jardin.png");
-        transicionArmario = assetManager.get("ropero.png");
-        transicionSotano = assetManager.get("sotano.png");
+        transicionCocina = assetManager.get("cocina.jpg");
+        transicionCoco = assetManager.get("coco.jpg");
+        transicionJardin = assetManager.get("jardin.jpg");
+        transicionArmario = assetManager.get("ropero.jpg");
+        transicionSotano = assetManager.get("sotano.jpg");
         plataforma = assetManager.get("PlataformaInclinada.png");
         pausaTex = assetManager.get("menuPausa.png");
         opciones = assetManager.get("opciones.png");
@@ -341,7 +330,7 @@ public class Nivel0 implements Screen, InputProcessor{
             }
 
 
-            if(Gdx.input.isKeyPressed(Input.Keys.DPAD_LEFT))
+            /*if(Gdx.input.isKeyPressed(Input.Keys.DPAD_LEFT))
                 pad.getLeft().setEstado(Boton.Estado.PRESIONADO);
             else{
                 pad.getLeft().setEstado(Boton.Estado.NOPRESIONADO);
@@ -365,7 +354,7 @@ public class Nivel0 implements Screen, InputProcessor{
 
             if(Gdx.input.isKeyJustPressed(Input.Keys.D)&&!abner.isJumping()&&!abner.isAttacking()&&abner.getPogo()){
                 botonHabilidad.setEstado(Boton.Estado.PRESIONADO);
-            }
+            }*/
 
 
             if(botonSaltar.isPressed()) {
@@ -593,7 +582,7 @@ public class Nivel0 implements Screen, InputProcessor{
     }
 
     public static boolean sotano() {
-        return mapaActual == 2 || mapaActual ==13||mapaActual == 14;
+        return mapaActual == 13 || mapaActual ==14||mapaActual == 15;
     }
 
     private void habilidadSiguiente() {
@@ -606,8 +595,12 @@ public class Nivel0 implements Screen, InputProcessor{
                 case LANZAPAPAS:
                     if(abner.lampara)
                         habilidadActual = Habilidad.LAMPARA;
+                    else
+                        habilidadActual = Habilidad.POGO;
                     break;
                 case LAMPARA:
+                    estadoLampara = Lampara.APAGADA;
+                    abner.setLampara(estadoLampara);
                     habilidadActual = Habilidad.POGO;
                     break;
             }

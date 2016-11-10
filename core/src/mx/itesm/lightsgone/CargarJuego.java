@@ -1,6 +1,5 @@
 package mx.itesm.lightsgone;
 
-import com.badlogic.gdx.Files;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.assets.AssetManager;
@@ -20,7 +19,6 @@ import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.badlogic.gdx.utils.viewport.StretchViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.Iterator;
 
@@ -96,7 +94,7 @@ public class CargarJuego implements Screen {
             @Override
             public void clicked(InputEvent event, float x, float y) {
                 if(!trBtnJuego1.getRegion().getTexture().equals(empty)){
-                    juego.setScreen(new Nivel0(juego,"Juego1.txt"));
+                    juego.setScreen(new LightsGone(juego,"Juego1.txt"));
                     Juego.audio.stop();
                 }
             }
@@ -106,7 +104,7 @@ public class CargarJuego implements Screen {
             @Override
             public void clicked(InputEvent event, float x, float y) {
                 if(!trBtnJuego2.getRegion().getTexture().equals(empty)){
-                    juego.setScreen(new Nivel0(juego,"Juego2.txt"));
+                    juego.setScreen(new LightsGone(juego,"Juego2.txt"));
                     Juego.audio.stop();
                 }
             }

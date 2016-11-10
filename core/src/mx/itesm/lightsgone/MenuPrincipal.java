@@ -4,7 +4,6 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.audio.Music;
-import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
@@ -19,7 +18,6 @@ import com.badlogic.gdx.utils.Timer;
 import com.badlogic.gdx.utils.viewport.StretchViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 
-import java.io.File;
 import java.util.Random;
 
 public class MenuPrincipal implements Screen {
@@ -107,7 +105,7 @@ public class MenuPrincipal implements Screen {
 				Timer.schedule(new Timer.Task() {
 					@Override
 					public void run() {
-						juego.setScreen(new Nivel0(juego));
+						juego.setScreen(new LightsGone(juego));
 					}
 				}, 2f);
 			}

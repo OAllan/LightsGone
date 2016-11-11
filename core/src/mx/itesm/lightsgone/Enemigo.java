@@ -2283,7 +2283,7 @@ public abstract class Enemigo {
         public void move(float x,float y, boolean right, float velocidad){
             if(estadoCaja==EstadoCaja.CAJAMOVIL){
                 if(getBoxRectangle().contains(x,y)){
-                    if(!mapa.colisionX(sprite.getX(), sprite.getY()+30)){
+                    if(!mapa.colisionX(sprite.getX()+45, sprite.getY()+30)&&!mapa.colisionX(sprite.getX()+45+ANCHOCAJA, sprite.getY()+30)){
                         if(right){
                             sprite.translate(velocidad, 0);
                         }

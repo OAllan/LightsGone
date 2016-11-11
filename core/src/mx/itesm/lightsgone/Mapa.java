@@ -28,7 +28,7 @@ public class Mapa {
     private static OrthographicCamera camara;
     private Array<TiledMapTileLayer> puertas,plataformaY, plataformaX,encima, items, guardado, muerte, dano, escaleras;
     private Array<CajaMovil> cajas;
-    private Array<Enemigo> enemigos, enemigosActuales;
+    private Array<Enemigo> enemigos;
     private SpriteBatch batch;
     private int[] numPuertas;
     private float[] posicionY, posicionX;
@@ -295,16 +295,6 @@ public class Mapa {
 
     public void setEnemigos(Array<Enemigo> enemigos){
         this.enemigos = enemigos;
-        copiarEnemigos();
-    }
-
-    private void copiarEnemigos() {
-        if(enemigos!=null){
-            this.enemigosActuales = new Array<Enemigo>(enemigos.size);
-            for(Enemigo enemigo: enemigos) {
-                enemigosActuales.add(enemigo);
-            }
-        }
     }
 
     private int index(int i) {
@@ -362,7 +352,6 @@ public class Mapa {
 
     public void reiniciar(GameInfo gameInfo) {
         MapLayers layers = mapa.getLayers();
-        copiarEnemigos();
         if(gameInfo.isPogo()&&layers.get("Pogo")!=null) {
             layers.get("Pogo").setVisible(false);
         }
@@ -380,7 +369,6 @@ public class Mapa {
 
     public void reiniciarTemp(GameInfo gameInfo) {
         MapLayers layers = mapa.getLayers();
-        copiarEnemigos();
 
         if(gameInfo.isPogoTemp()&&layers.get("Pogo")!=null) {
             layers.get("Pogo").setVisible(false);
@@ -445,9 +433,6 @@ public class Mapa {
 
         if(cajasFijas!=null){
             for (int i=0;i<cajasFijas.size;i++){
-                if(index==i){
-                    continue;
-                }
                 Rectangle rectangle = cajasFijas.get(i).getColisionRectangle();
                 if(rectangle.contains(x,y)){
                     return true;
@@ -456,7 +441,11 @@ public class Mapa {
         }
 
         if(cajas!=null){
-            for(CajaMovil caja:cajas){
+            for(int i = 0;i<cajas.size;i++){
+                if(index==i){
+                    continue;
+                }
+                CajaMovil caja = cajas.get(i);
                 if(caja.getRectangle().contains(x,y))
                     return true;
             }

@@ -3,9 +3,11 @@ package mx.itesm.lightsgone;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.assets.AssetManager;
+import com.badlogic.gdx.assets.loaders.resolvers.ClasspathFileHandleResolver;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Rectangle;
 
 /**
@@ -80,6 +82,11 @@ public abstract class Proyectil {
             if (right)return proyectil.getX() >= x+1000;
             else return proyectil.getX() <= x-1000;
         }
+
+        @Override
+        public String toString(){
+            return "Canica";
+        }
     }
 
     static class Papa extends Proyectil{
@@ -109,5 +116,26 @@ public abstract class Proyectil {
             return right? x + 1000 <= proyectil.getX() : proyectil.getX() <= x - 1000;
         }
 
+        @Override
+        public String toString(){
+            return "Papa";
+        }
+
+    }
+
+    static class Bola extends Proyectil{
+
+        public Bola(Texture texture, float x, float y, boolean right){
+            super(texture, x, y,right);
+        }
+
+        public Rectangle getRectangle(){
+            return proyectil.getBoundingRectangle();
+        }
+
+        @Override
+        public boolean out() {
+            return right? x+1500<proyectil.getX():proyectil.getX()<=x-1500;
+        }
     }
 }

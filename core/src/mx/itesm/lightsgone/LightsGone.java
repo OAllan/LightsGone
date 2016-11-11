@@ -105,13 +105,14 @@ public class LightsGone implements Screen, InputProcessor{
         iniciarCamara();
         crearMapas();
         crearEscena();
+
         Gdx.input.setInputProcessor(this);
     }
 
     private void crearMapas() {
-        mapas = new Array<String>(6);
+        mapas = new Array<String>(15);
         mapManager = new MapManager(camara, batch);
-        abner = new Abner(camara, mapa, gameInfo);
+        abner = new Abner(camara, null, gameInfo);
         mapas.add("CuartoAbner.tmx");
         mapas.add("Pasillo.tmx");
         mapas.add("Sala.tmx");
@@ -128,9 +129,10 @@ public class LightsGone implements Screen, InputProcessor{
         mapas.add("Sotano1.tmx");
         mapas.add("Sotano2.tmx");
         mapaActual = gameInfo.getMapa();
-        mapa = mapManager.getMapa(mapas.get(mapaActual),mapaActual,abner, gameInfo);
+        mapa = mapManager.getNewMapa(mapas.get(mapaActual),mapaActual,abner, gameInfo);
+        abner.setMapa(mapa);
         transicion = Transicion.DISMINUYENDO;
-        musica = true;
+        enemigos = mapa.getEnemigos();
         musica = true;
     }
 
@@ -172,8 +174,7 @@ public class LightsGone implements Screen, InputProcessor{
         else
             habilidadActual = Habilidad.VACIA;
         transicionNivel.setSize(LightsGone.ANCHO_MUNDO, LightsGone.ALTO_MUNDO);
-        abner = new Abner(camara, mapa, gameInfo);
-
+        enemigos = mapa.getEnemigos();
         gameInfo.setAbner(abner);
         estado = Estado.JUGANDO;
         botonHabilidad = new Boton(habilidadDes, ANCHO_MUNDO-habilidadDes.getWidth()-10,YBOTON,false);
@@ -194,7 +195,6 @@ public class LightsGone implements Screen, InputProcessor{
         botonCambioUp = new Boton(175,214,111,30);
         botonCambioDown = new Boton(175, 30, 111,30);
         alphaGame = 0;
-        enemigos = mapa.getEnemigos();
         ambiente.setVolume(0.5f);
 
     }
@@ -330,7 +330,7 @@ public class LightsGone implements Screen, InputProcessor{
             }
 
 
-            /*if(Gdx.input.isKeyPressed(Input.Keys.DPAD_LEFT))
+            if(Gdx.input.isKeyPressed(Input.Keys.DPAD_LEFT))
                 pad.getLeft().setEstado(Boton.Estado.PRESIONADO);
             else{
                 pad.getLeft().setEstado(Boton.Estado.NOPRESIONADO);
@@ -354,7 +354,7 @@ public class LightsGone implements Screen, InputProcessor{
 
             if(Gdx.input.isKeyJustPressed(Input.Keys.D)&&!abner.isJumping()&&!abner.isAttacking()&&abner.getPogo()){
                 botonHabilidad.setEstado(Boton.Estado.PRESIONADO);
-            }*/
+            }
 
 
             if(botonSaltar.isPressed()) {
@@ -582,7 +582,7 @@ public class LightsGone implements Screen, InputProcessor{
     }
 
     public static boolean sotano() {
-        return mapaActual == 13 || mapaActual ==14||mapaActual == 15;
+        return (abner.getLampara()&&mapaActual==12)||mapaActual == 13 || mapaActual ==14||mapaActual == 15;
     }
 
     private void habilidadSiguiente() {
@@ -732,8 +732,9 @@ public class LightsGone implements Screen, InputProcessor{
     private void reiniciarEscena() {
         abner.reiniciar(gameInfo);
         mapaActual = gameInfo.getMapa();
-        mapa = mapManager.getNewMapa(mapas.get(mapaActual),mapaActual, abner, gameInfo);
+        mapa = mapManager.getMapa(mapas.get(mapaActual),mapaActual, abner, gameInfo);
         abner.setMapa(mapa);
+        enemigos = mapa.getEnemigos();
         if(!gameInfo.isPogo()){
             habilidadActual = Habilidad.VACIA;
         }

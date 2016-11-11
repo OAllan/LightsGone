@@ -11,6 +11,8 @@ import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.utils.Array;
 
+import java.util.ArrayList;
+
 
 /**
  * Created by allanruiz on 07/10/16.
@@ -2142,6 +2144,7 @@ public abstract class Enemigo {
     }
 
     static class CajaPayaso extends Enemigo {
+        public static final int ANCHOCAJA = 223;
         private Abner abner;
         private Mapa mapa;
         private static Texture neutral;
@@ -2280,7 +2283,7 @@ public abstract class Enemigo {
         public void move(float x,float y, boolean right, float velocidad){
             if(estadoCaja==EstadoCaja.CAJAMOVIL){
                 if(getBoxRectangle().contains(x,y)){
-                    if(!mapa.colisionX(sprite.getX()+sprite.getWidth(), sprite.getY())){
+                    if(!mapa.colisionX(sprite.getX(), sprite.getY()+30)){
                         if(right){
                             sprite.translate(velocidad, 0);
                         }
@@ -2304,7 +2307,7 @@ public abstract class Enemigo {
         }
 
         public Rectangle getAttackRectangle() {
-            return new Rectangle(sprite.getX() - sprite.getWidth(), sprite.getY(), sprite.getWidth()*2.5f, sprite.getHeight());
+            return new Rectangle(sprite.getX(), sprite.getY(), ANCHOCAJA*2, sprite.getHeight());
         }
 
         private enum EstadoCaja{
@@ -2409,6 +2412,158 @@ public abstract class Enemigo {
 
         public String toString(){
             return "CajaPayaso";
+        }
+    }
+
+    static class Robot extends Enemigo{
+        private final float VELOCIDAD = 7f;
+        private static Texture neutral, proyectil;
+        private static Animation ataque;
+        private static Array<TextureRegion> textureRegions;
+        private float timer;
+        private Abner abner;
+        private Array<Proyectil.Bola> proyectiles;
+        private EstadoRobot estadoRobot;
+        private boolean right;
+        private float vida;
+
+        static {
+            cargarTexturas();
+            cargarAnimacion();
+        }
+
+
+        private static void cargarAnimacion() {
+            ataque = new Animation(0.2f, textureRegions);
+            ataque.setPlayMode(Animation.PlayMode.NORMAL);
+        }
+
+
+        private static void cargarTexturas() {
+            manager.load("R_A1.png", Texture.class);
+            manager.load("R_A2.png",Texture.class);
+            manager.load("R_A3.png", Texture.class);
+            manager.load("R_A4.png",Texture.class);
+            manager.load("R_ball.png", Texture.class);
+            manager.load("R_Off.png", Texture.class);
+            manager.load("R_On.png", Texture.class);
+            manager.finishLoading();
+            textureRegions = new Array<TextureRegion>(5);
+            textureRegions.add(new TextureRegion((Texture)manager.get("R_On.png")));
+            textureRegions.add(new TextureRegion((Texture)manager.get("R_A1.png")));
+            textureRegions.add(new TextureRegion((Texture)manager.get("R_A2.png")));
+            textureRegions.add(new TextureRegion((Texture)manager.get("R_A3.png")));
+            textureRegions.add(new TextureRegion((Texture)manager.get("R_A4.png")));
+            proyectil = manager.get("R_ball.png");
+            neutral = manager.get("R_Off.png");
+
+        }
+
+
+        public Robot(float x, float y, Abner abner){
+            super(neutral,x,y);
+            estadoRobot = EstadoRobot.APAGADO;
+            this.abner = abner;
+            this.proyectiles = new Array<Proyectil.Bola>();
+            this.vida = 3;
+        }
+
+        @Override
+        public void attack() {
+
+            for(int i =0;i<proyectiles.size;i++){
+                Proyectil.Bola proyectil = proyectiles.get(i);
+                if(proyectil.getRectangle().overlaps(abner.getBoundingRectangle())&&!abner.getDano()){
+                    abner.setCantVida(abner.getcantVida()-10);
+                    abner.setDano(true);
+                    proyectiles.removeIndex(i--);
+                }
+            }
+
+        }
+
+        @Override
+        public void setEstado(Estado estado) {
+
+        }
+
+        @Override
+        public void draw(SpriteBatch batch) {
+            sprite.draw(batch);
+            if(right&&sprite.isFlipX()){
+                sprite.flip(true, false);
+            }
+            else if(!right&&!sprite.isFlipX()){
+                sprite.flip(true, false);
+            }
+            actualizar();
+            attack();
+            for(Proyectil.Bola bola:proyectiles){
+                if(bola.out()){
+                    proyectiles.removeValue(bola, true);
+                }
+                else
+                    bola.draw(batch);
+            }
+        }
+
+
+        private void actualizar() {
+            switch (estadoRobot){
+                case APAGADO:
+                    if(Math.abs(sprite.getX() - abner.getX())<=1400){
+                        estadoRobot = EstadoRobot.ATACANDO;
+                    }
+                    break;
+                case ATACANDO:
+                    timer +=Gdx.graphics.getDeltaTime();
+                    sprite.setTexture(ataque.getKeyFrame(timer).getTexture());
+                    if(timer>=0.4f && timer<=0.4f+Gdx.graphics.getDeltaTime()){
+                        proyectiles.add(new Proyectil.Bola(proyectil,right?sprite.getX()+242:sprite.getX()+94, sprite.getY()+92, right));
+                    }
+                    else if(timer>=0.6f && timer<=0.6f+Gdx.graphics.getDeltaTime()){
+                        proyectiles.add(new Proyectil.Bola(proyectil,right?sprite.getX()+270:sprite.getX()+68, sprite.getY()+92, right));
+                    }
+                    if(timer>=ataque.getAnimationDuration()){
+                        estadoRobot = EstadoRobot.ESPERA;
+                        timer = 0;
+                    }
+                    break;
+                case ESPERA:
+                    if(proyectiles.size==0){
+                        estadoRobot = EstadoRobot.APAGADO;
+                    }
+            }
+
+            if(sprite.getX()-abner.getX()<0){
+                right = true;
+            }
+            else{
+                right = false;
+            }
+            ArrayList<Proyectil> proyectils = abner.getProyectiles();
+            for(int i=0;i<proyectils.size();i++){
+                Proyectil proyectil = proyectils.get(i);
+                if(proyectil.getRectangle().overlaps(sprite.getBoundingRectangle())&&proyectil.toString().equalsIgnoreCase("Papa")){
+                    vida--;
+                    proyectils.remove(i--);
+                }
+            }
+
+            if(vida<=0){
+                MapManager.quitarEnemigo(this);
+            }
+        }
+
+        @Override
+        public boolean muerte() {
+            return false;
+        }
+
+        private enum EstadoRobot{
+            APAGADO,
+            ATACANDO,
+            ESPERA
         }
     }
 

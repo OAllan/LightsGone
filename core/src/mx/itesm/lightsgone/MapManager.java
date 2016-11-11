@@ -14,7 +14,7 @@ public class MapManager {
     private OrthographicCamera camara;
     private SpriteBatch batch;
     private final float[] cuartoAbnerX ={530, 2295}, pasilloX = {270, 4140}, salaX = {450, 450,2280,2280}, cocina1X = {315,1305}, cocina2X = {5895,5895}, cocina3X = {630}, jardin1X = {1395, 20745,2170}, jardin2X ={540,18360}, jardin3X = {7740,400}, armario1X = {12510, 315},
-                armario2X = {14400, 270}, armario3X = {9450, 270}, armario4X = {1710}, sotano1X = {8900,990}, sotano2X = {630,8100};
+                armario2X = {14400, 270}, armario3X = {9450, 270}, armario4X = {1600}, sotano1X = {8900,990}, sotano2X = {630,8100};
     private final boolean[] cuartoAbnerB = {true, false}, pasilloB = {true, false}, salaB={true, true, false, false}, cocina1B = {true, true},
             cocina2B = {false,false}, cocina3B = {true}, jardin1B = {true, false, false}, jardin2B = {true, true}, jardin3B = {true, true}, armario1B = {false, true}, armario2B = {false, true}, armario3B ={false, true}, armario4B = {false},
             sotano1B = {false, true}, sotano2B = {true, false};
@@ -175,7 +175,7 @@ public class MapManager {
                 enemigos.add(new Enemigo.GeneradorCajasPayaso(6075, 315, mapa, abner));
                 mapa.setEnemigos(enemigos);
                 mapa.setCajas(new CajaMovil(8055,270,mapa), new CajaMovil(8055, 400, mapa));
-                mapa.setCajasFijas(new Caja(6255, 315), new Caja(6255, 315 + 164), new Caja(5850, 315),new Caja(5850, 315+164));
+                mapa.setCajasFijas(new Caja(6200, 270), new Caja(6200, 270 + 164), new Caja(5795, 270),new Caja(5795, 270+164));
                 break;
             case 10:
                 //Armario2
@@ -185,8 +185,19 @@ public class MapManager {
                 enemigos.add(new Enemigo.GeneradorCajasPayaso(7110,1215,mapa,abner));
                 enemigos.add(new Enemigo.GeneradorCajasPayaso(4680,500,mapa,abner));
                 enemigos.add(new Enemigo.GeneradorCajasPayaso(4970,315,mapa,abner));
+                enemigos.add(new Enemigo.Robot(11115, 540, abner));
+                enemigos.add(new Enemigo.Robot(5534, 315, abner));
                 mapa.setEnemigos(enemigos);
                 mapa.setCajasFijas(new Caja(8400, 765), new Caja(4680, 315));
+                break;
+            case 11:
+                //Armario3
+                enemigos.add(new Enemigo.GeneradorCajasPayaso(7470,900,mapa,abner));
+                enemigos.add(new Enemigo.GeneradorCajasPayaso(3150,225,mapa,abner));
+                enemigos.add(new Enemigo.Robot(990, 900,abner));
+                mapa.setEnemigos(enemigos);
+                mapa.setCajasFijas(new Caja(6920,900), new Caja(6920, 900+164), new Caja(7190, 900), new Caja(7190, 900+164), new Caja(4050,190), new Caja(4050,190+164));
+                mapa.setCajas(new CajaMovil(4100, 190+164*2,mapa));
                 break;
             case 13:
                 break;

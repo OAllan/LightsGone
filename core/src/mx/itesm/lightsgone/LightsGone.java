@@ -330,7 +330,7 @@ public class LightsGone implements Screen, InputProcessor{
             }
 
 
-            if(Gdx.input.isKeyPressed(Input.Keys.DPAD_LEFT))
+            /*if(Gdx.input.isKeyPressed(Input.Keys.DPAD_LEFT))
                 pad.getLeft().setEstado(Boton.Estado.PRESIONADO);
             else{
                 pad.getLeft().setEstado(Boton.Estado.NOPRESIONADO);
@@ -354,7 +354,7 @@ public class LightsGone implements Screen, InputProcessor{
 
             if(Gdx.input.isKeyJustPressed(Input.Keys.D)&&!abner.isJumping()&&!abner.isAttacking()&&abner.getPogo()){
                 botonHabilidad.setEstado(Boton.Estado.PRESIONADO);
-            }
+            }*/
 
 
             if(botonSaltar.isPressed()) {

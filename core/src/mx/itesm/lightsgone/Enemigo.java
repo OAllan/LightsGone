@@ -2206,7 +2206,7 @@ public abstract class Enemigo {
 
         @Override
         public void attack() {
-            if(abner.getBoundingRectangle().overlaps(getAttackRectangle())&&estadoCaja==EstadoCaja.CAJAATAQUE){
+            if(abner.getBoundingRectangle().overlaps(getAttackRectangle())&&isAttacking()){
                 if(!abner.getDano()){
                     abner.setDano(true);
                     abner.setCantVida(abner.getcantVida()-10);

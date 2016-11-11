@@ -130,7 +130,7 @@ public class Abner {
         lampara = true;
         estadoLampara = LightsGone.Lampara.APAGADA;
         this.luz = new Sprite(encendida);
-        this.luz.setPosition(sprite.getX()+ LAMPARAANCHO - LAMPARAX,sprite.getY()- LAMPARAY +120);
+        this.luz.setPosition(sprite.getX()- LAMPARAX,sprite.getY()- LAMPARAY +120);
         this.gameInfo = gameInfo;
     }
 
@@ -453,7 +453,7 @@ public class Abner {
         if (right){
             if(luz.isFlipX()){
                 luz.flip(true,false);
-                this.luz.setPosition(sprite.getX()+ LAMPARAANCHO - LAMPARAX,sprite.getY()- LAMPARAY +120);
+                this.luz.setPosition(sprite.getX() - LAMPARAX,sprite.getY()- LAMPARAY +120);
             }
             if(sprite.isFlipX()){
                 sprite.flip(true, false);
@@ -478,7 +478,7 @@ public class Abner {
         else {
             if(!luz.isFlipX()){
                 luz.flip(true,false);
-                this.luz.setPosition(sprite.getX()- LAMPARAXLEFT,sprite.getY()- LAMPARAY +120);
+                this.luz.setPosition(sprite.getX()- LAMPARAXLEFT-200,sprite.getY()- LAMPARAY +120);
             }
             if(!sprite.isFlipX()){
                 sprite.flip(true, false);

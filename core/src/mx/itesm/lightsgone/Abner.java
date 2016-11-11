@@ -190,6 +190,9 @@ public class Abner {
             escaleras = false;
 
         if(danoA){
+            if(timerDano==0.5f){
+                Gdx.input.vibrate(50);
+            }
             sprite.setRegion(dano);
             if(!right)
                 sprite.flip(true,false);

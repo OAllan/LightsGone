@@ -14,7 +14,7 @@ public class MapManager {
     private OrthographicCamera camara;
     private SpriteBatch batch;
     private final float[] cuartoAbnerX ={530, 2295}, pasilloX = {270, 4140}, salaX = {450, 450,2280,2280}, cocina1X = {315,1305}, cocina2X = {5895,5895}, cocina3X = {630}, jardin1X = {1395, 20745,2170}, jardin2X ={540,18360}, jardin3X = {7740,400}, armario1X = {12510, 315},
-                armario2X = {14400, 270}, armario3X = {9450, 270}, armario4X = {1600}, sotano1X = {8900,990}, sotano2X = {630,8100};
+                armario2X = {14400, 270}, armario3X = {9450, 270}, armario4X = {1600}, sotano1X = {8900,990}, sotano2X = {630,8100}, sotano3X = {};
     private final boolean[] cuartoAbnerB = {true, false}, pasilloB = {true, false}, salaB={true, true, false, false}, cocina1B = {true, true},
             cocina2B = {false,false}, cocina3B = {true}, jardin1B = {true, false, false}, jardin2B = {true, true}, jardin3B = {true, true}, armario1B = {false, true}, armario2B = {false, true}, armario3B ={false, true}, armario4B = {false},
             sotano1B = {false, true}, sotano2B = {true, false};
@@ -208,6 +208,7 @@ public class MapManager {
 
     public static void quitarEnemigo(Enemigo ene){
         if (enemigos.contains(ene,true)){
+            LightsGone.agregarItem(ene);
             if(ene.getClass().getSimpleName().equals("Hongo")){
                 enemigos.removeIndex(enemigos.indexOf(ene,true)-1);
             }

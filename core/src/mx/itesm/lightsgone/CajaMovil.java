@@ -38,7 +38,7 @@ public class CajaMovil {
 
     public void mover(float x, float y, boolean right, float velocidad, int index) {
         if(caja.getBoundingRectangle().contains(x,y)){
-            if(!mapa.colisionX(caja.getX()+caja.getWidth(), caja.getY())){
+            if(!mapa.colisionX(caja.getX()+caja.getWidth(), caja.getY())&&!mapa.colisionX(caja.getX(), caja.getY())){
                 if(right){
                     caja.translate(velocidad, 0);
                 }

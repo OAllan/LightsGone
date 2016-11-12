@@ -56,10 +56,10 @@ public abstract class Enemigo {
     }
 
     public float getX(){
-        return yInicial;
+        return sprite.getX();
     }
     public float getY(){
-        return xInicial;
+        return sprite.getY();
     }
 
     public enum Estado{
@@ -67,8 +67,6 @@ public abstract class Enemigo {
         ATAQUE,
         DANO
     }
-
-
 
 
     static class Sopa extends Enemigo {
@@ -626,7 +624,6 @@ public abstract class Enemigo {
 
         }
 
-
     static class Mosca extends Enemigo {
         private static Texture mosca1,mosca2,mosca3;
         private static Animation caminar, ataque;
@@ -801,7 +798,6 @@ public abstract class Enemigo {
             return "mosca";
         }
     }
-
 
     static class Fuego extends Enemigo {
         private static Texture fuegoAtaque1, fuegoAtaque2, fuegoAtaque3, fuegoPrepara1, fuegoPrepara2, fuegoTransicion;
@@ -2143,7 +2139,7 @@ public abstract class Enemigo {
 
     }
 
-    static class CajaPayaso extends Enemigo {
+    private static class CajaPayaso extends Enemigo {
         public static final int ANCHOCAJA = 223;
         private Abner abner;
         private Mapa mapa;
@@ -2235,7 +2231,7 @@ public abstract class Enemigo {
                 case CAJAMOVIL:
                     timer += Gdx.graphics.getDeltaTime();
                     sprite.setTexture(cajaMovil.getKeyFrame(timer).getTexture());
-                    if(timer>=7){
+                    if(timer>=5){
                         estadoCaja = EstadoCaja.PAYASOFUERA;
                         timer = 0;
                     }
@@ -2250,7 +2246,7 @@ public abstract class Enemigo {
                     break;
                 case NEUTRALPAYASO:
                     timer+= Gdx.graphics.getDeltaTime();
-                    if(timer>=2){
+                    if(timer>=1){
                         estadoCaja = EstadoCaja.CAJAATAQUE;
                         timer = 0;
                     }
@@ -2416,7 +2412,6 @@ public abstract class Enemigo {
     }
 
     static class Robot extends Enemigo{
-        private final float VELOCIDAD = 7f;
         private static Texture neutral, proyectil;
         private static Animation ataque;
         private static Array<TextureRegion> textureRegions;
@@ -2564,6 +2559,34 @@ public abstract class Enemigo {
             APAGADO,
             ATACANDO,
             ESPERA
+        }
+    }
+
+    static class MonstruoRopa extends Enemigo{
+
+
+        public MonstruoRopa(float x, float y, Abner abner){
+            super();
+        }
+
+        @Override
+        public void attack() {
+
+        }
+
+        @Override
+        public void setEstado(Estado estado) {
+
+        }
+
+        @Override
+        public void draw(SpriteBatch batch) {
+
+        }
+
+        @Override
+        public boolean muerte() {
+            return false;
         }
     }
 

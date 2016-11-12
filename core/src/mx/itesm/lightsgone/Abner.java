@@ -127,7 +127,7 @@ public class Abner {
         timerDano = 0.5f;
         timerDanoAlpha =3;
         this.papas = 10;
-        lampara = true;
+        lampara = gameInfo.isLampara();
         estadoLampara = LightsGone.Lampara.APAGADA;
         this.luz = new Sprite(encendida);
         this.luz.setPosition(sprite.getX()- LAMPARAX,sprite.getY()- LAMPARAY +120);

@@ -50,6 +50,8 @@ public class Abner {
     private static TextureRegion caminarTex, saltoTex, pogoTex, caminarLamparaTex, lanzapapasTex, resorteraTex, capaTex,neutral, dano, neutralLampara, neutralCapa, saltar1,saltar2,saltarLampara1,saltarLampara2,saltoCapa, saltarPogo1, saltarPogo2;
     private static Texture encendida, encendidaOscuridad, oscuridad;
     private boolean right;
+    private boolean atrapado;
+    private int clics;
     static {
         assetManager = new AssetManager();
         cargarTexturas();
@@ -136,23 +138,6 @@ public class Abner {
 
 
     public void draw(SpriteBatch batch, boolean right){
-        if(LightsGone.habilidadActual== LightsGone.Habilidad.LAMPARA||LightsGone.sotano()){
-            luz.draw(batch);
-            if(LightsGone.sotano()&&estadoLampara == LightsGone.Lampara.APAGADA){
-                mapa.drawDetallefondo();
-            }
-        }
-        sprite.draw(batch);
-        actualizar(right);
-    }
-
-    private void actualizar(boolean right) {
-        this.right = right;
-
-        if(sprite.getY()<= 0||mapa.colisionMuerte(sprite.getX(),sprite.getY())) {
-            muerte = true;
-        }
-
         if(cantVida<=0&&vidas<=0){
             muerte =true;
         }
@@ -162,6 +147,35 @@ public class Abner {
             cantVida = 99;
         }
 
+        if(!atrapado){
+            if(LightsGone.habilidadActual== LightsGone.Habilidad.LAMPARA||LightsGone.sotano()){
+                luz.draw(batch);
+                if(LightsGone.sotano()&&estadoLampara == LightsGone.Lampara.APAGADA){
+                    mapa.drawDetallefondo();
+                }
+            }
+            sprite.draw(batch);
+            actualizar(right);
+        }
+        else {
+            if(estadoAtaque!=Ataque.DESACTIVADO){
+                clics++;
+                estadoAtaque = Ataque.DESACTIVADO;
+            }
+            if(clics>20) {
+                atrapado = false;
+                clics = 0;
+            }
+
+        }
+    }
+
+    private void actualizar(boolean right) {
+        this.right = right;
+
+        if(sprite.getY()<= 0||mapa.colisionMuerte(sprite.getX(),sprite.getY())) {
+            muerte = true;
+        }
 
         switch (estadoLampara){
             case ENCENDIDA:
@@ -672,6 +686,7 @@ public class Abner {
 
     public void setX(float x){
         sprite.setX(x);
+        camara.position.set(110 + x, camara.position.y, 0);
     }
 
     public void setInitialPosition(int i) {
@@ -787,6 +802,14 @@ public class Abner {
 
     public boolean getLampara() {
         return lampara;
+    }
+
+    public void setAtrapado(boolean atrapado) {
+        this.atrapado = atrapado;
+    }
+
+    public boolean isAtrapado() {
+        return atrapado;
     }
 
     public enum Salto{

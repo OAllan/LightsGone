@@ -173,6 +173,7 @@ public class MapManager {
                 //Armario 1
                 enemigos.add(new Enemigo.GeneradorCajasPayaso(2385,315,mapa, abner));
                 enemigos.add(new Enemigo.GeneradorCajasPayaso(6075, 315, mapa, abner));
+                enemigos.add(new Enemigo.MonstruoRopa(4185,270,abner));
                 mapa.setEnemigos(enemigos);
                 mapa.setCajas(new CajaMovil(8055,270,mapa), new CajaMovil(8055, 400, mapa));
                 mapa.setCajasFijas(new Caja(6200, 270), new Caja(6200, 270 + 164), new Caja(5795, 270),new Caja(5795, 270+164));
@@ -207,8 +208,8 @@ public class MapManager {
     }
 
     public static void quitarEnemigo(Enemigo ene){
+        LightsGone.agregarItem(ene);
         if (enemigos.contains(ene,true)){
-            LightsGone.agregarItem(ene);
             if(ene.getClass().getSimpleName().equals("Hongo")){
                 enemigos.removeIndex(enemigos.indexOf(ene,true)-1);
             }

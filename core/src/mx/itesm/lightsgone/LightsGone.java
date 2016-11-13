@@ -14,6 +14,8 @@ import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector3;
+import com.badlogic.gdx.scenes.scene2d.Touchable;
+import com.badlogic.gdx.scenes.scene2d.utils.DragAndDrop;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.viewport.StretchViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
@@ -76,8 +78,9 @@ public class LightsGone implements Screen, InputProcessor{
     public static Habilidad habilidadActual;
     private Array<Sprite> vidas;
     private Arma estadoArma;
-    private boolean switchAtaque, switchHabilidad;
+    private boolean switchAtaque, switchHabilidad, switchedAtaque, switchedHabilidad;
     private static Array<Sprite> malteadas;
+    private int leftPointer, rightPointer;
 
     static Array<Enemigo> enemigosPrueba= new Array<Enemigo>(9);
 
@@ -343,31 +346,34 @@ public class LightsGone implements Screen, InputProcessor{
 
             //Inicio de los controles del teclado, si quieren habilitarlos quiten el /* al inicio y el */ al final
 
-            if(Gdx.input.isKeyPressed(Input.Keys.DPAD_LEFT))
-                pad.getLeft().setEstado(Boton.Estado.PRESIONADO);
-            else{
-                pad.getLeft().setEstado(Boton.Estado.NOPRESIONADO);
-                abner.setEstadoHorizontal(Abner.Horizontal.DESACTIVADO);
-            }
-            if(Gdx.input.isKeyPressed(Input.Keys.DPAD_RIGHT))
-                pad.getRight().setEstado(Boton.Estado.PRESIONADO);
-            else {
-                pad.getRight().setEstado(Boton.Estado.NOPRESIONADO);
-                abner.setEstadoHorizontal(Abner.Horizontal.DESACTIVADO);
+            if(Gdx.app.getType()== Application.ApplicationType.Desktop){
+                if(Gdx.input.isKeyPressed(Input.Keys.DPAD_LEFT))
+                    pad.getLeft().setEstado(Boton.Estado.PRESIONADO);
+                else{
+                    pad.getLeft().setEstado(Boton.Estado.NOPRESIONADO);
+                    abner.setEstadoHorizontal(Abner.Horizontal.DESACTIVADO);
+                }
+                if(Gdx.input.isKeyPressed(Input.Keys.DPAD_RIGHT))
+                    pad.getRight().setEstado(Boton.Estado.PRESIONADO);
+                else {
+                    pad.getRight().setEstado(Boton.Estado.NOPRESIONADO);
+                    abner.setEstadoHorizontal(Abner.Horizontal.DESACTIVADO);
+                }
+
+                if(Gdx.input.isKeyJustPressed(Input.Keys.DPAD_UP)||Gdx.input.isKeyJustPressed(Input.Keys.DPAD_DOWN)){
+                    habilidadSiguiente();
+                }
+
+                if(Gdx.input.isKeyJustPressed(Input.Keys.A)&&!abner.isJumping()&&!abner.isAttacking())
+                    botonSaltar.setEstado(Boton.Estado.PRESIONADO);
+                if(Gdx.input.isKeyJustPressed(Input.Keys.S)&&!abner.isAttacking())
+                    botonArma.setEstado(Boton.Estado.PRESIONADO);
+
+                if(Gdx.input.isKeyJustPressed(Input.Keys.D)&&!abner.isJumping()&&!abner.isAttacking()&&abner.getPogo()){
+                    botonHabilidad.setEstado(Boton.Estado.PRESIONADO);
+                }
             }
 
-            if(Gdx.input.isKeyJustPressed(Input.Keys.DPAD_UP)||Gdx.input.isKeyJustPressed(Input.Keys.DPAD_DOWN)){
-                habilidadSiguiente();
-            }
-
-            if(Gdx.input.isKeyJustPressed(Input.Keys.A)&&!abner.isJumping()&&!abner.isAttacking())
-                botonSaltar.setEstado(Boton.Estado.PRESIONADO);
-            if(Gdx.input.isKeyJustPressed(Input.Keys.S)&&!abner.isAttacking())
-                botonArma.setEstado(Boton.Estado.PRESIONADO);
-
-            if(Gdx.input.isKeyJustPressed(Input.Keys.D)&&!abner.isJumping()&&!abner.isAttacking()&&abner.getPogo()){
-                botonHabilidad.setEstado(Boton.Estado.PRESIONADO);
-            }
 
             //Fin de los controles del teclado
 
@@ -649,9 +655,8 @@ public class LightsGone implements Screen, InputProcessor{
 
 
     static void agregarItem(Enemigo enemigo){
-
         Sprite sprite = new Sprite(malteada);
-        sprite.setPosition(enemigo.getX(), enemigo.getY());
+        sprite.setPosition(enemigo.getX(), enemigo.getY()+100);
         malteadas.add(sprite);
     }
 
@@ -677,14 +682,22 @@ public class LightsGone implements Screen, InputProcessor{
         float x = v.x;
         float y = v.y;
         if(estado == Estado.JUGANDO) {
-            if (pad.getLeft().contiene(x, y))
+            if (pad.getLeft().contiene(x, y)){
                 pad.getLeft().setEstado(Boton.Estado.PRESIONADO);
-            if (pad.getRight().contiene(x, y))
+                leftPointer = pointer;
+            }
+            if (pad.getRight().contiene(x, y)){
                 pad.getRight().setEstado(Boton.Estado.PRESIONADO);
-            if (botonSaltar.contiene(x, y) & (!abner.isJumping()) & (!abner.isAttacking()))
+                leftPointer = pointer;
+            }
+            if (botonSaltar.contiene(x, y) & (!abner.isJumping()) & (!abner.isAttacking())){
                 botonSaltar.setEstado(Boton.Estado.PRESIONADO);
+                rightPointer = pointer;
+            }
             if (botonArma.contiene(x, y)){
                 switchAtaque = true;
+                rightPointer = pointer;
+                switchedAtaque = false;
             }
             if(pausa.contiene(x,y))
                 estado = Estado.PAUSA;
@@ -694,12 +707,12 @@ public class LightsGone implements Screen, InputProcessor{
                     botonSave.setEstado(Boton.Estado.PRESIONADO);
                 }
             }
-            //if(botonCambioDown.contiene(x,y)||botonCambioUp.contiene(x,y)){
-              //  habilidadSiguiente();
-            //}
+
             if(abner.getPogo()){
                 if(botonHabilidad.contiene(x,y)) {
                     switchHabilidad = true;
+                    rightPointer = pointer;
+                    switchedHabilidad = false;
                 }
             }
 
@@ -775,21 +788,25 @@ public class LightsGone implements Screen, InputProcessor{
         float x = v.x;
         float y = v.y;
         if(estado == Estado.JUGANDO){
-            if(pad.getLeft().contiene(x,y)) {
+            if(pad.getLeft().contiene(x,y)&&pointer==leftPointer) {
                 pad.getLeft().setEstado(Boton.Estado.NOPRESIONADO);
                 abner.setEstadoHorizontal(Abner.Horizontal.DESACTIVADO);
+                leftPointer =-1;
             }
-            if(pad.getRight().contiene(x,y)) {
+            if(pad.getRight().contiene(x,y)&&pointer==leftPointer) {
                 pad.getRight().setEstado(Boton.Estado.NOPRESIONADO);
                 abner.setEstadoHorizontal(Abner.Horizontal.DESACTIVADO);
+                leftPointer =-1;
             }
-            if(botonArma.contiene(x,y)&&(!abner.isAttacking())){
+            if(botonArma.contiene(x,y)&&(!abner.isAttacking())&&pointer==rightPointer&&!switchedAtaque){
                 botonArma.setEstado(Boton.Estado.PRESIONADO);
                 switchAtaque = false;
+                rightPointer = -1;
             }
-            if(abner.getPogo()&&botonHabilidad.contiene(x,y)&&!abner.isJumping()&&!abner.isAttacking()){
+            if(abner.getPogo()&&botonHabilidad.contiene(x,y)&&!abner.isJumping()&&!abner.isAttacking()&&!switchedHabilidad){
                 botonHabilidad.setEstado(Boton.Estado.PRESIONADO);
                 switchHabilidad = false;
+                rightPointer = -1;
             }
         }
 
@@ -803,26 +820,29 @@ public class LightsGone implements Screen, InputProcessor{
         float x = v.x;
         float y = v.y;
         if(estado == Estado.JUGANDO){
-            if(pad.getLeft().contiene(x,y))
+            if(pad.getLeft().contiene(x,y)&&leftPointer==pointer) {
                 pad.getLeft().setEstado(Boton.Estado.PRESIONADO);
-            else{
+            }
+            else if(leftPointer==pointer){
                 pad.getLeft().setEstado(Boton.Estado.NOPRESIONADO);
                 abner.setEstadoHorizontal(Abner.Horizontal.DESACTIVADO);
             }
-            if(pad.getRight().contiene(x,y))
+            if(pad.getRight().contiene(x,y)&&leftPointer==pointer)
                 pad.getRight().setEstado(Boton.Estado.PRESIONADO);
-            else{
+            else if (leftPointer==pointer){
                 pad.getRight().setEstado(Boton.Estado.NOPRESIONADO);
                 abner.setEstadoHorizontal(Abner.Horizontal.DESACTIVADO);
             }
-            if(!botonArma.contiene(x,y)&&switchAtaque){
+            if(!botonArma.contiene(x,y)&&switchAtaque&&rightPointer==pointer){
                 ataqueSiguiente();
                 switchAtaque = false;
+                switchedAtaque= true;
             }
 
-            if(!botonHabilidad.contiene(x,y)&&switchHabilidad){
+            if(!botonHabilidad.contiene(x,y)&&switchHabilidad&&rightPointer==pointer){
                 habilidadSiguiente();
                 switchHabilidad = false;
+                switchedHabilidad = true;
             }
         }
 

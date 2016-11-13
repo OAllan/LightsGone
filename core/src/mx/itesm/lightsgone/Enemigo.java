@@ -65,7 +65,8 @@ public abstract class Enemigo {
     public enum Estado{
         NEUTRAL,
         ATAQUE,
-        DANO
+        DANO,
+        ESPERANDO
     }
 
 
@@ -1607,7 +1608,7 @@ public abstract class Enemigo {
 
         private void actualizar() {
             if(abner.getBoundingRectangle().overlaps(sprite.getBoundingRectangle())){
-                if(ataco==false) {
+                if(!ataco) {
                     attack();
                     startTime = System.currentTimeMillis();
                 }
@@ -1657,11 +1658,11 @@ public abstract class Enemigo {
             }
 
             if(estado== Estado.ATAQUE && muerto==0) {
-                if (direccion == "arriba") {
+                if (direccion.equalsIgnoreCase("arriba")) {
                     sprite.setTexture(lanzamiento);
                     sprite.setY(sprite.getY() + 16);
                 }
-                if (direccion == "abajo") {
+                if (direccion.equalsIgnoreCase("abajo")) {
                     sprite.setY(sprite.getY() - 16);
                 }
             }
@@ -2716,4 +2717,63 @@ public abstract class Enemigo {
         }
     }
 
+    static class Alfombra extends Enemigo {
+        private static Texture neutral, esperando, ataque;
+
+        static {
+            cargarTexturas();
+        }
+
+        private static void cargarTexturas() {
+
+        }
+
+        public Alfombra(float x, float y, Abner abner){
+            super(neutral, x,y);
+        }
+
+
+        @Override
+        public void attack() {
+
+        }
+
+        @Override
+        public void setEstado(Estado estado) {
+
+        }
+
+        @Override
+        public void draw(SpriteBatch batch) {
+
+        }
+
+        @Override
+        public boolean muerte() {
+            return false;
+        }
+    }
+
+    static class Fantasma extends Enemigo {
+
+        @Override
+        public void attack() {
+
+        }
+
+        @Override
+        public void setEstado(Estado estado) {
+
+        }
+
+        @Override
+        public void draw(SpriteBatch batch) {
+
+        }
+
+        @Override
+        public boolean muerte() {
+            return false;
+        }
+    }
 }

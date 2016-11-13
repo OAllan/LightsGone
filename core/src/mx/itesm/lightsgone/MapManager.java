@@ -20,7 +20,7 @@ public class MapManager {
             sotano1B = {false, true}, sotano2B = {true, false};
     private final int[] cuartoAbner = {9,1}, pasillo = {0,2}, sala = {1,13,6,3}, cocina1 = {2,4}, cocina2 = {3,5}, cocina3 = {4}, jardin1 = {2,7,8}, jardin2 = {6,8}, jardin3 = {6,7}, armario1 = {0,10}, armario2 = {9,11}, armario3 = {10,12}, armario4 = {11}, sotano1 = {2,14}, sotano2 = {13,15};
     private final float[] cuartoAbnerY = {LightsGone.YBAJA, LightsGone.YBAJA}, pasilloY = {LightsGone.YBAJA, LightsGone.YBAJA}, salaY = {LightsGone.YALTA, LightsGone.YBAJA, LightsGone.YSALA, LightsGone.YMEDIA}, cocina1Y = {LightsGone.YBAJA, LightsGone.YCOCINA1}, cocina2Y ={LightsGone.YBAJA, LightsGone.YCOCINA2},cocina3Y = {LightsGone.YCOCINA3},
-            jardin1Y = {LightsGone.YCOCINA2, LightsGone.YJARDIN1, LightsGone.YBAJA}, jardin2Y = {LightsGone.YJARDIN2, LightsGone.YJARDIN2},jardin3Y={LightsGone.YBAJA, LightsGone.YJARDIN3}, armario1Y = {LightsGone.YARMARIO, LightsGone.YSALA}, armario2Y = {945,1035}, armario3Y = {945,945}, armario4Y = {LightsGone.YBAJA}, sotano1Y = {405,585}, sotano2Y = {4005,450};
+            jardin1Y = {LightsGone.YCOCINA2, LightsGone.YJARDIN1, LightsGone.YBAJA}, jardin2Y = {LightsGone.YJARDIN2, LightsGone.YJARDIN2},jardin3Y={LightsGone.YBAJA, LightsGone.YJARDIN3}, armario1Y = {LightsGone.YARMARIO, 540}, armario2Y = {945,1035}, armario3Y = {945,945}, armario4Y = {LightsGone.YBAJA}, sotano1Y = {405,585}, sotano2Y = {4005,450};
     private final float[][] posicionX= {cuartoAbnerX, pasilloX, salaX, cocina1X, cocina2X, cocina3X, jardin1X, jardin2X, jardin3X, armario1X, armario2X, armario3X, armario4X, sotano1X, sotano2X};
     private final int[][] numPuertas = {cuartoAbner, pasillo, sala, cocina1, cocina2, cocina3, jardin1, jardin2, jardin3, armario1, armario2, armario3, armario4, sotano1, sotano2};
     private final boolean[][] right= {cuartoAbnerB, pasilloB, salaB, cocina1B, cocina2B, cocina3B, jardin1B, jardin2B, jardin3B, armario1B, armario2B, armario3B, armario4B, sotano1B, sotano2B};
@@ -174,6 +174,8 @@ public class MapManager {
                 enemigos.add(new Enemigo.GeneradorCajasPayaso(2385,315,mapa, abner));
                 enemigos.add(new Enemigo.GeneradorCajasPayaso(6075, 315, mapa, abner));
                 enemigos.add(new Enemigo.MonstruoRopa(4185,270,abner));
+                enemigos.add(new Enemigo.MonstruoRopa(10215,270,abner));
+                enemigos.add(new Enemigo.MonstruoRopa(630,540,abner));
                 mapa.setEnemigos(enemigos);
                 mapa.setCajas(new CajaMovil(8055,270,mapa), new CajaMovil(8055, 400, mapa));
                 mapa.setCajasFijas(new Caja(6200, 270), new Caja(6200, 270 + 164), new Caja(5795, 270),new Caja(5795, 270+164));

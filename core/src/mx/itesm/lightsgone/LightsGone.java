@@ -650,6 +650,7 @@ public class LightsGone implements Screen, InputProcessor{
     @Override
     public void dispose() {
         batch.dispose();
+        abner.dispose();
 
     }
 

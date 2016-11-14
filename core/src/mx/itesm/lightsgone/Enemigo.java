@@ -62,19 +62,18 @@ public abstract class Enemigo {
     }
 
     public float getX(){
-        return yInicial;
+        return sprite.getX();
     }
     public float getY(){
-        return xInicial;
+        return sprite.getY();
     }
 
     public enum Estado{
         NEUTRAL,
         ATAQUE,
-        DANO
+        DANO,
+        ESPERANDO
     }
-
-
 
 
     static class Sopa extends Enemigo {
@@ -358,11 +357,6 @@ public abstract class Enemigo {
 
             if(vida<=0) {
                 MapManager.quitarEnemigo(this);
-                xInicial = sprite.getX()+sprite.getWidth()/2;
-                yInicial = sprite.getY();
-                muerte = true;
-                ///sprite.setPosition(20000,20000);
-
             }
             if(sprite.getY()!=1620 && sprite.getY()!=495) {
                 if (sprite.getX() >= xInicial + 400)
@@ -656,7 +650,6 @@ public abstract class Enemigo {
 
         }
 
-
     static class Mosca extends Enemigo {
         private static Texture mosca1,mosca2,mosca3;
         private static Animation caminar, ataque;
@@ -734,15 +727,10 @@ public abstract class Enemigo {
                     if (ataq && Math.abs(distancia) >= 1000) {
 
                     }
-
-
                 }
             }
-
             actualizar();
         }
-
-
 
         @Override
         public boolean muerte() {
@@ -851,7 +839,6 @@ public abstract class Enemigo {
             return "mosca";
         }
     }
-
 
     static class Fuego extends Enemigo {
         private static Texture fuegoAtaque1, fuegoAtaque2, fuegoAtaque3, fuegoPrepara1, fuegoPrepara2, fuegoTransicion;
@@ -2555,7 +2542,7 @@ public abstract class Enemigo {
 
     }
 
-    static class CajaPayaso extends Enemigo {
+    private static class CajaPayaso extends Enemigo {
         public static final int ANCHOCAJA = 223;
         private Abner abner;
         private Mapa mapa;
@@ -2647,7 +2634,7 @@ public abstract class Enemigo {
                 case CAJAMOVIL:
                     timer += Gdx.graphics.getDeltaTime();
                     sprite.setTexture(cajaMovil.getKeyFrame(timer).getTexture());
-                    if(timer>=7){
+                    if(timer>=5){
                         estadoCaja = EstadoCaja.PAYASOFUERA;
                         timer = 0;
                     }
@@ -2662,7 +2649,7 @@ public abstract class Enemigo {
                     break;
                 case NEUTRALPAYASO:
                     timer+= Gdx.graphics.getDeltaTime();
-                    if(timer>=2){
+                    if(timer>=1){
                         estadoCaja = EstadoCaja.CAJAATAQUE;
                         timer = 0;
                     }
@@ -2704,9 +2691,9 @@ public abstract class Enemigo {
                         }
                     }
                 }
-                //if(!mapa.colisionCaja(sprite.getX()+sprite.getWidth()/2, sprite.getY(), true, -1)){
-                  //  caer();
-             //   }
+                if(!mapa.colisionCaja(sprite.getX()+sprite.getWidth()/2, sprite.getY(), true, -1)){
+                    caer();
+                }
             }
         }
 
@@ -2826,13 +2813,12 @@ public abstract class Enemigo {
             return "CajaPayaso";
         }
     }
-/*
+
     static class Robot extends Enemigo{
-        private final float VELOCIDAD = 7f;
         private static Texture neutral, proyectil;
         private static Animation ataque;
         private static Array<TextureRegion> textureRegions;
-        private float timer;
+        private float timer, timerOn;
         private Abner abner;
         private Array<Proyectil.Bola> proyectiles;
         private EstadoRobot estadoRobot;
@@ -2878,6 +2864,7 @@ public abstract class Enemigo {
             this.abner = abner;
             this.proyectiles = new Array<Proyectil.Bola>();
             this.vida = 3;
+            timerOn = 0;
         }
 
         @Override
@@ -2923,8 +2910,12 @@ public abstract class Enemigo {
         private void actualizar() {
             switch (estadoRobot){
                 case APAGADO:
-                    if(Math.abs(sprite.getX() - abner.getX())<=1400){
-                        estadoRobot = EstadoRobot.ATACANDO;
+                    if(Math.abs(sprite.getX() - abner.getX())<=530){
+                        timerOn += Gdx.graphics.getDeltaTime();
+                        if(timerOn>=2){
+                            estadoRobot = EstadoRobot.ATACANDO;
+                            timerOn = 0;
+                        }
                     }
                     break;
                 case ATACANDO:
@@ -2937,14 +2928,10 @@ public abstract class Enemigo {
                         proyectiles.add(new Proyectil.Bola(proyectil,right?sprite.getX()+270:sprite.getX()+68, sprite.getY()+92, right));
                     }
                     if(timer>=ataque.getAnimationDuration()){
-                        estadoRobot = EstadoRobot.ESPERA;
+                        estadoRobot = EstadoRobot.APAGADO;
                         timer = 0;
                     }
                     break;
-                case ESPERA:
-                    if(proyectiles.size==0){
-                        estadoRobot = EstadoRobot.APAGADO;
-                    }
             }
 
             if(sprite.getX()-abner.getX()<0){
@@ -2974,9 +2961,226 @@ public abstract class Enemigo {
 
         private enum EstadoRobot{
             APAGADO,
-            ATACANDO,
-            ESPERA
+            ATACANDO
         }
-    }*/
+    }
 
+    static class MonstruoRopa extends Enemigo{
+
+        private static Texture neutral;
+        private static Animation respirando, levantando, atrapar, atrapado;
+        private static Array<TextureRegion> respirandoTex, levantandoTex, atraparTex, atrapadoTex;
+        private final Abner abner;
+        private EstadoRopa estadoRopa;
+        private float timer, timerAtaque;
+        private boolean right;
+
+        static{
+            cargarTexturas();
+            cargarAnimaciones();
+        }
+
+        private static void cargarAnimaciones() {
+            respirando = new Animation(0.4f, respirandoTex);
+            respirando.setPlayMode(Animation.PlayMode.LOOP);
+            levantando = new Animation(0.2f, levantandoTex);
+            levantando.setPlayMode(Animation.PlayMode.NORMAL);
+            atrapar = new Animation(0.1f, atraparTex);
+            atrapar.setPlayMode(Animation.PlayMode.NORMAL);
+            atrapado = new Animation(0.2f, atrapadoTex);
+            atrapado.setPlayMode(Animation.PlayMode.LOOP);
+        }
+
+        private static void cargarTexturas() {
+            manager.load("monstruoropa1.png", Texture.class);
+            manager.load("monstruoropa2.png", Texture.class);
+            manager.load("monstruoropa3.png", Texture.class);
+            manager.load("monstruoropa4.png", Texture.class);
+            manager.load("monstruoropa5.png", Texture.class);
+            manager.load("monstruoropa6.png",Texture.class);
+            manager.load("monstruoropa7.png", Texture.class);
+            manager.load("monstruoropa8.png", Texture.class);
+            manager.load("monstruoropa9.png", Texture.class);
+            manager.load("monstruoropa10.png", Texture.class);
+            manager.load("monstruoropa11.png", Texture.class);
+            manager.finishLoading();
+            respirandoTex = new Array<TextureRegion>();
+            levantandoTex = new Array<TextureRegion>();
+            atraparTex = new Array<TextureRegion>();
+            atrapadoTex = new Array<TextureRegion>();
+            neutral = manager.get("monstruoropa1.png");
+            levantandoTex.add(new TextureRegion((Texture)manager.get("monstruoropa2.png")));
+            levantandoTex.add(new TextureRegion((Texture)manager.get("monstruoropa3.png")));
+            respirandoTex.add(new TextureRegion((Texture)manager.get("monstruoropa4.png")));
+            respirandoTex.add(new TextureRegion((Texture)manager.get("monstruoropa5.png")));
+            atraparTex.add(new TextureRegion((Texture)manager.get("monstruoropa6.png")));
+            atraparTex.add(new TextureRegion((Texture)manager.get("monstruoropa7.png")));
+            atraparTex.add(new TextureRegion((Texture)manager.get("monstruoropa8.png")));
+            atraparTex.add(new TextureRegion((Texture)manager.get("monstruoropa9.png")));
+            atrapadoTex.add(new TextureRegion((Texture)manager.get("monstruoropa10.png")));
+            atrapadoTex.add(new TextureRegion((Texture)manager.get("monstruoropa11.png")));
+
+        }
+
+        public MonstruoRopa(float x, float y, Abner abner){
+            super(neutral, x,y);
+            estadoRopa = EstadoRopa.CAIDO;
+            this.abner = abner;
+            this.timerAtaque = 0;
+        }
+
+        @Override
+        public void attack() {
+            if(timer>=0.3f&&abner.getBoundingRectangle().overlaps(sprite.getBoundingRectangle())&&!abner.getDano()){
+                abner.setAtrapado(true);
+                estadoRopa = EstadoRopa.ATRAPADO;
+                timer=0;
+            }
+        }
+
+        @Override
+        public void setEstado(Estado estado) {
+
+        }
+
+        @Override
+        public void draw(SpriteBatch batch) {
+            sprite.draw(batch);
+            actualizar();
+        }
+
+        private void actualizar() {
+            switch (estadoRopa){
+                case CAIDO:
+                    sprite.setTexture(neutral);
+                    if(Math.abs(sprite.getX()-abner.getX())<=500){
+                        estadoRopa = EstadoRopa.LEVANTANDO;
+                    }
+                    break;
+                case LEVANTANDO:
+                    timer+=Gdx.graphics.getDeltaTime();
+                    sprite.setTexture(levantando.getKeyFrame(timer).getTexture());
+                    if(timer>=levantando.getAnimationDuration()){
+                        timer =0;
+                        estadoRopa = EstadoRopa.ESPERANDO;
+                    }
+                    break;
+                case ESPERANDO:
+                    if(abner.getX()-sprite.getX()>0){
+                        right = true;
+                    }
+                    else{
+                        right = false;
+                    }
+                    timer+=Gdx.graphics.getDeltaTime();
+                    sprite.setTexture(respirando.getKeyFrame(timer).getTexture());
+                    if(Math.abs(sprite.getX()-abner.getX())<=100){
+                        timer = 0;
+                        estadoRopa = EstadoRopa.ATACANDO;
+                    }
+                    else if(Math.abs(sprite.getX()-abner.getX())>=500){
+                        estadoRopa = EstadoRopa.CAIDO;
+                    }
+                    break;
+                case ATACANDO:
+                    attack();
+                    timer+=Gdx.graphics.getDeltaTime();
+                    sprite.setTexture(atrapar.getKeyFrame(timer).getTexture());
+                    if(timer>=atrapar.getAnimationDuration()){
+                        timer = 0;
+                        estadoRopa = EstadoRopa.ESPERANDO;
+                    }
+                    break;
+                case ATRAPADO:
+                    timer += Gdx.graphics.getDeltaTime();
+                    timerAtaque += Gdx.graphics.getDeltaTime();
+                    sprite.setTexture(atrapado.getKeyFrame(timer).getTexture());
+                    if(timerAtaque>=1){
+                        abner.setCantVida(abner.getcantVida()-7);
+                        timerAtaque = 0;
+                        Gdx.input.vibrate(10);
+                    }
+                    if(timer>=6||!abner.isAtrapado()){
+                        estadoRopa = EstadoRopa.CAIDO;
+                        abner.setX(right?abner.getX()-150:abner.getX()+150);
+                        abner.setDano(true);
+                        abner.setAtrapado(false);
+                    }
+                    break;
+            }
+        }
+
+        @Override
+        public boolean muerte() {
+            return false;
+        }
+
+        private enum EstadoRopa{
+            CAIDO,
+            LEVANTANDO,
+            ESPERANDO,
+            ATACANDO,
+            ATRAPADO
+        }
+    }
+
+    static class Alfombra extends Enemigo {
+        private static Texture neutral, esperando, ataque;
+
+        static {
+            cargarTexturas();
+        }
+
+        private static void cargarTexturas() {
+
+        }
+
+        public Alfombra(float x, float y, Abner abner){
+            super(neutral, x,y);
+        }
+
+
+        @Override
+        public void attack() {
+
+        }
+
+        @Override
+        public void setEstado(Estado estado) {
+
+        }
+
+        @Override
+        public void draw(SpriteBatch batch) {
+
+        }
+
+        @Override
+        public boolean muerte() {
+            return false;
+        }
+    }
+
+    static class Fantasma extends Enemigo {
+
+        @Override
+        public void attack() {
+
+        }
+
+        @Override
+        public void setEstado(Estado estado) {
+
+        }
+
+        @Override
+        public void draw(SpriteBatch batch) {
+
+        }
+
+        @Override
+        public boolean muerte() {
+            return false;
+        }
+    }
 }

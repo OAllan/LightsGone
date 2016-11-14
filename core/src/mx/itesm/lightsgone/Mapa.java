@@ -49,7 +49,7 @@ public class Mapa {
         this.right = right;
         cargarCapas();
         detallesFondo = (TiledMapTileLayer)this.mapa.getLayers().get("DetallesFondo2");
-        if(LightsGone.sotano()){
+        if(LightsGone.sotano()&&detallesFondo!=null){
             this.mapa.getLayers().get("DetallesFondo2").setVisible(false);
         }
     }
@@ -352,6 +352,11 @@ public class Mapa {
 
     public void reiniciar(GameInfo gameInfo) {
         MapLayers layers = mapa.getLayers();
+
+        for(MapLayer layer:layers){
+            layer.setVisible(true);
+        }
+
         if(gameInfo.isPogo()&&layers.get("Pogo")!=null) {
             layers.get("Pogo").setVisible(false);
         }
@@ -369,6 +374,10 @@ public class Mapa {
 
     public void reiniciarTemp(GameInfo gameInfo) {
         MapLayers layers = mapa.getLayers();
+
+        for (MapLayer layer: layers){
+            layer.setVisible(true);
+        }
 
         if(gameInfo.isPogoTemp()&&layers.get("Pogo")!=null) {
             layers.get("Pogo").setVisible(false);

@@ -126,8 +126,8 @@ public class Abner {
         danoA = false;
         timerDano = 0.5f;
         timerDanoAlpha =3;
-        this.papas = 1000;
-        lampara = true;
+        this.papas = 10;
+        lampara = gameInfo.isLampara();
         estadoLampara = LightsGone.Lampara.APAGADA;
         this.luz = new Sprite(encendida);
         this.luz.setPosition(sprite.getX()- LAMPARAX,sprite.getY()- LAMPARAY +120);
@@ -136,14 +136,36 @@ public class Abner {
 
 
     public void draw(SpriteBatch batch, boolean right){
-        if(LightsGone.habilidadActual== LightsGone.Habilidad.LAMPARA||LightsGone.sotano()){
-            luz.draw(batch);
-            if(LightsGone.sotano()&&estadoLampara == LightsGone.Lampara.APAGADA){
-                //mapa.drawDetallefondo();
-            }
+        if(cantVida<=0&&vidas<=0){
+            muerte =true;
         }
-        sprite.draw(batch);
-        actualizar(right);
+
+        else if(cantVida<=0&&vidas>=1) {
+            vidas--;
+            cantVida = 99;
+        }
+
+        if(!atrapado){
+            if(LightsGone.habilidadActual== LightsGone.Habilidad.LAMPARA||LightsGone.sotano()){
+                luz.draw(batch);
+                if(LightsGone.sotano()&&estadoLampara == LightsGone.Lampara.APAGADA){
+                    mapa.drawDetallefondo();
+                }
+            }
+            sprite.draw(batch);
+            actualizar(right);
+        }
+        else {
+            if(estadoAtaque!=Ataque.DESACTIVADO){
+                clics++;
+                estadoAtaque = Ataque.DESACTIVADO;
+            }
+            if(clics>20) {
+                atrapado = false;
+                clics = 0;
+            }
+
+        }
     }
 
     private void actualizar(boolean right) {
@@ -152,16 +174,6 @@ public class Abner {
         if(sprite.getY()<= 0||mapa.colisionMuerte(sprite.getX(),sprite.getY())) {
             muerte = true;
         }
-
-        if(cantVida<=0&&vidas<=0){
-            muerte =true;
-        }
-
-        else if(cantVida<=0&&vidas>=1) {
-            vidas--;
-            cantVida = 5000;
-        }
-
 
         switch (estadoLampara){
             case ENCENDIDA:
@@ -190,6 +202,9 @@ public class Abner {
             escaleras = false;
 
         if(danoA){
+            if(timerDano==0.5f){
+                Gdx.input.vibrate(50);
+            }
             sprite.setRegion(dano);
             if(!right)
                 sprite.flip(true,false);
@@ -669,6 +684,7 @@ public class Abner {
 
     public void setX(float x){
         sprite.setX(x);
+        camara.position.set(110 + x, camara.position.y, 0);
     }
 
     public void setInitialPosition(int i) {
@@ -784,6 +800,14 @@ public class Abner {
 
     public boolean getLampara() {
         return lampara;
+    }
+
+    public void setAtrapado(boolean atrapado) {
+        this.atrapado = atrapado;
+    }
+
+    public boolean isAtrapado() {
+        return atrapado;
     }
 
     public enum Salto{

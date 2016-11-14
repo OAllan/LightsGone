@@ -126,7 +126,7 @@ public class Abner {
         danoA = false;
         timerDano = 0.5f;
         timerDanoAlpha =3;
-        this.papas = 10;
+        this.papas = 1000;
         lampara = true;
         estadoLampara = LightsGone.Lampara.APAGADA;
         this.luz = new Sprite(encendida);
@@ -139,7 +139,7 @@ public class Abner {
         if(LightsGone.habilidadActual== LightsGone.Habilidad.LAMPARA||LightsGone.sotano()){
             luz.draw(batch);
             if(LightsGone.sotano()&&estadoLampara == LightsGone.Lampara.APAGADA){
-                mapa.drawDetallefondo();
+                //mapa.drawDetallefondo();
             }
         }
         sprite.draw(batch);
@@ -159,7 +159,7 @@ public class Abner {
 
         else if(cantVida<=0&&vidas>=1) {
             vidas--;
-            cantVida = 99;
+            cantVida = 5000;
         }
 
 

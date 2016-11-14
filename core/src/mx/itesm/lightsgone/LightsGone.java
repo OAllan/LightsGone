@@ -199,11 +199,7 @@ public class LightsGone implements Screen, InputProcessor{
 
     }
 
-    public static void crearNuevaMosca(float x,float y,Enemigo ene){
-        if(enemigosPrueba.contains(ene,true)){
-            enemigosPrueba.add(new Enemigo.Mosca(x,y,abner,mapa));
-        }
-    }
+
 
     private void cargarTexturas() {
         assetManager.load("BotonSalto.png", Texture.class);

@@ -6,6 +6,8 @@ import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.utils.Array;
 
+import java.util.Random;
+
 /**
  * Created by allanruiz on 07/11/16.
  */
@@ -49,8 +51,16 @@ public class MapManager {
     public static void setExtras(Mapa mapa, int mapaActual, Abner abner) {
         enemigos = new Array<Enemigo>();
         switch (mapaActual){
+            case 1:
+                //enemigos.add(new Enemigo.Cucarachon(1500,150,abner,mapa));
+                //enemigos.add(new Enemigo.Gnomo(2500,150,abner,mapa));
+                //mapa.setEnemigos(enemigos);
+                break;
+
             case 3:
                 //Moscas
+                //enemigos.add(new Enemigo.Cucarachon(2295,293,abner,mapa));
+               //enemigos.add(new Enemigo.Sopa(2295,293,abner,mapa));
                 enemigos.add(new Enemigo.Mosca(2295, 293, abner, mapa));
                 enemigos.add(new Enemigo.Mosca(2745, 2295, abner, mapa));
                 enemigos.add(new Enemigo.Mosca(3420, 2295, abner, mapa));
@@ -66,9 +76,9 @@ public class MapManager {
                 enemigos.add(new Enemigo.Fuego(9290, 1010, abner, mapa));
 
                 //Panes tostadores
-                enemigos.add(new Enemigo.PanTostadora(7635, 2035, abner, mapa));
-                enemigos.add(new Enemigo.PanTostadora(5873, 1995, abner, mapa));
-                enemigos.add(new Enemigo.PanTostadora(4703, 1995, abner, mapa));
+                enemigos.add(new Enemigo.PanTostadora(7612, 2035, abner, mapa));
+                enemigos.add(new Enemigo.PanTostadora(5850, 1995, abner, mapa));
+                enemigos.add(new Enemigo.PanTostadora(4680, 1995, abner, mapa));
 
                 //Tostadores
                 enemigos.add(new Enemigo.Tostadora(7612, 2025, abner, mapa));
@@ -139,6 +149,7 @@ public class MapManager {
                 enemigos.add(new Enemigo.Serpiente(13095,1800,abner,mapa));
                 enemigos.add(new Enemigo.Serpiente(17505,1260,abner,mapa));
                 enemigos.add(new Enemigo.Espinas(19200,1260,abner,mapa));
+                enemigos.add(new Enemigo.GnomoL(19400,2560,abner,mapa));
                 enemigos.add(new Enemigo.Espinas(20610,1260,abner,mapa));
                 mapa.setEnemigos(enemigos);
                 break;
@@ -146,6 +157,10 @@ public class MapManager {
                 //Jardin 2
                 mapa.setCajas(new CajaMovil(13815, 315, mapa));
                 enemigos.add(new Enemigo.Cucarachon(90,315,abner,mapa));
+                enemigos.add(new Enemigo.EspinasD(5670,540,abner,mapa));
+                enemigos.add(new Enemigo.EspinasD(6840,540,abner,mapa));
+                enemigos.add(new Enemigo.EspinasD(7605,540,abner,mapa));
+                enemigos.add(new Enemigo.EspinasD(8775,540,abner,mapa));
                 enemigos.add(new Enemigo.Serpiente(6165,540,abner,mapa));
                 enemigos.add(new Enemigo.ProyectilHongo(7260,610,abner,mapa));
                 enemigos.add(new Enemigo.Hongo(7200,540,abner,mapa));
@@ -185,8 +200,8 @@ public class MapManager {
                 enemigos.add(new Enemigo.GeneradorCajasPayaso(7110,1215,mapa,abner));
                 enemigos.add(new Enemigo.GeneradorCajasPayaso(4680,500,mapa,abner));
                 enemigos.add(new Enemigo.GeneradorCajasPayaso(4970,315,mapa,abner));
-                enemigos.add(new Enemigo.Robot(11115, 540, abner));
-                enemigos.add(new Enemigo.Robot(5534, 315, abner));
+                //enemigos.add(new Enemigo.Robot(11115, 540, abner));
+                //enemigos.add(new Enemigo.Robot(5534, 315, abner));
                 mapa.setEnemigos(enemigos);
                 mapa.setCajasFijas(new Caja(8400, 765), new Caja(4680, 315));
                 break;
@@ -194,7 +209,7 @@ public class MapManager {
                 //Armario3
                 enemigos.add(new Enemigo.GeneradorCajasPayaso(7470,900,mapa,abner));
                 enemigos.add(new Enemigo.GeneradorCajasPayaso(3150,225,mapa,abner));
-                enemigos.add(new Enemigo.Robot(990, 900,abner));
+                //enemigos.add(new Enemigo.Robot(990, 900,abner));
                 mapa.setEnemigos(enemigos);
                 mapa.setCajasFijas(new Caja(6920,900), new Caja(6920, 900+164), new Caja(7190, 900), new Caja(7190, 900+164), new Caja(4050,190), new Caja(4050,190+164));
                 mapa.setCajas(new CajaMovil(4100, 190+164*2,mapa));
@@ -212,6 +227,18 @@ public class MapManager {
                 enemigos.removeIndex(enemigos.indexOf(ene,true)-1);
             }
             enemigos.removeIndex(enemigos.indexOf(ene,true));
+        }
+    }
+
+    public static void crearNuevaMosca(float x,float y,Enemigo.Mosca ene){
+            enemigos.add(new Enemigo.Mosca(x,y,ene.getAbner(),ene.getMapa()));
+
+    }
+
+    public static void  invocarLluviaDeGnomos(Abner abner,Mapa mapa){
+        Random rnd=new Random();
+        for (int i = 0; i <20 ; i++) {
+            enemigos.add(new Enemigo.GnomoL(rnd.nextInt(1410)+19200,rnd.nextInt(4000)+1900,abner,mapa));
         }
     }
 

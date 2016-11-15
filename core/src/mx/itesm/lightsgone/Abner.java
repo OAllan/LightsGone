@@ -348,7 +348,7 @@ public class Abner {
             gameInfo.actualizarDatosTemp();
         }
 
-        if(mapa.colisionItem(sprite.getX()+(3*sprite.getWidth()/4), sprite.getY()+20,"Lampara")){
+        if(mapa.colisionItem(sprite.getX()+(3*sprite.getWidth()/4), sprite.getY(),"Lampara")||mapa.colisionItem(getBoundingRectangle().x, sprite.getY(),"Lampara")){
             mapa.remove("Lampara");
             lampara = true;
             gameInfo.actualizarDatosTemp();

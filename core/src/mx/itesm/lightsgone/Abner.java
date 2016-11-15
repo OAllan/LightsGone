@@ -763,7 +763,7 @@ public class Abner {
     }
 
     public int cambioNivel() {
-        return LightsGone.mapaActual==6||LightsGone.mapaActual==16?mapa.colisionPuerta(sprite.getX()+3*(sprite.getWidth()/4) + mov, sprite.getY()+sprite.getHeight()/2):mapa.colisionPuerta(sprite.getX()+3*(sprite.getWidth()/4) + mov, sprite.getY());
+        return LightsGone.mapaActual==6||LightsGone.mapaActual==1?mapa.colisionPuerta(sprite.getX()+3*(sprite.getWidth()/4) + mov, sprite.getY()+sprite.getHeight()/2):mapa.colisionPuerta(sprite.getX()+3*(sprite.getWidth()/4) + mov, sprite.getY());
     }
 
     public boolean isDead(){
@@ -852,12 +852,16 @@ public class Abner {
         sprite.setPosition(gameInfo.getX(), gameInfo.getY());
         luz.setPosition(sprite.getX()+sprite.getWidth()- LAMPARAX,sprite.getY()- LAMPARAY +120);
         camara.position.set(gameInfo.getCamaraX(), gameInfo.getCamaraY(), gameInfo.getY());
+        if(cayendo){
+            cayendo = false;
+        }
         alturaMax = sprite.getY() + SALTOMAX;
         estadoHorizontal = Horizontal.DESACTIVADO;
         estadoAtaque = Ataque.DESACTIVADO;
         estadoSalto = Vertical.DESACTIVADO;
         pogo = gameInfo.isPogo();
         capita = gameInfo.isCapita();
+        sprite.setAlpha(1);
         lanzapapas = gameInfo.isLanzapapas();
         if(muerte){
             if(vidas>0)

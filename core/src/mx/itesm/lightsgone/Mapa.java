@@ -366,7 +366,7 @@ public class Mapa {
         if(gameInfo.isLanzapapas()&&layers.get("LanzaPapa")!=null) {
             mapa.getLayers().get("LanzaPapa").setVisible(false);
         }
-        if(gameInfo.isLamparaTemp()&&layers.get("Lampara")!=null){
+        if(gameInfo.isLampara()&&layers.get("Lampara")!=null){
             mapa.getLayers().get("Lampara").setVisible(false);
         }
 

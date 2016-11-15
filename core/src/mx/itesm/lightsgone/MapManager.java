@@ -44,7 +44,7 @@ public class MapManager {
 
     public Mapa getMapa(String nombre, int mapaActual, Abner abner, GameInfo gameInfo){
         Mapa mapa = new Mapa(nombre, batch, camara,numPuertas[mapaActual], right[mapaActual], posicionX[mapaActual], posicionY[mapaActual]);
-        mapa.reiniciarTemp(gameInfo);
+        mapa.reiniciar(gameInfo);
         setExtras(mapa, mapaActual, abner);
         return mapa;
     }

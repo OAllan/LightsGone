@@ -196,7 +196,7 @@ public class Abner {
                 globo.draw(batch);
             }
 
-            if(LightsGone.mapaActual==6&&getDano()){
+            if(LightsGone.mapaActual==6&&getDano()&&!pogo){
                 globo.setTexture(globoPogo);
                 globo.setPosition(getBoundingRectangle().x+100, sprite.getY()+200);
                 globo.draw(batch);

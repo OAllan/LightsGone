@@ -2,6 +2,7 @@ package mx.itesm.lightsgone;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.assets.AssetManager;
+import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Animation;
@@ -42,22 +43,24 @@ public class Abner {
     private Rectangle ProyectilRectangulo=new Rectangle();
     public boolean pogo, capita, lanzapapas, danoA, danoB, pisoLata,lampara;
     private boolean muerte, escaleras;
-    private boolean arrastrado, arrastradoPiso;
+    private boolean arrastrado, arrastradoPiso, puertaCerrada;
     private float movPiso;
     private int papas, clics;
     private GameInfo gameInfo;
+    private Sprite globo;
     private LightsGone.Lampara estadoLampara;
     private TextureRegion caminarTex, saltoTex, pogoTex, caminarLamparaTex, lanzapapasTex, resorteraTex, capaTex,neutral, dano, neutralLampara, neutralCapa, saltar1,saltar2,saltarLampara1,saltarLampara2,saltoCapa, saltarPogo1, saltarPogo2;
-    private Texture encendida, encendidaOscuridad, oscuridad;
-    private boolean right, atrapado;
+    private Texture globoPogo, globoCapita, globoLampara, globoLanzapapas, encendida, encendidaOscuridad, oscuridad;
+    private boolean right, atrapado, cayendo;
+    private Music puerta, pasos, lanzapapa, leche;
 
     {
         assetManager = new AssetManager();
-        cargarTexturas();
+        cargarAssets();
     }
 
 
-    private void cargarTexturas() {
+    private void cargarAssets() {
         assetManager.load("PCapa.png",Texture.class);
         assetManager.load("PLampara.png",Texture.class);
         assetManager.load("PLanzaPapa.png",Texture.class);
@@ -68,6 +71,14 @@ public class Abner {
         assetManager.load("OscuridadConLampara.png", Texture.class);
         assetManager.load("LuzConLampara.png",Texture.class);
         assetManager.load("Oscuridad.png", Texture.class);
+        assetManager.load("globocapita.png", Texture.class);
+        assetManager.load("globolampara.png", Texture.class);
+        assetManager.load("globolanzappas.png", Texture.class);
+        assetManager.load("globopogo.png", Texture.class);
+        assetManager.load("Locked Door.mp3", Music.class);
+        assetManager.load("Run Grass.mp3", Music.class);
+        assetManager.load("Lanza Papas.mp3", Music.class);
+        assetManager.load("leche.mp3", Music.class);
         assetManager.finishLoading();
         capaTex = new TextureRegion((Texture)assetManager.get("PCapa.png"));
         caminarLamparaTex = new TextureRegion((Texture) assetManager.get("PLampara.png"));
@@ -79,6 +90,15 @@ public class Abner {
         encendida = assetManager.get("LuzConLampara.png");
         encendidaOscuridad = assetManager.get("OscuridadConLampara.png");
         oscuridad = assetManager.get("Oscuridad.png");
+        globoCapita = assetManager.get("globocapita.png");
+        globoLampara = assetManager.get("globolampara.png");
+        globoLanzapapas = assetManager.get("globolanzappas.png");
+        globoPogo = assetManager.get("globopogo.png");
+        puerta = assetManager.get("Locked Door.mp3");
+        pasos = assetManager.get("Run Grass.mp3");
+        lanzapapa = assetManager.get("Lanza Papas.mp3");
+        leche  = assetManager.get("leche.mp3");
+        pasos.setLooping(true);
 
     }
 
@@ -133,6 +153,9 @@ public class Abner {
         this.luz = new Sprite(encendida);
         this.luz.setPosition(sprite.getX()- LAMPARAX,sprite.getY()- LAMPARAY +120);
         this.gameInfo = gameInfo;
+        this.globo = new Sprite(globoLanzapapas);
+        puertaCerrada = false;
+        cayendo = false;
     }
 
 
@@ -154,6 +177,36 @@ public class Abner {
                 }
             }
             sprite.draw(batch);
+            if(mapa.colisionPuerta(sprite.getX()+3*(sprite.getWidth()/4) + mov, sprite.getY())==-2){
+                globo.setTexture(globoLanzapapas);
+                globo.setPosition(getBoundingRectangle().x+100, sprite.getY()+200);
+                if(!puertaCerrada&& LightsGone.musica){
+                    puerta.play();
+                    puertaCerrada = true;
+                }
+                globo.draw(batch);
+            }
+            else{
+                puertaCerrada = false;
+            }
+
+            if(LightsGone.sotano()&&!lampara){
+                globo.setTexture(globoLampara);
+                globo.setPosition(getBoundingRectangle().x+100, sprite.getY()+200);
+                globo.draw(batch);
+            }
+
+            if(LightsGone.mapaActual==6&&getDano()){
+                globo.setTexture(globoPogo);
+                globo.setPosition(getBoundingRectangle().x+100, sprite.getY()+200);
+                globo.draw(batch);
+            }
+
+            if(LightsGone.mapaActual==1&&getDano()){
+                globo.setTexture(globoCapita);
+                globo.setPosition(getBoundingRectangle().x+100, sprite.getY()+200);
+                globo.draw(batch);
+            }
             actualizar(right);
         }
         else {
@@ -257,12 +310,14 @@ public class Abner {
 
         if(mapa.colisionItem(sprite.getX()+sprite.getWidth(),sprite.getY(),"VidaExtra")){
             mapa.remove("VidaExtra");
+            leche.play();
             if(vidas<3)
                 vidas++;
         }
 
         if(mapa.colisionItem(sprite.getX()+sprite.getWidth(), sprite.getY(), "Malteada")){
             mapa.remove("Malteada");
+            leche.play();
             if((cantVida + 10)<=99) cantVida+=10;
             else cantVida = 99;
         }
@@ -318,123 +373,168 @@ public class Abner {
                 arrastradoPiso =false;
         }
 
-        if(estadoHorizontal == Horizontal.INCLINADO){
-            sprite.setRotation(12);
-            if(estadoSalto==Vertical.DESACTIVADO&&estadoAtaque!= Ataque.ACTIVADO&&!danoA&& LightsGone.habilidadActual== LightsGone.Habilidad.LAMPARA){
-                timerAnimation += Gdx.graphics.getDeltaTime();
-                sprite.setRegion(caminarLampara.getKeyFrame(timerAnimation));
-                walk(right);
-            }
-            else if(estadoSalto==Vertical.DESACTIVADO&&estadoAtaque!= Ataque.ACTIVADO&&!danoA){
-                timerAnimation += Gdx.graphics.getDeltaTime();
-                sprite.setRegion(caminar.getKeyFrame(timerAnimation));
-                walk(right);
-            }
-            else
-                walk(right);
-            if(!arrastrado){
-                sprite.translate(0, right?MOVY:-MOVY);
-                camara.translate(0, right ? MOVY : -MOVY);
-            }
-            alturaMax = sprite.getY() +SALTOMAX;
-        }
+        if(!cayendo){
+            if(estadoHorizontal == Horizontal.INCLINADO){
+                sprite.setRotation(12);
+                if(estadoSalto==Vertical.DESACTIVADO&&estadoAtaque!= Ataque.ACTIVADO&&!danoA&& LightsGone.habilidadActual== LightsGone.Habilidad.LAMPARA){
+                    timerAnimation += Gdx.graphics.getDeltaTime();
+                    sprite.setRegion(caminarLampara.getKeyFrame(timerAnimation));
+                    if(!pasos.isPlaying()&&LightsGone.musica)
+                        pasos.play();
+                    else if(pasos.isPlaying()&&!LightsGone.musica){
+                        pasos.stop();
+                    }
 
-
-        else if(estadoHorizontal == Horizontal.ACTIVADO){
-            sprite.setRotation(0);
-            if((estadoSalto==Vertical.DESACTIVADO&&estadoAtaque!= Ataque.ACTIVADO&&!danoA&& LightsGone.habilidadActual== LightsGone.Habilidad.LAMPARA)||(escaleras&& LightsGone.habilidadActual== LightsGone.Habilidad.LAMPARA)){
-                timerAnimation += Gdx.graphics.getDeltaTime();
-                sprite.setRegion(caminarLampara.getKeyFrame(timerAnimation));
-                walk(right);
-            }
-            else if((estadoSalto==Vertical.DESACTIVADO&&estadoAtaque!= Ataque.ACTIVADO&&!danoA)||escaleras){
-                timerAnimation += Gdx.graphics.getDeltaTime();
-                sprite.setRegion(caminar.getKeyFrame(timerAnimation));
-                walk(right);
-            }
-            else
-                walk(right);
-        }
-
-        if(estadoSalto==Vertical.POGO) {
-            if (estadoAtaque != Ataque.ACTIVADO) {
-                if (cont >= 0) {
-                    sprite.setRegion(saltarPogo1);
-                    cont--;
-                } else {
-                    sprite.setRegion(saltarPogo2);
-                    jump(alturaMax + SALTOMAX);
+                    walk(right);
                 }
-                if(!right){
-                    sprite.flip(true, false);
+                else if(estadoSalto==Vertical.DESACTIVADO&&estadoAtaque!= Ataque.ACTIVADO&&!danoA){
+                    timerAnimation += Gdx.graphics.getDeltaTime();
+                    sprite.setRegion(caminar.getKeyFrame(timerAnimation));
+                    if(!pasos.isPlaying()&&LightsGone.musica)
+                        pasos.play();
+                    else if(pasos.isPlaying()&&!LightsGone.musica){
+                        pasos.stop();
+                    }
+                    walk(right);
+                }
+                else{
+                    walk(right);
+                    if(pasos.isPlaying()){
+                        pasos.stop();
+                    }
+                }
+                if(!arrastrado){
+                    sprite.translate(0, right?MOVY:-MOVY);
+                    camara.translate(0, right ? MOVY : -MOVY);
+                }
+                alturaMax = sprite.getY() +SALTOMAX;
+            }
+
+
+            else if(estadoHorizontal == Horizontal.ACTIVADO){
+                sprite.setRotation(0);
+                if((estadoSalto==Vertical.DESACTIVADO&&estadoAtaque!= Ataque.ACTIVADO&&!danoA&& LightsGone.habilidadActual== LightsGone.Habilidad.LAMPARA)||(escaleras&& LightsGone.habilidadActual== LightsGone.Habilidad.LAMPARA)){
+                    timerAnimation += Gdx.graphics.getDeltaTime();
+                    sprite.setRegion(caminarLampara.getKeyFrame(timerAnimation));
+                    if(!pasos.isPlaying()&&LightsGone.musica)
+                        pasos.play();
+                    else if(pasos.isPlaying()&&!LightsGone.musica){
+                        pasos.stop();
+                    }
+                    walk(right);
+                }
+                else if((estadoSalto==Vertical.DESACTIVADO&&estadoAtaque!= Ataque.ACTIVADO&&!danoA)||escaleras){
+                    timerAnimation += Gdx.graphics.getDeltaTime();
+                    sprite.setRegion(caminar.getKeyFrame(timerAnimation));
+                    if(!pasos.isPlaying()&&LightsGone.musica)
+                        pasos.play();
+                    else if(pasos.isPlaying()&&!LightsGone.musica){
+                        pasos.stop();
+                    }
+                    walk(right);
+                }
+                else{
+                    if(pasos.isPlaying()){
+                        pasos.stop();
+                    }
+                    walk(right);
                 }
             }
-        }
 
-        else if(estadoSalto == Vertical.ACTIVADO){
+            else {
+                if(pasos.isPlaying()){
+                    pasos.stop();
+                }
+            }
 
-            if(estadoAtaque != Ataque.ACTIVADO&&!danoA){
-                if(LightsGone.habilidadActual== LightsGone.Habilidad.LAMPARA){
-                    if(cont>=0&&!escaleras){
-                        sprite.setRegion(saltarLampara1);
+            if(estadoSalto==Vertical.POGO) {
+                if (estadoAtaque != Ataque.ACTIVADO) {
+                    if (cont >= 0) {
+                        sprite.setRegion(saltarPogo1);
                         cont--;
+                    } else {
+                        sprite.setRegion(saltarPogo2);
+                        jump(alturaMax + SALTOMAX);
+                    }
+                    if(!right){
+                        sprite.flip(true, false);
+                    }
+                }
+            }
+
+            else if(estadoSalto == Vertical.ACTIVADO){
+
+                if(estadoAtaque != Ataque.ACTIVADO&&!danoA){
+                    if(LightsGone.habilidadActual== LightsGone.Habilidad.LAMPARA){
+                        if(cont>=0&&!escaleras){
+                            sprite.setRegion(saltarLampara1);
+                            cont--;
+                        }
+                        else {
+                            if(!escaleras)
+                                sprite.setRegion(saltarLampara2);
+                            jump(alturaMax);
+                        }
                     }
                     else {
-                        if(!escaleras)
-                            sprite.setRegion(saltarLampara2);
-                        jump(alturaMax);
+                        if(cont>=0&!escaleras){
+                            sprite.setRegion(saltar1);
+                            cont--;
+                        }
+                        else {
+                            if(!escaleras)
+                                sprite.setRegion(saltar2);
+                            jump(alturaMax);
+                        }
                     }
+                    if(!right&&!escaleras)
+                        sprite.flip(true,false);
                 }
-                else {
-                    if(cont>=0&!escaleras){
-                        sprite.setRegion(saltar1);
-                        cont--;
-                    }
-                    else {
-                        if(!escaleras)
-                            sprite.setRegion(saltar2);
-                        jump(alturaMax);
-                    }
-                }
-                if(!right&&!escaleras)
-                    sprite.flip(true,false);
+                else
+                    jump(alturaMax);
             }
-            else
-                jump(alturaMax);
-        }
 
 
-        if(estadoAtaque == Ataque.ACTIVADO&&estadoSalto!= Vertical.POGO){
-            if(!danoA)
-                attack(right);
-            else
-                estadoAtaque = Ataque.DESACTIVADO;
-        }
-        else if(estadoAtaque==Ataque.LANZAPAPAS&&estadoSalto==Vertical.DESACTIVADO){
-            if(!danoA)
-                attack(right);
-            else
-                estadoAtaque = Ataque.DESACTIVADO;
-        }
-        else{
-            estadoAtaque = Ataque.DESACTIVADO;
-        }
-
-        if(estadoAtaque == Ataque.DESACTIVADO && estadoSalto == Vertical.DESACTIVADO && estadoHorizontal==Horizontal.DESACTIVADO&&!danoA){
-            if((mapa.colisionY(sprite.getX()+sprite.getWidth()/2,sprite.getY()-(saltoMov))!=-1||mapa.colisionInclinada(sprite.getX() + sprite.getWidth() / 2, sprite.getY() - (saltoMov + gravedad))||pisoLata)&& LightsGone.habilidadActual== LightsGone.Habilidad.LAMPARA){
-                sprite.setRegion(neutralLampara);
-                if(!right)
-                    sprite.flip(true, false);
+            if(estadoAtaque == Ataque.ACTIVADO&&estadoSalto!= Vertical.POGO){
+                if(!danoA)
+                    attack(right);
+                else
+                    estadoAtaque = Ataque.DESACTIVADO;
             }
-            else if(mapa.colisionY(sprite.getX()+sprite.getWidth()/2,sprite.getY()-(saltoMov))!=-1||mapa.colisionInclinada(sprite.getX() + sprite.getWidth() / 2, sprite.getY() - (saltoMov + gravedad))||pisoLata){
-                sprite.setRegion(neutral);
-                if(!right)
-                    sprite.flip(true, false);
+            else if(estadoAtaque==Ataque.LANZAPAPAS&&estadoSalto==Vertical.DESACTIVADO){
+                if(!danoA)
+                    attack(right);
+                else
+                    estadoAtaque = Ataque.DESACTIVADO;
             }
             else{
-                estadoSalto = Vertical.ACTIVADO;
-                salto = Salto.BAJANDO;
+                estadoAtaque = Ataque.DESACTIVADO;
             }
+
+            if(estadoAtaque == Ataque.DESACTIVADO && estadoSalto == Vertical.DESACTIVADO && estadoHorizontal==Horizontal.DESACTIVADO&&!danoA){
+                if((mapa.colisionY(sprite.getX()+sprite.getWidth()/2,sprite.getY()-(saltoMov))!=-1||mapa.colisionInclinada(sprite.getX() + sprite.getWidth() / 2, sprite.getY() - (saltoMov + gravedad))||pisoLata)&& LightsGone.habilidadActual== LightsGone.Habilidad.LAMPARA){
+                    sprite.setRegion(neutralLampara);
+                    if(!right)
+                        sprite.flip(true, false);
+                }
+                else if(mapa.colisionY(sprite.getX()+sprite.getWidth()/2,sprite.getY()-(saltoMov))!=-1||mapa.colisionInclinada(sprite.getX() + sprite.getWidth() / 2, sprite.getY() - (saltoMov + gravedad))||pisoLata){
+                    sprite.setRegion(neutral);
+                    if(!right)
+                        sprite.flip(true, false);
+                }
+                else{
+                    estadoSalto = Vertical.ACTIVADO;
+                    salto = Salto.BAJANDO;
+                }
+            }
+
+        }
+        else{
+            sprite.setRegion(dano);
+            sprite.translate(0,-20);
+            estadoHorizontal = Horizontal.DESACTIVADO;
+            estadoSalto = Vertical.DESACTIVADO;
+            estadoAtaque = Ataque.DESACTIVADO;
         }
 
         if(limiteCamara()){
@@ -470,6 +570,8 @@ public class Abner {
                     sprite.flip(true,false);
                 }
                 if(timerAnimationA>0.2f&&timerAnimationA<=(0.2f+Gdx.graphics.getDeltaTime())&&papas>0){
+                    if(LightsGone.musica)
+                        lanzapapa.play();
                     proyectiles.add(new Proyectil.Papa(!right?sprite.getX():sprite.getX()+sprite.getWidth(), sprite.getY()+100, right, this.mapa));
                     papas--;
                 }
@@ -661,8 +763,7 @@ public class Abner {
     }
 
     public int cambioNivel() {
-
-        return mapa.colisionPuerta(sprite.getX()+3*(sprite.getWidth()/4) + mov, sprite.getY());
+        return LightsGone.mapaActual==6||LightsGone.mapaActual==16?mapa.colisionPuerta(sprite.getX()+3*(sprite.getWidth()/4) + mov, sprite.getY()+sprite.getHeight()/2):mapa.colisionPuerta(sprite.getX()+3*(sprite.getWidth()/4) + mov, sprite.getY());
     }
 
     public boolean isDead(){
@@ -695,6 +796,10 @@ public class Abner {
         float x = mapa.getPositionX(i);
         sprite.setPosition(x,y);
         right = mapa.getRight(i);
+        if(cayendo){
+            danoA = true;
+            cayendo = false;
+        }
         luz.setPosition(sprite.getX()+sprite.getWidth()- LAMPARAX,sprite.getY()- LAMPARAY +120);
         if(x<530){
             camara.position.set(LightsGone.ANCHO_MUNDO/2, camara.position.y, 0);
@@ -812,6 +917,10 @@ public class Abner {
 
     public boolean isAtrapado() {
         return atrapado;
+    }
+
+    public void setCayendo(boolean cayendo) {
+        this.cayendo = cayendo;
     }
 
     public enum Salto{

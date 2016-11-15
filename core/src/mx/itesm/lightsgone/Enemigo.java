@@ -2987,6 +2987,7 @@ public abstract class Enemigo {
         private EstadoRopa estadoRopa;
         private float timer, timerAtaque;
         private boolean right;
+        private static Music mordida;
 
         static{
             cargarTexturas();
@@ -3016,6 +3017,7 @@ public abstract class Enemigo {
             manager.load("monstruoropa9.png", Texture.class);
             manager.load("monstruoropa10.png", Texture.class);
             manager.load("monstruoropa11.png", Texture.class);
+            manager.load("Bite 2.mp3", Music.class);
             manager.finishLoading();
             respirandoTex = new Array<TextureRegion>();
             levantandoTex = new Array<TextureRegion>();
@@ -3032,6 +3034,7 @@ public abstract class Enemigo {
             atraparTex.add(new TextureRegion((Texture)manager.get("monstruoropa9.png")));
             atrapadoTex.add(new TextureRegion((Texture)manager.get("monstruoropa10.png")));
             atrapadoTex.add(new TextureRegion((Texture)manager.get("monstruoropa11.png")));
+            mordida = manager.get("Bite 2.mp3");
 
         }
 
@@ -3112,6 +3115,7 @@ public abstract class Enemigo {
                         abner.setCantVida(abner.getcantVida()-7);
                         timerAtaque = 0;
                         Gdx.input.vibrate(10);
+                        mordida.play();
                     }
                     if(timer>=6||!abner.isAtrapado()){
                         estadoRopa = EstadoRopa.CAIDO;
@@ -3147,6 +3151,7 @@ public abstract class Enemigo {
         private boolean right;
         private float timerAtaque, timerAnimation;
         private float rotation;
+        private static Music mordida;
 
         static {
             cargarTexturas();
@@ -3156,10 +3161,12 @@ public abstract class Enemigo {
             manager.load("AlfombraAtaque1.png",Texture.class);
             manager.load("AlfombraAtaque2.png",Texture.class);
             manager.load("AlfombraNeutro.png", Texture.class);
+            manager.load("Bite 2.mp3", Music.class);
             manager.finishLoading();
             neutral = manager.get("AlfombraNeutro.png");
             esperando = manager.get("AlfombraAtaque1.png");
             ataque = manager.get("AlfombraAtaque2.png");
+            mordida = manager.get("Bite 2.mp3");
         }
 
         public Alfombra(float x, float y, Abner abner){
@@ -3232,6 +3239,7 @@ public abstract class Enemigo {
                         abner.setCantVida(abner.getcantVida()-7);
                         timerAtaque = 0;
                         Gdx.input.vibrate(10);
+                        mordida.play();
                     }
                     break;
             }
@@ -3263,6 +3271,74 @@ public abstract class Enemigo {
         @Override
         public boolean muerte() {
             return false;
+        }
+    }
+
+    static class OndaCoco extends Enemigo{
+
+        private static Texture ondaGrande;
+        private Abner abner;
+        private EstadoOnda estadoOnda;
+        private final float CAIDA = -20f;
+        private static Music rugido;
+
+        static{
+            cargarTexturas();
+        }
+
+        private static void cargarTexturas() {
+            manager.load("CocoAtaqueOndaGrande.png", Texture.class);
+            manager.load("rugido.mp3", Music.class);
+            manager.finishLoading();
+            ondaGrande = manager.get("CocoAtaqueOndaGrande.png");
+            rugido = manager.get("rugido.mp3");
+        }
+
+        public OndaCoco(float x, float y, Abner abner){
+            super(ondaGrande, x,y);
+            this.abner = abner;
+            estadoOnda = EstadoOnda.BAJANDO;
+            rugido.play();
+        }
+
+
+        @Override
+        public void attack() {
+            abner.setCayendo(true);
+        }
+
+        @Override
+        public void setEstado(Estado estado) {
+
+        }
+
+        @Override
+        public void draw(SpriteBatch batch) {
+            sprite.draw(batch);
+            actualizar();
+        }
+
+        private void actualizar() {
+            switch (estadoOnda){
+                case BAJANDO:
+                    sprite.translate(0,CAIDA);
+                    if(abner.getBoundingRectangle().overlaps(sprite.getBoundingRectangle())){
+                        attack();
+                    }
+                    break;
+                case AVAZANDO:
+                    break;
+            }
+        }
+
+        @Override
+        public boolean muerte() {
+            return false;
+        }
+
+        private enum EstadoOnda{
+            BAJANDO,
+            AVAZANDO
         }
     }
 }

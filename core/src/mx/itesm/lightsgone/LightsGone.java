@@ -51,7 +51,7 @@ public class LightsGone implements Screen, InputProcessor{
     private OrthographicCamera camaraHUD;
     private Viewport vista;
     private SpriteBatch batch;
-    private Music ambiente, gameover;
+    private Music ambiente, gameover, leche;
     private Juego juego;
     private AssetManager assetManager = new AssetManager();
     public static Texture plataforma;
@@ -120,7 +120,7 @@ public class LightsGone implements Screen, InputProcessor{
     }
 
     private void crearMapas() {
-        mapas = new Array<String>(15);
+        mapas = new Array<String>(18);
         mapManager = new MapManager(camara, batch);
         abner = new Abner(camara, null, gameInfo);
         mapas.add("CuartoAbner.tmx");
@@ -139,6 +139,7 @@ public class LightsGone implements Screen, InputProcessor{
         mapas.add("Sotano1.tmx");
         mapas.add("Sotano2.tmx");
         mapas.add("Sotano3.tmx");
+        mapas.add("CaminoAlCoco.tmx");
         mapaActual = gameInfo.getMapa();
         mapa = mapManager.getNewMapa(mapas.get(mapaActual),mapaActual,abner, gameInfo);
         abner.setMapa(mapa);
@@ -247,6 +248,7 @@ public class LightsGone implements Screen, InputProcessor{
         assetManager.load("FlechasHabilidades.png",Texture.class);
         assetManager.load("ambiente.mp3", Music.class);
         assetManager.load("risa.mp3", Music.class);
+        assetManager.load("leche.mp3", Music.class);
         assetManager.finishLoading();
         botonSalto = assetManager.get("BotonSalto.png");
         JFondo = assetManager.get("JoystickBoton.png");
@@ -280,7 +282,7 @@ public class LightsGone implements Screen, InputProcessor{
         lamparaOn = assetManager.get("BotonHabLamparaOn.png");
         flechasArma = new Sprite((Texture)assetManager.get("FlechasArmas.png"));
         flechasHabilidad = new Sprite((Texture)assetManager.get("FlechasHabilidades.png"));
-
+        leche = assetManager.get("leche.mp3");
     }
 
     @Override
@@ -493,6 +495,7 @@ public class LightsGone implements Screen, InputProcessor{
             for(Sprite sprite:malteadas) {
                 if(abner.getBoundingRectangle().overlaps(sprite.getBoundingRectangle())){
                     abner.setCantVida(abner.getcantVida()+10);
+                    leche.play();
                     malteadas.removeIndex(malteadas.indexOf(sprite, true));
                 }
                 else {

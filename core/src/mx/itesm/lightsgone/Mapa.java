@@ -266,7 +266,7 @@ public class Mapa {
                 TiledMapTileLayer.Cell cellDer = capa.getCell((int)(x/capa.getTileWidth()), (int)(y/capa.getTileHeight()));
                 TiledMapTileLayer.Cell cellIzq = capa.getCell((int)((x-125)/capa.getTileWidth()), (int)(y/capa.getTileHeight()));
                 if((cellDer != null||cellIzq!=null) && capa.getName().equals("PuertaCerrada"))
-                    return -1;
+                    return -2;
                 if((cellDer != null||cellIzq!=null)){
                     return numPuertas[Integer.parseInt(""+capa.getName().charAt(capa.getName().length()-1))-1];
                 }

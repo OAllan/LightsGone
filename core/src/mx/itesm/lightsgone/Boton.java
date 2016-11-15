@@ -16,6 +16,7 @@ public class Boton {
     private float timer = 0.2f;
     private boolean pad;
     private Animacion animacion;
+    private float x;
 
     public Boton(float x, float y, float width, float height){
         rectangle = new Rectangle(x,y,width,height);
@@ -96,6 +97,14 @@ public class Boton {
             if(estado != Estado.PRESIONADO)
                 estado = Estado.NOPRESIONADO;
         }
+    }
+
+    public float getX() {
+        return sprite.getX();
+    }
+
+    public float getY() {
+        return sprite.getY();
     }
 
     public enum Estado{

@@ -44,19 +44,20 @@ public class Abner {
     private boolean muerte, escaleras;
     private boolean arrastrado, arrastradoPiso;
     private float movPiso;
-    private int papas;
+    private int papas, clics;
     private GameInfo gameInfo;
     private LightsGone.Lampara estadoLampara;
-    private static TextureRegion caminarTex, saltoTex, pogoTex, caminarLamparaTex, lanzapapasTex, resorteraTex, capaTex,neutral, dano, neutralLampara, neutralCapa, saltar1,saltar2,saltarLampara1,saltarLampara2,saltoCapa, saltarPogo1, saltarPogo2;
-    private static Texture encendida, encendidaOscuridad, oscuridad;
-    private boolean right;
-    static {
+    private TextureRegion caminarTex, saltoTex, pogoTex, caminarLamparaTex, lanzapapasTex, resorteraTex, capaTex,neutral, dano, neutralLampara, neutralCapa, saltar1,saltar2,saltarLampara1,saltarLampara2,saltoCapa, saltarPogo1, saltarPogo2;
+    private Texture encendida, encendidaOscuridad, oscuridad;
+    private boolean right, atrapado;
+
+    {
         assetManager = new AssetManager();
         cargarTexturas();
     }
 
 
-    private static void cargarTexturas() {
+    private void cargarTexturas() {
         assetManager.load("PCapa.png",Texture.class);
         assetManager.load("PLampara.png",Texture.class);
         assetManager.load("PLanzaPapa.png",Texture.class);
@@ -214,6 +215,20 @@ public class Abner {
                 danoA = false;
                 danoB = true;
             }
+        }
+
+        if(this.right){
+            if(luz.isFlipX()){
+                luz.flip(true,false);
+            }
+            this.luz.setPosition(sprite.getX()+194 - LAMPARAX,sprite.getY()- LAMPARAY +120);
+        }
+
+        else {
+            if(!luz.isFlipX()){
+                luz.flip(true,false);
+            }
+            this.luz.setPosition(sprite.getX()- LAMPARAXLEFT-200,sprite.getY()- LAMPARAY +120);
         }
 
         if(danoB){
@@ -425,6 +440,10 @@ public class Abner {
         if(limiteCamara()){
             camara.position.set(camara.position.x, 265 + sprite.getY(), 0);
         }
+
+        if(limiteCamaraX()){
+            camara.position.set(110+sprite.getX(),camara.position.y,0);
+        }
         camara.update();
     }
 
@@ -466,10 +485,6 @@ public class Abner {
     public void walk(boolean right){
 
         if (right){
-            if(luz.isFlipX()){
-                luz.flip(true,false);
-                this.luz.setPosition(sprite.getX() - LAMPARAX,sprite.getY()- LAMPARAY +120);
-            }
             if(sprite.isFlipX()){
                 sprite.flip(true, false);
 
@@ -478,11 +493,6 @@ public class Abner {
                 if(mapa.colisionY(sprite.getX() + sprite.getWidth() / 2, sprite.getY() - (saltoMov))!=-1 || estadoSalto != Vertical.DESACTIVADO|| mapa.colisionInclinada(sprite.getX() + sprite.getWidth() / 2, sprite.getY() - (saltoMov + gravedad))||pisoLata){
                     sprite.translate(mov, 0);
                     luz.translate(mov, 0);
-                    if(limiteCamaraX()){
-                        camara.translate(mov,0);
-                    }
-                    else if(sprite.getX()<=530)
-                        camara.position.x = LightsGone.ANCHO_MUNDO/2;
                 }
                 else {
                     estadoSalto = Vertical.ACTIVADO;
@@ -491,10 +501,6 @@ public class Abner {
             }
         }
         else {
-            if(!luz.isFlipX()){
-                luz.flip(true,false);
-                this.luz.setPosition(sprite.getX()- LAMPARAXLEFT-200,sprite.getY()- LAMPARAY +120);
-            }
             if(!sprite.isFlipX()){
                 sprite.flip(true, false);
             }
@@ -502,9 +508,6 @@ public class Abner {
                 if (mapa.colisionY(sprite.getX() + sprite.getWidth() / 2, sprite.getY() - (saltoMov))!=-1 || estadoSalto != Vertical.DESACTIVADO|| mapa.colisionInclinada(sprite.getX() + sprite.getWidth() / 2, sprite.getY() - (saltoMov))||pisoLata){
                     sprite.translate(-mov, 0);
                     luz.translate(-mov, 0);
-                    if(limiteCamaraX()){
-                        camara.translate(-mov,0);
-                    }
                 }
                 else {
                     estadoSalto = Vertical.ACTIVADO;
@@ -691,6 +694,7 @@ public class Abner {
         float y = mapa.getPositionY(i);
         float x = mapa.getPositionX(i);
         sprite.setPosition(x,y);
+        right = mapa.getRight(i);
         luz.setPosition(sprite.getX()+sprite.getWidth()- LAMPARAX,sprite.getY()- LAMPARAY +120);
         if(x<530){
             camara.position.set(LightsGone.ANCHO_MUNDO/2, camara.position.y, 0);
@@ -781,12 +785,12 @@ public class Abner {
         neutral.getTexture().dispose();
         dano.getTexture().dispose();
         neutralLampara.getTexture().dispose();
-        neutralCapa.getTexture().dispose();
+        //neutralCapa.getTexture().dispose();
         saltar1.getTexture().dispose();
         saltar2.getTexture().dispose();
         saltarLampara1.getTexture().dispose();
         saltarLampara2.getTexture().dispose();
-        saltoCapa.getTexture().dispose();
+        //saltoCapa.getTexture().dispose();
         saltarPogo1.getTexture().dispose();
         saltarPogo2.getTexture().dispose();
         encendida.dispose();

@@ -57,6 +57,11 @@ public class MapManager {
                 //mapa.setEnemigos(enemigos);
                 break;
 
+            case 2:
+                enemigos.add(new Enemigo.Alfombra(1485,500,abner));
+                mapa.setEnemigos(enemigos);
+                break;
+
             case 3:
                 //Moscas
                 //enemigos.add(new Enemigo.Cucarachon(2295,293,abner,mapa));
@@ -203,8 +208,8 @@ public class MapManager {
                 enemigos.add(new Enemigo.GeneradorCajasPayaso(7110,1215,mapa,abner));
                 enemigos.add(new Enemigo.GeneradorCajasPayaso(4680,500,mapa,abner));
                 enemigos.add(new Enemigo.GeneradorCajasPayaso(4970,315,mapa,abner));
-                //enemigos.add(new Enemigo.Robot(11115, 540, abner));
-                //enemigos.add(new Enemigo.Robot(5534, 315, abner));
+                enemigos.add(new Enemigo.Robot(11115, 540, abner));
+                enemigos.add(new Enemigo.Robot(5534, 315, abner));
                 mapa.setEnemigos(enemigos);
                 mapa.setCajasFijas(new Caja(8400, 765), new Caja(4680, 315));
                 break;
@@ -212,7 +217,7 @@ public class MapManager {
                 //Armario3
                 enemigos.add(new Enemigo.GeneradorCajasPayaso(7470,900,mapa,abner));
                 enemigos.add(new Enemigo.GeneradorCajasPayaso(3150,225,mapa,abner));
-                //enemigos.add(new Enemigo.Robot(990, 900,abner));
+                enemigos.add(new Enemigo.Robot(990, 900,abner));
                 mapa.setEnemigos(enemigos);
                 mapa.setCajasFijas(new Caja(6920,900), new Caja(6920, 900+164), new Caja(7190, 900), new Caja(7190, 900+164), new Caja(4050,190), new Caja(4050,190+164));
                 mapa.setCajas(new CajaMovil(4100, 190+164*2,mapa));

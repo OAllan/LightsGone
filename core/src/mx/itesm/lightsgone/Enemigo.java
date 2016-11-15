@@ -2,6 +2,7 @@ package mx.itesm.lightsgone;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.assets.AssetManager;
+import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Animation;
@@ -148,7 +149,7 @@ public abstract class Enemigo {
 
         private void actualizar() {
             if(abner.getBoundingRectangle().overlaps(getRectangle())){
-                if(ataco==false && estado== Estado.ATAQUE) {
+                if(!ataco && estado== Estado.ATAQUE) {
                     if(time==0) {
                        attack();
                     }
@@ -330,7 +331,7 @@ public abstract class Enemigo {
         private void actualizar() {
             //Colisiones con abner
             if(abner.getBoundingRectangle().overlaps(getRectangle())){
-                if(ataco==false && estado== Estado.ATAQUE) {
+                if(!ataco && estado== Estado.ATAQUE) {
                     attack();
                     startTime = System.currentTimeMillis();
                 }
@@ -629,9 +630,9 @@ public abstract class Enemigo {
             }
 
 
-            if (direccion=="arriba")
+            if (direccion.equalsIgnoreCase("arriba"))
                 sprite.setY(sprite.getY()+16);
-            if (direccion=="abajo")
+            if (direccion.equalsIgnoreCase("abajo"))
                 sprite.setY(sprite.getY()-16);
 
 
@@ -1005,6 +1006,7 @@ public abstract class Enemigo {
         private float MOVX = 7f, rotation = 10f;
         private final float MOVCAIDA = 18f, MOVRODANDO = 0.2125f*MOVX;
         private Mapa mapa;
+        private Music rodando;
 
         static {
             cargarTexturas();
@@ -1014,6 +1016,7 @@ public abstract class Enemigo {
 
         private static void cargarTexturas() {
             manager.load("Lata.png", Texture.class);
+            manager.load("Rolling.mp3", Music.class);
             manager.finishLoading();
             neutral = manager.get("Lata.png");
         }
@@ -1023,6 +1026,8 @@ public abstract class Enemigo {
             estadoLata = EstadoLata.CAYENDO;
             alto = alturaOriginal = sprite.getHeight();
             this.mapa = mapa;
+            rodando = manager.get("Rolling.mp3");
+            rodando.setLooping(true);
         }
 
         public Lata(float x, float y, Mapa mapa, String string){
@@ -1073,10 +1078,18 @@ public abstract class Enemigo {
                 case RODANDO:
                     if(!mapa.colisionInclinada(sprite.getX()+sprite.getWidth()/2, sprite.getY()+MOVCAIDA)){
                         estadoLata = EstadoLata.CAYENDO;
+                        if(rodando.isPlaying())
+                            rodando.stop();
                     }
                     else{
                         sprite.translate(-MOVX, -MOVRODANDO);
                         sprite.rotate(10);
+                        if(!rodando.isPlaying()&&LightsGone.musica){
+                            rodando.play();
+                        }
+                        else if(rodando.isPlaying()&&!LightsGone.musica){
+                            rodando.pause();
+                        }
                     }
                     break;
                 case DESAPARECIENDO:
@@ -3052,9 +3065,13 @@ public abstract class Enemigo {
         private void actualizar() {
             switch (estadoRopa){
                 case CAIDO:
+                    timer += Gdx.graphics.getDeltaTime();
                     sprite.setTexture(neutral);
                     if(Math.abs(sprite.getX()-abner.getX())<=500){
-                        estadoRopa = EstadoRopa.LEVANTANDO;
+                        if(timer >= 3){
+                            estadoRopa = EstadoRopa.LEVANTANDO;
+                            timer =0;
+                        }
                     }
                     break;
                 case LEVANTANDO:
@@ -3066,12 +3083,7 @@ public abstract class Enemigo {
                     }
                     break;
                 case ESPERANDO:
-                    if(abner.getX()-sprite.getX()>0){
-                        right = true;
-                    }
-                    else{
-                        right = false;
-                    }
+                    right = abner.getX() - sprite.getX() > 0;
                     timer+=Gdx.graphics.getDeltaTime();
                     sprite.setTexture(respirando.getKeyFrame(timer).getTexture());
                     if(Math.abs(sprite.getX()-abner.getX())<=100){
@@ -3080,6 +3092,7 @@ public abstract class Enemigo {
                     }
                     else if(Math.abs(sprite.getX()-abner.getX())>=500){
                         estadoRopa = EstadoRopa.CAIDO;
+                        timer = 0;
                     }
                     break;
                 case ATACANDO:
@@ -3105,6 +3118,8 @@ public abstract class Enemigo {
                         abner.setX(right?abner.getX()-150:abner.getX()+150);
                         abner.setDano(true);
                         abner.setAtrapado(false);
+                        timer = 0;
+
                     }
                     break;
             }
@@ -3126,23 +3141,38 @@ public abstract class Enemigo {
 
     static class Alfombra extends Enemigo {
         private static Texture neutral, esperando, ataque;
+        private Estado estadoAlfombra;
+        private float timer;
+        private Abner abner;
+        private boolean right;
+        private float timerAtaque, timerAnimation;
+        private float rotation;
 
         static {
             cargarTexturas();
         }
 
         private static void cargarTexturas() {
-
+            manager.load("AlfombraAtaque1.png",Texture.class);
+            manager.load("AlfombraAtaque2.png",Texture.class);
+            manager.load("AlfombraNeutro.png", Texture.class);
+            manager.finishLoading();
+            neutral = manager.get("AlfombraNeutro.png");
+            esperando = manager.get("AlfombraAtaque1.png");
+            ataque = manager.get("AlfombraAtaque2.png");
         }
 
         public Alfombra(float x, float y, Abner abner){
             super(neutral, x,y);
+            this.abner = abner;
+            estadoAlfombra = Estado.NEUTRAL;
+            rotation = 0;
         }
 
 
         @Override
         public void attack() {
-
+            abner.setAtrapado(true);
         }
 
         @Override
@@ -3152,7 +3182,59 @@ public abstract class Enemigo {
 
         @Override
         public void draw(SpriteBatch batch) {
+            sprite.draw(batch);
+            sprite.setRotation(rotation);
+            actualizar();
+            right = abner.getX() - sprite.getX() > 0;
+            if(right&&sprite.isFlipX()){
+                sprite.flip(true, false);
+            }
+            else if(!right&&!sprite.isFlipX()){
+                sprite.flip(true,false);
+            }
+        }
 
+        private void actualizar() {
+            switch (estadoAlfombra){
+                case NEUTRAL:
+                    sprite.setTexture(neutral);
+                    if(Math.abs(sprite.getX()-abner.getX())<=500){
+                        estadoAlfombra = Estado.ESPERANDO;
+                    }
+                    break;
+                case ESPERANDO:
+                    sprite.setTexture(esperando);
+                    if (abner.getBoundingRectangle().overlaps(sprite.getBoundingRectangle())&&!abner.getDano()){
+                        attack();
+                        estadoAlfombra = Estado.ATAQUE;
+                        rotation = 5;
+                    }
+                    break;
+                case ATAQUE:
+                    sprite.setTexture(ataque);
+                    float delta = Gdx.graphics.getDeltaTime();
+                    timer += delta;
+                    timerAtaque += delta;
+                    timerAnimation += delta;
+                    if(timer>=6||!abner.isAtrapado()){
+                        estadoAlfombra = Estado.NEUTRAL;
+                        abner.setX(right?abner.getX()-450:abner.getX()+450);
+                        abner.setDano(true);
+                        abner.setAtrapado(false);
+                        timer = 0;
+                        rotation = 0;
+                    }
+                    if(timerAnimation>=0.3){
+                        timerAnimation = 0;
+                        rotation*=-1;
+                    }
+                    if(timerAtaque>=1){
+                        abner.setCantVida(abner.getcantVida()-7);
+                        timerAtaque = 0;
+                        Gdx.input.vibrate(10);
+                    }
+                    break;
+            }
         }
 
         @Override

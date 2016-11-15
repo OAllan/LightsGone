@@ -43,6 +43,8 @@ public class LightsGone implements Screen, InputProcessor{
     public static final int MUNICIONY = 706;
     public static final float YBAJA = 135f, YMEDIA = 800f, YALTA =1100f;
     public static final float YARMARIO = 450;
+    public static final float ANCHOBOTON = 137;
+    private static final float ALTOBOTON = 134;
     private float velocidadTransicion = TRANSICIONNEUTRAL;
     public static final int LATAX = 4871;
     private OrthographicCamera camara;
@@ -72,12 +74,12 @@ public class LightsGone implements Screen, InputProcessor{
     private Estado estado;
     private EstadoPausa estadoPausa;
     private GameInfo gameInfo;
-    private Texture pPogo1, pPogo2;
     private float alphaGame;
     private MapManager mapManager;
     public static Habilidad habilidadActual;
     private Array<Sprite> vidas;
     private Arma estadoArma;
+    private Sprite flechasArma, flechasHabilidad;
     private boolean switchAtaque, switchHabilidad, switchedAtaque, switchedHabilidad;
     private static Array<Sprite> malteadas;
     private int leftPointer, rightPointer;
@@ -168,6 +170,7 @@ public class LightsGone implements Screen, InputProcessor{
             vidas.add(sprite);
         }
         botonArma = new Boton(habilidad, ANCHO_MUNDO - habilidadDes.getWidth()- botonSalto.getWidth()-habilidad.getWidth()-30, YBOTON, false);
+        flechasArma.setPosition(botonArma.getX() + ANCHOBOTON-flechasArma.getWidth()-10, botonArma.getY()+ALTOBOTON-flechasArma.getHeight()-8);
         pausa = new Boton(texPausa, ANCHO_MUNDO- texPausa.getWidth(), ALTO_MUNDO - texPausa.getHeight(), false);
         imgVida = new Sprite(botonVida);
         malteadas = new Array<Sprite>();
@@ -187,6 +190,7 @@ public class LightsGone implements Screen, InputProcessor{
         gameInfo.setAbner(abner);
         estado = Estado.JUGANDO;
         botonHabilidad = new Boton(habilidadDes, ANCHO_MUNDO-habilidadDes.getWidth()-10,YBOTON,false);
+        flechasHabilidad.setPosition(botonHabilidad.getX()+10, botonHabilidad.getY()+ALTOBOTON-flechasHabilidad.getHeight()+10);
         estadoPausa = EstadoPausa.PRINCIPAL;
         menuGameOver = new Sprite(gameOver);
         pausaActual = new Sprite(pausaTex);
@@ -239,6 +243,8 @@ public class LightsGone implements Screen, InputProcessor{
         assetManager.load("BotonHabLamparaOn.png", Texture.class);
         assetManager.load("LuzConLampara.png", Texture.class);
         assetManager.load("OscuridadConLampara.png", Texture.class);
+        assetManager.load("FlechasArmas.png", Texture.class);
+        assetManager.load("FlechasHabilidades.png",Texture.class);
         assetManager.load("ambiente.mp3", Music.class);
         assetManager.load("risa.mp3", Music.class);
         assetManager.finishLoading();
@@ -272,6 +278,9 @@ public class LightsGone implements Screen, InputProcessor{
         caja = assetManager.get("CajaMovilDer.png");
         lamparaOff = assetManager.get("BotonHabLamparaOff.png");
         lamparaOn = assetManager.get("BotonHabLamparaOn.png");
+        flechasArma = new Sprite((Texture)assetManager.get("FlechasArmas.png"));
+        flechasHabilidad = new Sprite((Texture)assetManager.get("FlechasHabilidades.png"));
+
     }
 
     @Override
@@ -547,6 +556,12 @@ public class LightsGone implements Screen, InputProcessor{
             botonHabilidad.draw(batch);
             botonSave.draw(batch);
             botonArma.draw(batch);
+            if(abner.getLampara()){
+                flechasHabilidad.draw(batch);
+            }
+            if(abner.getLanzapapas()){
+                flechasArma.draw(batch);
+            }
             pausa.draw(batch);
             imgVida.draw(batch);
             if(estadoArma == Arma.LANZAPAPAS){

@@ -29,7 +29,6 @@ public abstract class Enemigo {
     boolean ataco=false;
     protected boolean muerte;
     long startTime;
-    long startTime1;
 
     public Enemigo(){
 
@@ -47,6 +46,7 @@ public abstract class Enemigo {
     public abstract void attack();
     public abstract void setEstado(Estado estado);
     public abstract void draw(SpriteBatch batch);
+    public abstract void stop();
 
     public boolean colisiona(Proyectil p){
         return sprite.getBoundingRectangle().overlaps(p.getRectangle());
@@ -140,6 +140,11 @@ public abstract class Enemigo {
                 }
 
             actualizar();
+        }
+
+        @Override
+        public void stop() {
+
         }
 
         @Override
@@ -321,6 +326,11 @@ public abstract class Enemigo {
                     estado = Estado.NEUTRAL;
             }
             actualizar();
+        }
+
+        @Override
+        public void stop() {
+
         }
 
         @Override
@@ -511,6 +521,11 @@ public abstract class Enemigo {
             actualizar();
         }
 
+        @Override
+        public void stop() {
+
+        }
+
 
         @Override
         public boolean muerte() {
@@ -604,6 +619,11 @@ public abstract class Enemigo {
             sprite.draw(batch);
 
             actualizar();
+        }
+
+        @Override
+        public void stop() {
+
         }
 
         @Override
@@ -734,6 +754,11 @@ public abstract class Enemigo {
         }
 
         @Override
+        public void stop() {
+
+        }
+
+        @Override
         public boolean muerte() {
             return muerte;
         }
@@ -783,9 +808,8 @@ public abstract class Enemigo {
             }
 
             if(vida<=0) {
-                sprite.setPosition(20000,20000);
-                muerte = true;
-
+                MapManager.crearNuevaMosca(xInicial,yInicial,this);
+                MapManager.quitarEnemigo(this);
             }
 
           if(Math.abs(sprite.getX()-20000)<200) {
@@ -793,7 +817,6 @@ public abstract class Enemigo {
             }
 
             if((time>=2)){
-
                 MapManager.crearNuevaMosca(xInicial,yInicial,this);
                 MapManager.quitarEnemigo(this);
                 time=0;
@@ -936,6 +959,11 @@ public abstract class Enemigo {
         }
 
         @Override
+        public void stop() {
+
+        }
+
+        @Override
         public boolean muerte() {
             return vida <=0;
         }
@@ -1057,6 +1085,13 @@ public abstract class Enemigo {
         public void draw(SpriteBatch batch) {
             sprite.draw(batch);
             actualizar();
+        }
+
+        @Override
+        public void stop() {
+            if(rodando!=null&&rodando.isPlaying()){
+                rodando.stop();
+            }
         }
 
         private void actualizar() {
@@ -1209,6 +1244,11 @@ public abstract class Enemigo {
                     estado = Estado.NEUTRAL;
             }
             actualizar();
+        }
+
+        @Override
+        public void stop() {
+
         }
 
         @Override
@@ -1401,6 +1441,11 @@ public abstract class Enemigo {
             actualizar();
         }
 
+        @Override
+        public void stop() {
+
+        }
+
 
         @Override
         public boolean muerte() {
@@ -1537,6 +1582,10 @@ public abstract class Enemigo {
             actualizar();
         }
 
+        @Override
+        public void stop() {
+
+        }
 
 
         @Override
@@ -1679,6 +1728,11 @@ public abstract class Enemigo {
             sprite.draw(batch);
 
             actualizar();
+        }
+
+        @Override
+        public void stop() {
+
         }
 
         @Override
@@ -1845,6 +1899,11 @@ public abstract class Enemigo {
             sprite.draw(batch);
 
             actualizar();
+        }
+
+        @Override
+        public void stop() {
+
         }
 
         @Override
@@ -2022,6 +2081,11 @@ public abstract class Enemigo {
             sprite.draw(batch);
 
             actualizar();
+        }
+
+        @Override
+        public void stop() {
+
         }
 
         @Override
@@ -2210,6 +2274,11 @@ public abstract class Enemigo {
         }
 
         @Override
+        public void stop() {
+
+        }
+
+        @Override
         public boolean muerte() {
             return vida <=0;
         }
@@ -2345,6 +2414,11 @@ public abstract class Enemigo {
         }
 
         @Override
+        public void stop() {
+
+        }
+
+        @Override
         public boolean muerte() {
             return vida <=0;
         }
@@ -2476,6 +2550,11 @@ public abstract class Enemigo {
         }
 
         @Override
+        public void stop() {
+
+        }
+
+        @Override
         public boolean muerte() {
             return vida <=0;
         }
@@ -2562,6 +2641,7 @@ public abstract class Enemigo {
         private static Texture neutral;
         private EstadoCaja estadoCaja;
         private float timer;
+        private Music sonidoCaja, risaPayaso, explosion;
         private static Animation cajaMovil, cajaAtaque, cajaPayaso;
         private static TextureRegion[] cajaMovilTex, cajaAtaqueTex, cajaPayasoTex;
 
@@ -2592,6 +2672,9 @@ public abstract class Enemigo {
             manager.load("payasoexplotando4.png", Texture.class);
             manager.load("payasoexplotando5.png", Texture.class);
             manager.load("payasoexplotando6.png", Texture.class);
+            manager.load("Music Box.mp3", Music.class);
+            manager.load("risa de payaso.mp3", Music.class);
+            manager.load("explosion .mp3", Music.class);
             manager.finishLoading();
             neutral = manager.get("cajapayaso1.png");
             cajaMovilTex = new TextureRegion[]{new TextureRegion((Texture) manager.get("cajapayaso1.png")),new TextureRegion((Texture) manager.get("cajapayaso2.png")),
@@ -2607,6 +2690,8 @@ public abstract class Enemigo {
 
 
 
+
+
         }
         public CajaPayaso(float x, float y, Abner abner, Mapa mapa){
             super(neutral, x,y);
@@ -2614,6 +2699,9 @@ public abstract class Enemigo {
             this.abner = abner;
             this.estadoCaja = EstadoCaja.NEUTRAL;
             timer = 0;
+            sonidoCaja = manager.get("Music Box.mp3");
+            risaPayaso = manager.get("risa de payaso.mp3");
+            explosion = manager.get("explosion .mp3");
         }
 
         @Override
@@ -2637,6 +2725,19 @@ public abstract class Enemigo {
             actualizar();
         }
 
+        @Override
+        public void stop() {
+            if(sonidoCaja.isPlaying()){
+                sonidoCaja.stop();
+            }
+            if(risaPayaso.isPlaying()){
+                risaPayaso.stop();
+            }
+            if(explosion.isPlaying()){
+                explosion.stop();
+            }
+        }
+
         private void actualizar(){
             switch (estadoCaja){
                 case NEUTRAL:
@@ -2647,9 +2748,13 @@ public abstract class Enemigo {
                 case CAJAMOVIL:
                     timer += Gdx.graphics.getDeltaTime();
                     sprite.setTexture(cajaMovil.getKeyFrame(timer).getTexture());
+                    if(!sonidoCaja.isPlaying()){
+                        sonidoCaja.play();
+                    }
                     if(timer>=5){
                         estadoCaja = EstadoCaja.PAYASOFUERA;
                         timer = 0;
+                        sonidoCaja.stop();
                     }
                     break;
                 case PAYASOFUERA:
@@ -2662,9 +2767,14 @@ public abstract class Enemigo {
                     break;
                 case NEUTRALPAYASO:
                     timer+= Gdx.graphics.getDeltaTime();
-                    if(timer>=1){
+                    if(!risaPayaso.isPlaying()){
+                        risaPayaso.play();
+                    }
+                    if(timer>=4){
                         estadoCaja = EstadoCaja.CAJAATAQUE;
                         timer = 0;
+                        risaPayaso.stop();
+                        explosion.play();
                     }
                     break;
                 case CAJAATAQUE:
@@ -2785,6 +2895,13 @@ public abstract class Enemigo {
                 actualizar();
             }
 
+        }
+
+        @Override
+        public void stop() {
+            if(cajaPayaso!=null){
+                cajaPayaso.stop();
+            }
         }
 
         private void actualizar() {
@@ -2917,6 +3034,11 @@ public abstract class Enemigo {
                 else
                     bola.draw(batch);
             }
+        }
+
+        @Override
+        public void stop() {
+
         }
 
 
@@ -3065,6 +3187,13 @@ public abstract class Enemigo {
             actualizar();
         }
 
+        @Override
+        public void stop() {
+            if(mordida.isPlaying()){
+                mordida.stop();
+            }
+        }
+
         private void actualizar() {
             switch (estadoRopa){
                 case CAIDO:
@@ -3201,6 +3330,13 @@ public abstract class Enemigo {
             }
         }
 
+        @Override
+        public void stop() {
+            if(mordida.isPlaying()){
+                mordida.stop();
+            }
+        }
+
         private void actualizar() {
             switch (estadoAlfombra){
                 case NEUTRAL:
@@ -3269,6 +3405,11 @@ public abstract class Enemigo {
         }
 
         @Override
+        public void stop() {
+
+        }
+
+        @Override
         public boolean muerte() {
             return false;
         }
@@ -3316,6 +3457,13 @@ public abstract class Enemigo {
         public void draw(SpriteBatch batch) {
             sprite.draw(batch);
             actualizar();
+        }
+
+        @Override
+        public void stop() {
+            if(rugido.isPlaying()){
+                rugido.stop();
+            }
         }
 
         private void actualizar() {

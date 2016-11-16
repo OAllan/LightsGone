@@ -53,6 +53,7 @@ public class Abner {
     private Texture globoPogo, globoCapita, globoLampara, globoLanzapapas, encendida, encendidaOscuridad, oscuridad;
     private boolean right, atrapado, cayendo;
     private Music puerta, pasos, lanzapapa, leche;
+    private boolean armario;
 
     {
         assetManager = new AssetManager();
@@ -348,7 +349,7 @@ public class Abner {
             gameInfo.actualizarDatosTemp();
         }
 
-        if(mapa.colisionItem(sprite.getX()+(3*sprite.getWidth()/4), sprite.getY()+20,"Lampara")||mapa.colisionItem(getBoundingRectangle().x, sprite.getY()+20,"Lampara")){
+        if(mapa.colisionItem(sprite.getX(), sprite.getY()+20,"Lampara")||mapa.colisionItem(getBoundingRectangle().x, sprite.getY()+20,"Lampara")){
             mapa.remove("Lampara");
             lampara = true;
             gameInfo.actualizarDatosTemp();
@@ -372,6 +373,7 @@ public class Abner {
             else
                 arrastradoPiso =false;
         }
+
 
         if(!cayendo){
             if(estadoHorizontal == Horizontal.INCLINADO){
@@ -514,18 +516,18 @@ public class Abner {
             if(estadoAtaque == Ataque.DESACTIVADO && estadoSalto == Vertical.DESACTIVADO && estadoHorizontal==Horizontal.DESACTIVADO&&!danoA){
                 if((mapa.colisionY(sprite.getX()+sprite.getWidth()/2,sprite.getY()-(saltoMov))!=-1||mapa.colisionInclinada(sprite.getX() + sprite.getWidth() / 2, sprite.getY() - (saltoMov + gravedad))||pisoLata)&& LightsGone.habilidadActual== LightsGone.Habilidad.LAMPARA){
                     sprite.setRegion(neutralLampara);
-                    if(!right)
-                        sprite.flip(true, false);
                 }
                 else if(mapa.colisionY(sprite.getX()+sprite.getWidth()/2,sprite.getY()-(saltoMov))!=-1||mapa.colisionInclinada(sprite.getX() + sprite.getWidth() / 2, sprite.getY() - (saltoMov + gravedad))||pisoLata){
                     sprite.setRegion(neutral);
-                    if(!right)
-                        sprite.flip(true, false);
                 }
+
                 else{
                     estadoSalto = Vertical.ACTIVADO;
                     salto = Salto.BAJANDO;
                 }
+
+                if(!right)
+                    sprite.flip(true, false);
             }
 
         }
@@ -925,6 +927,22 @@ public class Abner {
 
     public void setCayendo(boolean cayendo) {
         this.cayendo = cayendo;
+    }
+
+    public void setArmario(boolean armario) {
+        this.armario = armario;
+    }
+
+    public boolean getArmario() {
+        return armario;
+    }
+
+    public void setPapas(int papas) {
+        this.papas = papas;
+    }
+
+    public int getPapas() {
+        return papas;
     }
 
     public enum Salto{

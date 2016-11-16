@@ -12,15 +12,13 @@ import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector3;
-import com.badlogic.gdx.scenes.scene2d.Touchable;
-import com.badlogic.gdx.scenes.scene2d.utils.DragAndDrop;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.viewport.StretchViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 
 import java.util.ArrayList;
+import java.util.Random;
 
 /**
  * Created by allanruiz on 19/09/16.
@@ -51,7 +49,7 @@ public class LightsGone implements Screen, InputProcessor{
     private OrthographicCamera camaraHUD;
     private Viewport vista;
     private SpriteBatch batch;
-    private Music ambiente, gameover, leche;
+    private Music ambiente, gameover, leche, recarga;
     private Juego juego;
     private AssetManager assetManager = new AssetManager();
     public static Texture plataforma;
@@ -60,7 +58,7 @@ public class LightsGone implements Screen, InputProcessor{
     private static Abner abner;
     private Texto vida, municionTex;
     private Pad pad;
-    private static Texture malteada;
+    private static Texture malteada,papa;
     private Sprite imgVida, menuGameOver, imgMunicion;
     private boolean right, saveB;
     public static boolean musica;
@@ -81,14 +79,13 @@ public class LightsGone implements Screen, InputProcessor{
     private Arma estadoArma;
     private Sprite flechasArma, flechasHabilidad;
     private boolean switchAtaque, switchHabilidad, switchedAtaque, switchedHabilidad;
-    private static Array<Sprite> malteadas;
+    private static Array<Sprite> malteadas, papas;
     private int leftPointer, rightPointer;
 
-    static Array<Enemigo> enemigosPrueba= new Array<Enemigo>(9);
 
-    Array<Enemigo> enemigos = new Array<Enemigo>(3);
+    Array<Enemigo> enemigos;
 
-    private Texture caja;
+
     private Lampara estadoLampara;
     private Texture lamparaOff, lamparaOn;
 
@@ -140,6 +137,8 @@ public class LightsGone implements Screen, InputProcessor{
         mapas.add("Sotano2.tmx");
         mapas.add("Sotano3.tmx");
         mapas.add("CaminoAlCoco.tmx");
+        mapas.add("Atico1.tmx");
+        mapas.add("Atico2.tmx");
         mapaActual = gameInfo.getMapa();
         mapa = mapManager.getNewMapa(mapas.get(mapaActual),mapaActual,abner, gameInfo);
         abner.setMapa(mapa);
@@ -175,6 +174,7 @@ public class LightsGone implements Screen, InputProcessor{
         pausa = new Boton(texPausa, ANCHO_MUNDO- texPausa.getWidth(), ALTO_MUNDO - texPausa.getHeight(), false);
         imgVida = new Sprite(botonVida);
         malteadas = new Array<Sprite>();
+        papas = new Array<Sprite>();
         imgVida.setPosition(0, 780 - imgVida.getHeight());
         imgMunicion = new Sprite(municion);
         imgMunicion.setPosition(MUNICIONX, MUNICIONY);
@@ -231,6 +231,7 @@ public class LightsGone implements Screen, InputProcessor{
         assetManager.load("gameOver.png", Texture.class);
         assetManager.load("BotonNivelVida.png", Texture.class);
         assetManager.load("MalteadaMundo.png", Texture.class);
+        assetManager.load("PapaMundo.png", Texture.class);
         assetManager.load("FondoCielo.jpg", Texture.class);
         assetManager.load("cocina.jpg", Texture.class);
         assetManager.load("coco.jpg", Texture.class);
@@ -249,6 +250,7 @@ public class LightsGone implements Screen, InputProcessor{
         assetManager.load("ambiente.mp3", Music.class);
         assetManager.load("risa.mp3", Music.class);
         assetManager.load("leche.mp3", Music.class);
+        assetManager.load("recargar papas.mp3", Music.class);
         assetManager.finishLoading();
         botonSalto = assetManager.get("BotonSalto.png");
         JFondo = assetManager.get("JoystickBoton.png");
@@ -277,12 +279,13 @@ public class LightsGone implements Screen, InputProcessor{
         fondoCielo.setPosition(0,0);
         habilidadLanzaPapas = assetManager.get("BotonHabLanzaPapa.png");
         municion = assetManager.get("BotonMunicion.png");
-        caja = assetManager.get("CajaMovilDer.png");
         lamparaOff = assetManager.get("BotonHabLamparaOff.png");
         lamparaOn = assetManager.get("BotonHabLamparaOn.png");
         flechasArma = new Sprite((Texture)assetManager.get("FlechasArmas.png"));
         flechasHabilidad = new Sprite((Texture)assetManager.get("FlechasHabilidades.png"));
         leche = assetManager.get("leche.mp3");
+        papa = assetManager.get("PapaMundo.png");
+        recarga = assetManager.get("recargar papas.mp3");
     }
 
     @Override
@@ -439,6 +442,8 @@ public class LightsGone implements Screen, InputProcessor{
                 int tempMapa = mapaActual;
                 transicion = Transicion.AUMENTANDO;
                 mapaActual = cambio;
+                malteadas = new Array<Sprite>();
+                papas = new Array<Sprite>();
                 switch (mapaActual){
                     case 3:
                         if(tempMapa==2){
@@ -469,6 +474,7 @@ public class LightsGone implements Screen, InputProcessor{
                         velocidadTransicion = TRANSICIONNEUTRAL;
                         break;
                 }
+                mapa.stop();
                 mapa = mapManager.getMapa(mapas.get(mapaActual), mapaActual, abner, gameInfo);
                 abner.setMapa(mapa);
                 abner.setInitialPosition(tempMapa);
@@ -505,12 +511,26 @@ public class LightsGone implements Screen, InputProcessor{
                 }
             }
 
+            for(Sprite sprite:papas) {
+                if(abner.getBoundingRectangle().overlaps(sprite.getBoundingRectangle())){
+                    abner.setPapas(abner.getPapas()+4);
+                    recarga.play();
+                    papas.removeIndex(papas.indexOf(sprite, true));
+                }
+                else {
+                    if(mapa.colisionY(sprite.getX()+sprite.getWidth()/2, sprite.getY()-10)==-1)
+                        sprite.translate(0,-10);
+                    sprite.draw(batch);
+                }
+            }
+
             for (int i=0;i<proyectiles.size();i++) {
                 Proyectil proyectil = proyectiles.get(i);
                 if(proyectil instanceof Proyectil.Papa&&mapa.colisionPuertaCerrada(proyectil.getRectangle().getX()-proyectil.getRectangle().getWidth(), proyectil.getRectangle().getY())){
                     mapa.remove("PuertaCerrada");
                     proyectiles.remove(i);
-
+                    abner.setArmario(true);
+                    gameInfo.actualizarDatosTemp();
                 }
                 else if(proyectil.out()) {
                     proyectiles.remove(i);
@@ -670,9 +690,19 @@ public class LightsGone implements Screen, InputProcessor{
 
 
     static void agregarItem(Enemigo enemigo){
-        Sprite sprite = new Sprite(malteada);
-        sprite.setPosition(enemigo.getX(), enemigo.getY()+100);
-        malteadas.add(sprite);
+        Random rnd = new Random();
+        int i = rnd.nextInt(3);
+        if(i==0){
+            Sprite sprite = new Sprite(malteada);
+            sprite.setPosition(enemigo.getX(), enemigo.getY()+100);
+            malteadas.add(sprite);
+        }
+        else if(i==1&&abner.getLanzapapas()){
+            Sprite sprite = new Sprite(papa);
+            sprite.setPosition(enemigo.getX(), enemigo.getY()+100);
+            papas.add(sprite);
+        }
+
     }
 
     @Override
@@ -783,7 +813,8 @@ public class LightsGone implements Screen, InputProcessor{
     private void reiniciarEscena() {
         abner.reiniciar(gameInfo);
         mapaActual = gameInfo.getMapa();
-        mapa = mapManager.getMapa(mapas.get(mapaActual),mapaActual, abner, gameInfo);
+        alpha = 0;
+        mapa = mapManager.getNewMapa(mapas.get(mapaActual),mapaActual, abner, gameInfo);
         abner.setMapa(mapa);
         enemigos = mapa.getEnemigos();
         if(!gameInfo.isPogo()){

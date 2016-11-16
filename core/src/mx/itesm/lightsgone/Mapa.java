@@ -75,6 +75,7 @@ public class Mapa {
         items.add((TiledMapTileLayer)mapa.getLayers().get("Pogo"));
         items.add((TiledMapTileLayer)mapa.getLayers().get("VidaExtra"));
         items.add((TiledMapTileLayer)mapa.getLayers().get("LanzaPapa"));
+        items.add((TiledMapTileLayer)mapa.getLayers().get("Lampara"));
         items.add((TiledMapTileLayer)mapa.getLayers().get("Capita"));
         puertas.add((TiledMapTileLayer)mapa.getLayers().get("PuertaCerrada"));
         puertas.add((TiledMapTileLayer)mapa.getLayers().get("Puerta1"));
@@ -185,7 +186,8 @@ public class Mapa {
     }
 
     public boolean colisionItem(float x, float y, String name){
-        return colision(x,y,items, name);
+        boolean bool = colision(x,y,items, name);
+        return bool;
     }
 
     private boolean colision(float x, float y, Array<TiledMapTileLayer> items, String name) {
@@ -483,6 +485,14 @@ public class Mapa {
     public void drawDetallefondo() {
         if(detallesFondo!=null){
             renderer.renderTileLayer(detallesFondo);
+        }
+    }
+
+    public void stop(){
+        if(enemigos!=null){
+            for(Enemigo enemigo:enemigos){
+                enemigo.stop();
+            }
         }
     }
 }

@@ -13,8 +13,8 @@ import java.util.Iterator;
  */
 public class GameInfo {
     private int vida, vidas;
-    private boolean pogo, capita, lanzapapas, lampara;
-    private boolean pogoTemp, capitaTemp, lanzapapasTemp, lamparaTemp;
+    private boolean pogo, capita, lanzapapas, lampara, armario;
+    private boolean pogoTemp, capitaTemp, lanzapapasTemp, lamparaTemp, armarioTemp;
     private int mapa;
     private float x, y, camaraX, camaraY;
     private String nombre;
@@ -32,6 +32,7 @@ public class GameInfo {
         nombre = nombre();
         camaraX = 640;
         camaraY = 400;
+        armario = armarioTemp = false;
     }
 
     public GameInfo(String juego) {
@@ -61,6 +62,7 @@ public class GameInfo {
             camaraY = Float.parseFloat(lineas[9].trim());
             vidas = Integer.parseInt(lineas[10].trim());
             lampara = lamparaTemp = Boolean.parseBoolean(lineas[11].trim());
+            armario = armarioTemp = Boolean.parseBoolean(lineas[12].trim());
 
         }
         catch (Exception e){
@@ -86,6 +88,8 @@ public class GameInfo {
             save.writeString(camaraY + "\n", true);
             save.writeString(vidas + "\n", true);
             save.writeString(lampara + "\n",true);
+            save.writeString(armario+"\n", true);
+
         }
         catch (Exception e){
             Gdx.app.log("Exception ", e.getMessage());
@@ -105,6 +109,7 @@ public class GameInfo {
         camaraY = abner.getCamaraY();
         vidas = abner.getVidas();
         lampara = abner.getLampara();
+        armario = abner.getArmario();
     }
 
     private String nombre(){
@@ -138,7 +143,7 @@ public class GameInfo {
         }
 
         if(numero!=null){
-            if(numero.equals(new Character('1')))return nombre + "2.txt";
+            if(numero.equals('1'))return nombre + "2.txt";
             else return nombre + "1.txt";
         }
 
@@ -216,5 +221,6 @@ public class GameInfo {
         lamparaTemp = abner.getLampara();
         pogoTemp = abner.getPogo();
         lanzapapasTemp = abner.getLanzapapas();
+        armarioTemp = abner.getArmario();
     }
 }

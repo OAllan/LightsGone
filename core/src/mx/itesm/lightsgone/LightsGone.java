@@ -86,7 +86,7 @@ public class LightsGone implements Screen, InputProcessor{
     Array<Enemigo> enemigos;
 
 
-    private Lampara estadoLampara;
+    private static Lampara estadoLampara;
     private Texture lamparaOff, lamparaOn;
 
     public LightsGone(Juego juego) {
@@ -676,6 +676,10 @@ public class LightsGone implements Screen, InputProcessor{
 
     }
 
+    public static Lampara getEstadoLampara(){
+        return estadoLampara;
+    }
+
     @Override
     public void hide() {
         dispose();
@@ -691,7 +695,7 @@ public class LightsGone implements Screen, InputProcessor{
 
     static void agregarItem(Enemigo enemigo){
         Random rnd = new Random();
-        int i = rnd.nextInt(3);
+        int i = rnd.nextInt(5);
         if(i==0){
             Sprite sprite = new Sprite(malteada);
             sprite.setPosition(enemigo.getX(), enemigo.getY()+100);

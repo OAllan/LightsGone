@@ -4,6 +4,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.graphics.Cursor;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.Sprite;
@@ -15,6 +16,7 @@ import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.TimeUtils;
 
 import java.util.ArrayList;
+import java.util.Random;
 
 
 /**
@@ -799,6 +801,7 @@ public abstract class Enemigo {
             if(!abner.getProyectiles().isEmpty()) {
                 if (sprite.getBoundingRectangle().overlaps(abner.getProyectiles().get(0).getRectangle())) {
                     vida -= 1;
+                    LightsGone.agregarItem(this);
                     abner.borrarProyectiles();
                 }
             }
@@ -808,15 +811,14 @@ public abstract class Enemigo {
             }
 
             if(vida<=0) {
-                MapManager.crearNuevaMosca(xInicial,yInicial,this);
-                MapManager.quitarEnemigo(this);
+                sprite.setPosition(20000,20000);
             }
 
           if(Math.abs(sprite.getX()-20000)<200) {
                 time += Gdx.graphics.getDeltaTime();
             }
 
-            if((time>=2)){
+            if((time>=3)){
                 MapManager.crearNuevaMosca(xInicial,yInicial,this);
                 MapManager.quitarEnemigo(this);
                 time=0;
@@ -3388,20 +3390,80 @@ public abstract class Enemigo {
     }
 
     static class Fantasma extends Enemigo {
+        private static Texture fantasma1,fantasma2,fantasma3,muerte1,muerte2,muerte3,muerte4;
+        private static Animation caminar, muerte;
+        private Estado estado;
+        private boolean right, ata;
+        private final float velocidad = 2f;
+        private float timer, timerA;
+        private Abner abner;
+        private int vida;
+        private int tama=10;
+        private boolean ataq=false;
+        private Mapa mapa;
+        private int direccion;
+        private float posXOriginal;
+        private float posYOriginal;
+        private float time;
+
+
+        static {
+            cargarTexturas();
+            cargarAnimacion();
+        }
+
+        private static void cargarAnimacion() {
+            caminar = new Animation(0.3f, new TextureRegion(fantasma1), new TextureRegion(fantasma2), new TextureRegion(fantasma3), new TextureRegion(fantasma2));
+            muerte = new Animation(0.2f, new TextureRegion(muerte1), new TextureRegion(muerte2), new TextureRegion(muerte3), new TextureRegion(muerte4));
+            caminar.setPlayMode(Animation.PlayMode.LOOP);
+            muerte.setPlayMode(Animation.PlayMode.NORMAL);
+
+        }
+
+        public Fantasma(float x, float y, Abner abner, Mapa mapa){
+            super(fantasma1, x, y);
+            estado = Estado.NEUTRAL;
+            right = true;
+            timer = timerA=0;
+            this.abner = abner;
+            vida = 1;
+            this.mapa=mapa;
+            posXOriginal=sprite.getX();
+            posYOriginal=sprite.getY();
+
+            time=0;
+        }
 
         @Override
         public void attack() {
+            if(!abner.getDano()){
+                abner.setCantVida(abner.getcantVida()-3);
+                ataco=true;
+                abner.setDano(true);
+            }
+
 
         }
 
         @Override
         public void setEstado(Estado estado) {
-
+            this.estado = estado;
         }
 
         @Override
         public void draw(SpriteBatch batch) {
 
+            sprite.draw(batch);
+
+                float distancia = sprite.getX() - abner.getX();
+
+                    if (Math.abs(distancia) <= 900 && vida>0 && Math.abs(sprite.getY()-abner.getY())<500) {
+                        estado = Estado.ATAQUE;
+                        ataq = true;
+                    }
+
+
+            actualizar();
         }
 
         @Override
@@ -3411,7 +3473,107 @@ public abstract class Enemigo {
 
         @Override
         public boolean muerte() {
-            return false;
+            return true;
+        }
+
+        public Abner getAbner(){
+            return abner;
+        }
+
+        public Mapa getMapa(){
+            return mapa;
+        }
+
+        private void actualizar() {
+            if(abner.getX()>posXOriginal){
+                direccion=-1;
+                if(sprite.isFlipX()) {
+                    sprite.flip(true, false);
+                }
+            }
+            else {
+                direccion=1;
+                if(!sprite.isFlipX()){
+                    sprite.flip(true,false);
+                }
+            }
+
+            if(abner.getBoundingRectangle().overlaps(sprite.getBoundingRectangle())){
+                if(!ataco && estado==Estado.ATAQUE) {
+                    attack();
+                    startTime = System.currentTimeMillis();
+                }
+            }
+            if(System.currentTimeMillis()-startTime>2000) {
+                ataco=false;
+                startTime=0;
+            }
+
+
+                if (LightsGone.getEstadoLampara().equals(LightsGone.Lampara.ENCENDIDA) && Math.abs(sprite.getX()-abner.getX())<500 && Math.abs(sprite.getY()-abner.getY())<150) {
+
+                    vida -= 1;
+
+                }
+
+
+
+
+
+            if(vida<=0) {
+                estado=Estado.NEUTRAL;
+                timer += Gdx.graphics.getDeltaTime();
+                timerA += Gdx.graphics.getDeltaTime();
+                sprite.setTexture(muerte.getKeyFrame(timerA).getTexture());
+                if(timer>=1.5)
+                    MapManager.quitarEnemigo(this);
+            }
+
+
+
+            switch (estado){
+                case NEUTRAL:
+
+                    break;
+                case ATAQUE:
+
+                    timer += Gdx.graphics.getDeltaTime();
+                    sprite.setTexture(caminar.getKeyFrame(timer).getTexture());
+                    sprite.setX(sprite.getX()-8*direccion);
+                    sprite.setY(abner.getY()+(abner.getHeight()/2)-50);
+
+                    break;
+
+            }
+        }
+
+
+
+
+        private static void cargarTexturas() {
+            manager.load("FantasmaN1.png", Texture.class);
+            manager.load("FantasmaN2y4.png", Texture.class);
+            manager.load("FantasmaN3.png", Texture.class);
+            manager.load("FantasmaMuerte1.png", Texture.class);
+            manager.load("FantasmaMuerte2.png", Texture.class);
+            manager.load("FantasmaMuerte3.png", Texture.class);
+            manager.load("FantasmaMuerte4.png", Texture.class);
+
+            manager.finishLoading();
+            fantasma1 = manager.get("FantasmaN1.png");
+            fantasma2= manager.get("FantasmaN2y4.png");
+            fantasma3= manager.get("FantasmaN3.png");
+            muerte1 = manager.get("FantasmaMuerte1.png");
+            muerte2 = manager.get("FantasmaMuerte2.png");
+            muerte3= manager.get("FantasmaMuerte3.png");
+            muerte4= manager.get("FantasmaMuerte4.png");
+
+
+        }
+
+        @Override
+        public String toString() {
+            return "mosca";
         }
     }
 
@@ -3489,4 +3651,423 @@ public abstract class Enemigo {
             AVAZANDO
         }
     }
+
+    static class Telarana extends Enemigo {
+        private static Texture neutralT,rota1,rota2,rota3;
+        private Estado estado;
+        private static Animation destruccion;
+        private final float velocidad = 2f;
+        private float timer, timerA;
+        private Abner abner;
+        private int vida;
+        private int tama=10;
+        private boolean ataq=false;
+        private Mapa mapa;
+        long contador=0;
+        long contador1=0;
+        float posXOriginal;
+        int direccion;
+        boolean primera=true;
+
+
+        static {
+            cargarTexturas();
+            cargarAnimacion();
+
+
+        }
+
+        private static void cargarAnimacion() {
+            destruccion = new Animation(0.2f, new TextureRegion(rota1), new TextureRegion(rota2), new TextureRegion(rota3));
+            //destruccion.setPlayMode(Animation.PlayMode.NORMAL);
+
+        }
+
+
+
+        public Telarana(float x, float y, Abner abner, Mapa mapa){
+            super(neutralT, x, y);
+            estado = Estado.NEUTRAL;
+            timer = timerA=0;
+            this.abner = abner;
+            this.mapa=mapa;
+            vida = 3;
+            posXOriginal=sprite.getX();
+            vida=1;
+            MapManager.crearArana(this);
+
+        }
+
+
+        public Rectangle getRectangle(){
+            return new Rectangle(sprite.getX()+200,sprite.getY()+200,sprite.getWidth()-400,sprite.getHeight()-200);
+        }
+
+        public Abner getAbner(){
+            return abner;
+        }
+
+        public Mapa getMapa(){
+            return mapa;
+        }
+
+        @Override
+        public void attack() {
+
+            if(!abner.getDano()){
+                abner.setCantVida(abner.getcantVida()-1);
+                abner.setDano(true);
+            }
+
+        }
+
+        @Override
+        public void setEstado(Estado estado) {
+            this.estado = estado;
+        }
+
+        @Override
+        public void draw(SpriteBatch batch) {
+            sprite.draw(batch);
+            /*if(primera) {
+                MapManager.crearArana(this);
+            }*/
+            actualizar();
+
+
+        }
+
+        @Override
+        public void stop() {
+
+        }
+
+        @Override
+        public boolean muerte() {
+            return vida <=0;
+        }
+
+        private void actualizar() {
+            primera=false;
+
+            //Colisiones con proyectiles
+            if(abner.getBoundingRectangle().overlaps(new Rectangle(sprite.getX()+100,sprite.getY(),sprite.getWidth()-100,sprite.getHeight()))){
+                    if(abner.getX()>posXOriginal){
+                        direccion=-1;
+                    }
+                    else {
+                        direccion=1;
+                    }
+                    abner.setX(abner.getX()-(float)10*direccion);
+                    abner.ajusteCamara(direccion);
+
+            }
+
+            if(!abner.getProyectiles().isEmpty()) {
+                if(abner.getProyectiles().get(0).toString().equals("Canica")){
+                    if (sprite.getBoundingRectangle().overlaps(abner.getProyectiles().get(0).getRectangle())) {
+                        abner.borrarProyectiles();
+                    }
+                }else {
+                    if (sprite.getBoundingRectangle().overlaps(abner.getProyectiles().get(0).getRectangle())) {
+                        vida -= 1;
+                        abner.borrarProyectiles();
+                    }
+                }
+            }
+
+
+
+            if(vida<=0) {
+                timer += Gdx.graphics.getDeltaTime();
+                sprite.setTexture(destruccion.getKeyFrame(timer).getTexture());
+                if(timer>=.5)
+                    MapManager.quitarEnemigo(this);
+            }
+
+
+
+
+        }
+
+
+        private static void cargarTexturas() {
+            manager.load("TelaranaNeutra.png", Texture.class);
+            manager.load("TelaranaRota1.png", Texture.class);
+            manager.load("TelaranaRota2.png", Texture.class);
+            manager.load("TelaranaRota3.png", Texture.class);
+
+
+            manager.finishLoading();
+            neutralT = manager.get("TelaranaNeutra.png");
+            rota1 = manager.get("TelaranaRota1.png");
+            rota2= manager.get("TelaranaRota2.png");
+            rota3 = manager.get("TelaranaRota3.png");
+
+
+        }
+
+        @Override
+        public String toString() {
+            return "scarecrow";
+        }
+    }
+
+    static class Arana extends Enemigo {
+        private static Texture arana1,arana2;
+        private static Animation caminar;
+        private Estado estado;
+        private boolean right, ata;
+        private final float velocidad = 2f;
+        private float timer, timerA;
+        private Abner abner;
+        private int vida;
+        private int tama=10;
+        private boolean ataq=false;
+        private Mapa mapa;
+        private int direccionX =1;
+        private float posXOriginal;
+        private float posYOriginal;
+        private float time;
+        private Rectangle rec;
+        private int movimiento;
+        private Random rnd= new Random();
+
+
+        static {
+            cargarTexturas();
+            cargarAnimacion();
+        }
+
+        private static void cargarAnimacion() {
+            caminar = new Animation(0.1f, new TextureRegion(arana1), new TextureRegion(arana2));
+            caminar.setPlayMode(Animation.PlayMode.LOOP);
+
+
+        }
+
+        public Arana(float x, float y, Abner abner, Mapa mapa, Rectangle rect){
+            super(arana1, x, y);
+            estado = Estado.NEUTRAL;
+            timer = timerA=0;
+            this.abner = abner;
+            vida = 1;
+            this.mapa=mapa;
+            rec=rect;
+            time=0;
+        }
+
+
+
+        @Override
+        public void attack() {
+
+        }
+
+        @Override
+        public void setEstado(Estado estado) {
+            this.estado = estado;
+        }
+
+        @Override
+        public void draw(SpriteBatch batch) {
+
+            sprite.draw(batch);
+            actualizar();
+        }
+
+        @Override
+        public void stop() {
+
+        }
+
+        @Override
+        public boolean muerte() {
+            return muerte;
+        }
+
+        public Abner getAbner(){
+            return abner;
+        }
+
+        public Mapa getMapa(){
+            return mapa;
+        }
+
+        private void actualizar() {
+            if(!sprite.getBoundingRectangle().overlaps(rec)){
+                direccionX*=-1;
+            }
+
+
+            timer += Gdx.graphics.getDeltaTime();
+            sprite.setTexture(caminar.getKeyFrame(timer).getTexture());
+
+            timerA += Gdx.graphics.getDeltaTime();
+
+            if(timerA>2){
+                timerA=0;
+                movimiento=rnd.nextInt(2);
+            }
+
+
+            if(vida<=0) {
+                //MapManager.crearNuevaMosca(xInicial,yInicial,this);
+                //MapManager.quitarEnemigo(this);
+            }
+
+
+
+            if(movimiento==0) {
+                sprite.setX(sprite.getX() - 1 * direccionX);
+            }else{
+                sprite.setY(sprite.getY() - 1 * direccionX);
+            }
+
+
+        }
+
+
+
+
+        private static void cargarTexturas() {
+            manager.load("Arana1.png", Texture.class);
+            manager.load("Arana2.png", Texture.class);
+
+
+            manager.finishLoading();
+            arana1= manager.get("Arana1.png");
+            arana2 = manager.get("Arana2.png");
+
+
+        }
+
+        @Override
+        public String toString() {
+            return "mosca";
+        }
+    }
+
+    static class ParedPicos extends Enemigo {
+        private static Texture pared;
+        private Estado estado;
+        private boolean right, ata;
+        private final float velocidad = 2f;
+        private float timer, timerA;
+        private Abner abner;
+        private int vida;
+        private int tama=10;
+        private boolean ataq=false;
+        private Mapa mapa;
+        long contador=0;
+        long contador1=0;
+        float posXOriginal;
+        int direccion;
+
+
+        static {
+            cargarTexturas();
+
+        }
+
+
+
+
+
+        public ParedPicos(float x, float y, Abner abner, Mapa mapa){
+            super(pared, x, y);
+            estado = Estado.NEUTRAL;
+            right = true;
+            timer = timerA=0;
+            this.abner = abner;
+            this.mapa=mapa;
+            vida = 3;
+            posXOriginal=sprite.getX();
+            //sprite.setSize(250,400);
+
+        }
+
+
+
+
+
+        @Override
+        public void attack() {
+
+            if(!abner.getDano()){
+                abner.setCantVida(0);
+                abner.setDano(true);
+            }
+
+        }
+
+        @Override
+        public void setEstado(Estado estado) {
+            this.estado = estado;
+        }
+
+        @Override
+        public void draw(SpriteBatch batch) {
+            sprite.draw(batch);
+            actualizar();
+
+        }
+
+        @Override
+        public void stop() {
+
+        }
+
+        @Override
+        public boolean muerte() {
+            return vida <=0;
+        }
+
+        private void actualizar() {
+            if(abner.getBoundingRectangle().overlaps(new Rectangle(sprite.getX()+100,sprite.getY(),sprite.getWidth()-100,sprite.getHeight()))){
+                attack();
+            }
+        if(Math.abs(sprite.getX()-posXOriginal)<4230){
+
+                if (abner.getX() < sprite.getX()) {
+
+                    if (Math.abs(abner.getX() - sprite.getX()) < 800 && Math.abs(abner.getY() - sprite.getY()) < 500) {
+                        estado = Estado.ATAQUE;
+
+                    }
+                }
+            }else{
+            estado=Estado.NEUTRAL;
+        }
+
+            switch (estado){
+                case NEUTRAL:
+
+                    break;
+                case ATAQUE:
+                    sprite.setX(sprite.getX()-8);
+                    break;
+
+            }
+        }
+
+
+        private static void cargarTexturas() {
+            manager.load("Pared Picos.png", Texture.class);
+
+
+
+            manager.finishLoading();
+            pared = manager.get("Pared Picos.png");
+
+
+
+        }
+
+        @Override
+        public String toString() {
+            return "Pared Picos";
+        }
+    }
+
 }

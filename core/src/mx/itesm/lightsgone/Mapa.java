@@ -270,6 +270,12 @@ public class Mapa {
                 if((cellDer != null||cellIzq!=null) && capa.getName().equals("PuertaCerrada"))
                     return -2;
                 if((cellDer != null||cellIzq!=null)){
+                    if(LightsGone.mapaActual == 12&&LightsGone.getLampara()){
+                        return numPuertas[1];
+                    }
+                    else if(LightsGone.mapaActual == 0&&Integer.parseInt(""+capa.getName().charAt(capa.getName().length()-1))-1==0&&LightsGone.getLampara()){
+                        return numPuertas[2];
+                    }
                     return numPuertas[Integer.parseInt(""+capa.getName().charAt(capa.getName().length()-1))-1];
                 }
             }
@@ -371,6 +377,9 @@ public class Mapa {
         if(gameInfo.isLampara()&&layers.get("Lampara")!=null){
             mapa.getLayers().get("Lampara").setVisible(false);
         }
+        if(gameInfo.isArmario()&&layers.get("PuertaCerrada")!=null){
+            mapa.getLayers().get("PuertaCerrada").setVisible(false);
+        }
 
     }
 
@@ -392,6 +401,9 @@ public class Mapa {
         }
         if(gameInfo.isLamparaTemp()&&layers.get("Lampara")!=null){
             mapa.getLayers().get("Lampara").setVisible(false);
+        }
+        if(gameInfo.isArmarioTemp()&&layers.get("PuertaCerrada")!=null){
+            mapa.getLayers().get("PuertaCerrada").setVisible(false);
         }
 
     }

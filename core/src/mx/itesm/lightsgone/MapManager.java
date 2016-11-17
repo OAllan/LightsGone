@@ -15,19 +15,19 @@ import java.util.Random;
 public class MapManager {
     private OrthographicCamera camara;
     private SpriteBatch batch;
-    private final float[] cuartoAbnerX ={530, 2295}, pasilloX = {270, 4140,2160}, salaX = {450, 450,2280,2280}, cocina1X = {315,1305}, cocina2X = {5895,5895}, cocina3X = {630}, jardin1X = {1395, 20745,2170}, jardin2X ={540,18360}, jardin3X = {7740,400}, armario1X = {12510, 315},
-                armario2X = {14400, 270}, armario3X = {9450, 270}, armario4X = {1600}, sotano1X = {8900,990}, sotano2X = {630,8100}, sotano3X = {7515}, caminoX = {585,585};
-    private final boolean[] cuartoAbnerB = {true, false}, pasilloB = {true, false,true}, salaB={true, true, false, false}, cocina1B = {true, true},
-            cocina2B = {false,false}, cocina3B = {true}, jardin1B = {true, false, false}, jardin2B = {true, true}, jardin3B = {true, true}, armario1B = {false, true}, armario2B = {false, true}, armario3B ={false, true}, armario4B = {false},
-            sotano1B = {false, true}, sotano2B = {true, false}, sotano3B = {false},caminoB = {true, true};
-    private final int[] cuartoAbner = {9,1}, pasillo = {0,2,16}, sala = {1,13,6,3}, cocina1 = {2,4}, cocina2 = {3,5}, cocina3 = {4}, jardin1 = {2,7,8}, jardin2 = {6,8}, jardin3 = {6,7}, armario1 = {0,10}, armario2 = {9,11}, armario3 = {10,12}, armario4 = {11}, sotano1 = {2,14}, sotano2 = {13,15}, sotano3 = {14}, camino = {1,17};
-    private final float[] cuartoAbnerY = {LightsGone.YBAJA, LightsGone.YBAJA}, pasilloY = {LightsGone.YBAJA, LightsGone.YBAJA, LightsGone.YBAJA}, salaY = {LightsGone.YALTA, LightsGone.YBAJA, LightsGone.YSALA, LightsGone.YMEDIA}, cocina1Y = {LightsGone.YBAJA, LightsGone.YCOCINA1}, cocina2Y ={LightsGone.YBAJA, LightsGone.YCOCINA2},cocina3Y = {LightsGone.YCOCINA3},
-            jardin1Y = {LightsGone.YCOCINA2, LightsGone.YJARDIN1, LightsGone.YBAJA}, jardin2Y = {LightsGone.YJARDIN2, LightsGone.YJARDIN2},jardin3Y={LightsGone.YBAJA, LightsGone.YJARDIN3}, armario1Y = {LightsGone.YARMARIO, 990}, armario2Y = {945,1035}, armario3Y = {945,945}, armario4Y = {LightsGone.YBAJA}, sotano1Y = {405,585}, sotano2Y = {4005,450}, sotano3Y = {4455},
-            caminoY = {LightsGone.YBAJA, 3510};
-    private final float[][] posicionX= {cuartoAbnerX, pasilloX, salaX, cocina1X, cocina2X, cocina3X, jardin1X, jardin2X, jardin3X, armario1X, armario2X, armario3X, armario4X, sotano1X, sotano2X, sotano3X,caminoX};
-    private final int[][] numPuertas = {cuartoAbner, pasillo, sala, cocina1, cocina2, cocina3, jardin1, jardin2, jardin3, armario1, armario2, armario3, armario4, sotano1, sotano2, sotano3, camino};
-    private final boolean[][] right= {cuartoAbnerB, pasilloB, salaB, cocina1B, cocina2B, cocina3B, jardin1B, jardin2B, jardin3B, armario1B, armario2B, armario3B, armario4B, sotano1B, sotano2B, sotano3B, caminoB};
-    private final float[][] posicionY = {cuartoAbnerY, pasilloY, salaY, cocina1Y, cocina2Y, cocina3Y, jardin1Y, jardin2Y, jardin3Y, armario1Y, armario2Y, armario3Y, armario4Y, sotano1Y, sotano2Y, sotano3Y, caminoY};
+    private final float[] cuartoAbnerX ={530, 2295, 530}, pasilloX = {270, 4140,2160}, salaX = {450, 450,2280,2280}, cocina1X = {315,1305}, cocina2X = {5895,5895}, cocina3X = {630}, jardin1X = {1395, 20745,2170}, jardin2X ={540,18360}, jardin3X = {7740,400}, armario1X = {12510, 315},
+                armario2X = {14400, 270}, armario3X = {9450, 270}, armario4X = {1600,1600}, sotano1X = {8900,990}, sotano2X = {630,8100}, sotano3X = {7515}, caminoX = {585,585}, atico1X = {1260,1260}, atico2X = {3240};
+    private final boolean[] cuartoAbnerB = {true, false, true}, pasilloB = {true, false,true}, salaB={true, true, false, false}, cocina1B = {true, true},
+            cocina2B = {false,false}, cocina3B = {true}, jardin1B = {true, false, false}, jardin2B = {true, true}, jardin3B = {true, true}, armario1B = {false, true}, armario2B = {false, true}, armario3B ={false, true}, armario4B = {false, false},
+            sotano1B = {false, true}, sotano2B = {true, false}, sotano3B = {false},caminoB = {true, true}, atico1B = {true, true}, atico2B = {false};
+    private final int[] cuartoAbner = {9,1,12}, pasillo = {0,2,16}, sala = {1,13,6,3}, cocina1 = {2,4}, cocina2 = {3,5}, cocina3 = {4}, jardin1 = {2,7,8}, jardin2 = {6,8}, jardin3 = {6,7}, armario1 = {0,10}, armario2 = {9,11}, armario3 = {10,12}, armario4 = {11,0}, sotano1 = {2,14}, sotano2 = {13,15}, sotano3 = {14}, camino = {1,17}, atico1 = {16,18}, atico2={17};
+    private final float[] cuartoAbnerY = {LightsGone.YBAJA, LightsGone.YBAJA, LightsGone.YBAJA}, pasilloY = {LightsGone.YBAJA, LightsGone.YBAJA, LightsGone.YBAJA}, salaY = {LightsGone.YALTA, LightsGone.YBAJA, LightsGone.YSALA, LightsGone.YMEDIA}, cocina1Y = {LightsGone.YBAJA, LightsGone.YCOCINA1}, cocina2Y ={LightsGone.YBAJA, LightsGone.YCOCINA2},cocina3Y = {LightsGone.YCOCINA3},
+            jardin1Y = {LightsGone.YCOCINA2, LightsGone.YJARDIN1, LightsGone.YBAJA}, jardin2Y = {LightsGone.YJARDIN2, LightsGone.YJARDIN2},jardin3Y={LightsGone.YBAJA, LightsGone.YJARDIN3}, armario1Y = {LightsGone.YARMARIO, 990}, armario2Y = {945,1035}, armario3Y = {945,945}, armario4Y = {LightsGone.YBAJA, LightsGone.YBAJA}, sotano1Y = {405,585}, sotano2Y = {4005,450}, sotano3Y = {4455},
+            caminoY = {LightsGone.YBAJA, 3510}, atico1Y = {180,720}, atico2Y = {180};
+    private final float[][] posicionX= {cuartoAbnerX, pasilloX, salaX, cocina1X, cocina2X, cocina3X, jardin1X, jardin2X, jardin3X, armario1X, armario2X, armario3X, armario4X, sotano1X, sotano2X, sotano3X,caminoX, atico1X, atico2X};
+    private final int[][] numPuertas = {cuartoAbner, pasillo, sala, cocina1, cocina2, cocina3, jardin1, jardin2, jardin3, armario1, armario2, armario3, armario4, sotano1, sotano2, sotano3, camino, atico1, atico2};
+    private final boolean[][] right= {cuartoAbnerB, pasilloB, salaB, cocina1B, cocina2B, cocina3B, jardin1B, jardin2B, jardin3B, armario1B, armario2B, armario3B, armario4B, sotano1B, sotano2B, sotano3B, caminoB, atico1B, atico2B};
+    private final float[][] posicionY = {cuartoAbnerY, pasilloY, salaY, cocina1Y, cocina2Y, cocina3Y, jardin1Y, jardin2Y, jardin3Y, armario1Y, armario2Y, armario3Y, armario4Y, sotano1Y, sotano2Y, sotano3Y, caminoY, atico1Y, atico2Y};
     private static Array<Enemigo> enemigos;
 
     public MapManager(OrthographicCamera camara, SpriteBatch batch){

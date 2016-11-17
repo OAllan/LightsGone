@@ -217,6 +217,14 @@ public class GameInfo {
         return lamparaTemp;
     }
 
+    public boolean isArmarioTemp(){
+        return armarioTemp;
+    }
+
+    public boolean isArmario(){
+        return armario;
+    }
+
     public void actualizarDatosTemp() {
         lamparaTemp = abner.getLampara();
         pogoTemp = abner.getPogo();

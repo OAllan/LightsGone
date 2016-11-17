@@ -53,7 +53,7 @@ public class LightsGone implements Screen, InputProcessor{
     private Juego juego;
     private AssetManager assetManager = new AssetManager();
     public static Texture plataforma;
-    private Texture  municion, habilidadLanzaPapas, transicionCocina,transicionJardin, transicionArmario, transicionSotano, transicionCoco, transicionNeutral,  dano, nivelVida, gameOver,habilidadDes, habilidadPogo,save,pausaTex,quitTex, opciones,  botonSalto, JFondo, botonVida, habilidad, texPausa;
+    private Texture  capa,municion, habilidadLanzaPapas, transicionCocina,transicionJardin, transicionArmario, transicionSotano, transicionCoco, transicionNeutral,  dano, nivelVida, gameOver,habilidadDes, habilidadPogo,save,pausaTex,quitTex, opciones,  botonSalto, JFondo, botonVida, habilidad, texPausa;
     private Sprite transicionNivel, pausaActual, fondoCielo;
     private static Abner abner;
     private Texto vida, municionTex;
@@ -103,7 +103,9 @@ public class LightsGone implements Screen, InputProcessor{
         gameInfo = new GameInfo(nombre);
     }
 
-
+    public static boolean getLampara() {
+        return abner.getLampara();
+    }
 
 
     @Override
@@ -247,6 +249,7 @@ public class LightsGone implements Screen, InputProcessor{
         assetManager.load("OscuridadConLampara.png", Texture.class);
         assetManager.load("FlechasArmas.png", Texture.class);
         assetManager.load("FlechasHabilidades.png",Texture.class);
+        assetManager.load("BotonHabCapa.png", Texture.class);
         assetManager.load("ambiente.mp3", Music.class);
         assetManager.load("risa.mp3", Music.class);
         assetManager.load("leche.mp3", Music.class);
@@ -286,6 +289,7 @@ public class LightsGone implements Screen, InputProcessor{
         leche = assetManager.get("leche.mp3");
         papa = assetManager.get("PapaMundo.png");
         recarga = assetManager.get("recargar papas.mp3");
+        capa = assetManager.get("BotonHabCapa.png");
     }
 
     @Override
@@ -348,6 +352,9 @@ public class LightsGone implements Screen, InputProcessor{
                             botonHabilidad.setTexture(lamparaOff);
                             break;
                     }
+                    break;
+                case CAPITA:
+                    botonHabilidad.setTexture(capa);
                     break;
                 case VACIA:
                     botonHabilidad.setTexture(habilidadDes);
@@ -437,7 +444,7 @@ public class LightsGone implements Screen, InputProcessor{
 
             int cambio= abner.cambioNivel();
             if(cambio>=0){
-                if(mapaActual<=6)
+                if(mapaActual<=6||mapaActual>15)
                     abner.setEstadoVertical(Abner.Vertical.DESACTIVADO);
                 int tempMapa = mapaActual;
                 transicion = Transicion.AUMENTANDO;
@@ -466,6 +473,12 @@ public class LightsGone implements Screen, InputProcessor{
                     case 13:
                         if(tempMapa == 2){
                             transicionNivel.setTexture(transicionSotano);
+                            velocidadTransicion = TRANSICIONNIVEL;
+                        }
+                        break;
+                    case 16:
+                        if(tempMapa==1){
+                            transicionNivel.setTexture(transicionCoco);
                             velocidadTransicion = TRANSICIONNIVEL;
                         }
                         break;
@@ -655,6 +668,9 @@ public class LightsGone implements Screen, InputProcessor{
                 case LAMPARA:
                     estadoLampara = Lampara.APAGADA;
                     abner.setLampara(estadoLampara);
+                    habilidadActual = abner.capita?Habilidad.CAPITA:Habilidad.POGO;
+                    break;
+                case CAPITA:
                     habilidadActual = Habilidad.POGO;
                     break;
             }
@@ -783,10 +799,13 @@ public class LightsGone implements Screen, InputProcessor{
                     }
                     break;
                 case OPCIONES:
-                    if(botonOn.contiene(x,y))
+                    if(botonOn.contiene(x,y)){
                         musica = true;
-                    else if(botonOff.contiene(x,y))
+                    }
+                    else if(botonOff.contiene(x,y)){
                         musica = false;
+                        stop();
+                    }
                     else if(botonBack.contiene(x,y))
                         estadoPausa = EstadoPausa.PRINCIPAL;
                     break;
@@ -916,7 +935,21 @@ public class LightsGone implements Screen, InputProcessor{
         return false;
     }
 
-
+    public void stop(){
+        if(ambiente.isPlaying()){
+            ambiente.stop();
+        }
+        if(gameover.isPlaying()){
+            gameover.stop();
+        }
+        if(leche.isPlaying()){
+            leche.stop();
+        }
+        if(recarga.isPlaying()){
+            recarga.stop();
+        }
+        mapa.stop();
+    }
 
     private enum EstadoPausa{
         PRINCIPAL,
@@ -939,7 +972,8 @@ public class LightsGone implements Screen, InputProcessor{
     public enum Habilidad{
         VACIA,
         POGO,
-        LAMPARA
+        LAMPARA,
+        CAPITA
     }
 
     public enum Arma{

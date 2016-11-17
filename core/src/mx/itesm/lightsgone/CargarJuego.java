@@ -195,4 +195,20 @@ public class CargarJuego implements Screen {
         escena.dispose();
 
     }
+
+    private void borrarJuegos(){
+        try {
+            ArrayList<FileHandle> files;
+            String fileHandle = Gdx.files.getLocalStoragePath();
+            FileHandle directorio = new FileHandle(fileHandle);
+            files = new ArrayList<FileHandle>(directorio.list().length);
+            for(FileHandle file: directorio.list()) {
+                if(file.name().equalsIgnoreCase("Juego1.txt")||file.name().equalsIgnoreCase("Juego2.txt")){
+                    file.delete();
+                }
+            }
+        }catch (Exception e){
+
+        }
+    }
 }

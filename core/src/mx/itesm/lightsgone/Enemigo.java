@@ -3438,8 +3438,7 @@ public abstract class Enemigo {
         public OndaCoco(float x, float y, Abner abner){
             super(ondaGrande, x,y);
             this.abner = abner;
-            estadoOnda = EstadoOnda.BAJANDO;
-            rugido.play();
+            estadoOnda = EstadoOnda.ESPERANDO;
         }
 
 
@@ -3468,9 +3467,15 @@ public abstract class Enemigo {
 
         private void actualizar() {
             switch (estadoOnda){
+                case ESPERANDO:
+                    if(abner.getY()>1500){
+                        estadoOnda = EstadoOnda.BAJANDO;
+                        rugido.play();
+                    }
+                    break;
                 case BAJANDO:
                     sprite.translate(0,CAIDA);
-                    if(abner.getBoundingRectangle().overlaps(sprite.getBoundingRectangle())){
+                    if(abner.getBoundingRectangle().overlaps(sprite.getBoundingRectangle())&&LightsGone.habilidadActual!= LightsGone.Habilidad.CAPITA){
                         attack();
                     }
                     break;
@@ -3485,6 +3490,7 @@ public abstract class Enemigo {
         }
 
         private enum EstadoOnda{
+            ESPERANDO,
             BAJANDO,
             AVAZANDO
         }

@@ -32,7 +32,7 @@ public class Abner {
     private final float MOVY = (0.2125f)*mov;
     private Salto salto;
     private int cantVida, vidas;
-    private Animation caminar, atacar, atacarLanzaPapas, caminarLampara;
+    private Animation caminar, atacar, atacarLanzaPapas, caminarLampara, caminarCapa;
     private OrthographicCamera camara;
     private ArrayList<Proyectil> proyectiles;
     private Mapa mapa;
@@ -49,7 +49,7 @@ public class Abner {
     private GameInfo gameInfo;
     private Sprite globo;
     private LightsGone.Lampara estadoLampara;
-    private TextureRegion caminarTex, saltoTex, pogoTex, caminarLamparaTex, lanzapapasTex, resorteraTex, capaTex,neutral, dano, neutralLampara, neutralCapa, saltar1,saltar2,saltarLampara1,saltarLampara2,saltoCapa, saltarPogo1, saltarPogo2;
+    private TextureRegion caminarTex, saltoTex, pogoTex, caminarLamparaTex, lanzapapasTex, resorteraTex, capaTex,neutral, dano, neutralLampara, neutralCapa, saltar1,saltar2,saltarLampara1,saltarLampara2,saltoCapa1, saltoCapa2, saltarPogo1, saltarPogo2;
     private Texture globoPogo, globoCapita, globoLampara, globoLanzapapas, encendida, encendidaOscuridad, oscuridad;
     private boolean right, atrapado, cayendo;
     private Music puerta, pasos, lanzapapa, leche;
@@ -126,6 +126,12 @@ public class Abner {
         textureRegions = pogoTex.split(ANCHO, ALTO);
         saltarPogo1 = textureRegions[0][0];
         saltarPogo2 = textureRegions[0][1];
+        textureRegions = capaTex.split(ANCHO,ALTO);
+        neutralCapa = textureRegions[0][0];
+        caminarCapa = new Animation(0.15f, textureRegions[0][1], textureRegions[0][2]);
+        caminarCapa.setPlayMode(Animation.PlayMode.LOOP);
+        saltoCapa1 = textureRegions[0][3];
+        saltoCapa2 = textureRegions[0][4];
         sprite = new Sprite(neutral);
         sprite.setPosition(gameInfo.getX(), gameInfo.getY());
         timerAnimation = 0;
@@ -329,6 +335,12 @@ public class Abner {
             gameInfo.actualizarDatosTemp();
         }
 
+        if(mapa.colisionItem(sprite.getX()+(3*sprite.getWidth()/4), sprite.getY()+20,"Capita")) {
+            mapa.remove("Capita");
+            capita = true;
+            gameInfo.actualizarDatosTemp();
+        }
+
         if(escaleras){
             float y;
             if(right) {
@@ -378,7 +390,17 @@ public class Abner {
         if(!cayendo){
             if(estadoHorizontal == Horizontal.INCLINADO){
                 sprite.setRotation(12);
-                if(estadoSalto==Vertical.DESACTIVADO&&estadoAtaque!= Ataque.ACTIVADO&&!danoA&& LightsGone.habilidadActual== LightsGone.Habilidad.LAMPARA){
+                if(estadoSalto==Vertical.DESACTIVADO&&estadoAtaque!= Ataque.ACTIVADO&&!danoA&& LightsGone.habilidadActual== LightsGone.Habilidad.CAPITA){
+                    timerAnimation += Gdx.graphics.getDeltaTime();
+                    sprite.setRegion(caminarCapa.getKeyFrame(timerAnimation));
+                    if(!pasos.isPlaying()&&LightsGone.musica)
+                        pasos.play();
+                    else if(pasos.isPlaying()&&!LightsGone.musica){
+                        pasos.stop();
+                    }
+                    walk(right);
+                }
+                else if(estadoSalto==Vertical.DESACTIVADO&&estadoAtaque!= Ataque.ACTIVADO&&!danoA&& LightsGone.habilidadActual== LightsGone.Habilidad.LAMPARA){
                     timerAnimation += Gdx.graphics.getDeltaTime();
                     sprite.setRegion(caminarLampara.getKeyFrame(timerAnimation));
                     if(!pasos.isPlaying()&&LightsGone.musica)
@@ -415,7 +437,17 @@ public class Abner {
 
             else if(estadoHorizontal == Horizontal.ACTIVADO){
                 sprite.setRotation(0);
-                if((estadoSalto==Vertical.DESACTIVADO&&estadoAtaque!= Ataque.ACTIVADO&&!danoA&& LightsGone.habilidadActual== LightsGone.Habilidad.LAMPARA)||(escaleras&& LightsGone.habilidadActual== LightsGone.Habilidad.LAMPARA)){
+                if((estadoSalto==Vertical.DESACTIVADO&&estadoAtaque!= Ataque.ACTIVADO&&!danoA&& LightsGone.habilidadActual== LightsGone.Habilidad.CAPITA)||(escaleras&& LightsGone.habilidadActual== LightsGone.Habilidad.CAPITA)){
+                    timerAnimation += Gdx.graphics.getDeltaTime();
+                    sprite.setRegion(caminarCapa.getKeyFrame(timerAnimation));
+                    if(!pasos.isPlaying()&&LightsGone.musica)
+                        pasos.play();
+                    else if(pasos.isPlaying()&&!LightsGone.musica){
+                        pasos.stop();
+                    }
+                    walk(right);
+                }
+                else if((estadoSalto==Vertical.DESACTIVADO&&estadoAtaque!= Ataque.ACTIVADO&&!danoA&& LightsGone.habilidadActual== LightsGone.Habilidad.LAMPARA)||(escaleras&& LightsGone.habilidadActual== LightsGone.Habilidad.LAMPARA)){
                     timerAnimation += Gdx.graphics.getDeltaTime();
                     sprite.setRegion(caminarLampara.getKeyFrame(timerAnimation));
                     if(!pasos.isPlaying()&&LightsGone.musica)
@@ -467,7 +499,20 @@ public class Abner {
             else if(estadoSalto == Vertical.ACTIVADO){
 
                 if(estadoAtaque != Ataque.ACTIVADO&&!danoA){
-                    if(LightsGone.habilidadActual== LightsGone.Habilidad.LAMPARA){
+
+                    if(LightsGone.habilidadActual== LightsGone.Habilidad.CAPITA){
+                        if(cont>=0&&!escaleras){
+                            sprite.setRegion(saltoCapa1);
+                            cont--;
+                        }
+                        else {
+                            if(!escaleras)
+                                sprite.setRegion(saltoCapa2);
+                            jump(alturaMax);
+                        }
+                    }
+
+                    else if(LightsGone.habilidadActual== LightsGone.Habilidad.LAMPARA){
                         if(cont>=0&&!escaleras){
                             sprite.setRegion(saltarLampara1);
                             cont--;
@@ -500,21 +545,28 @@ public class Abner {
             if(estadoAtaque == Ataque.ACTIVADO&&estadoSalto!= Vertical.POGO){
                 if(!danoA)
                     attack(right);
-                else
+                else{
                     estadoAtaque = Ataque.DESACTIVADO;
+                    timerAnimationA = 0;
+                }
             }
             else if(estadoAtaque==Ataque.LANZAPAPAS&&estadoSalto==Vertical.DESACTIVADO){
                 if(!danoA)
                     attack(right);
-                else
+                else{
                     estadoAtaque = Ataque.DESACTIVADO;
+                    timerAnimationA = 0;
+                }
             }
             else{
                 estadoAtaque = Ataque.DESACTIVADO;
             }
 
             if(estadoAtaque == Ataque.DESACTIVADO && estadoSalto == Vertical.DESACTIVADO && estadoHorizontal==Horizontal.DESACTIVADO&&!danoA){
-                if((mapa.colisionY(sprite.getX()+sprite.getWidth()/2,sprite.getY()-(saltoMov))!=-1||mapa.colisionInclinada(sprite.getX() + sprite.getWidth() / 2, sprite.getY() - (saltoMov + gravedad))||pisoLata)&& LightsGone.habilidadActual== LightsGone.Habilidad.LAMPARA){
+                if((mapa.colisionY(sprite.getX()+sprite.getWidth()/2,sprite.getY()-(saltoMov))!=-1||mapa.colisionInclinada(sprite.getX() + sprite.getWidth() / 2, sprite.getY() - (saltoMov + gravedad))||pisoLata)&& LightsGone.habilidadActual== LightsGone.Habilidad.CAPITA){
+                    sprite.setRegion(neutralCapa);
+                }
+                else if((mapa.colisionY(sprite.getX()+sprite.getWidth()/2,sprite.getY()-(saltoMov))!=-1||mapa.colisionInclinada(sprite.getX() + sprite.getWidth() / 2, sprite.getY() - (saltoMov + gravedad))||pisoLata)&& LightsGone.habilidadActual== LightsGone.Habilidad.LAMPARA){
                     sprite.setRegion(neutralLampara);
                 }
                 else if(mapa.colisionY(sprite.getX()+sprite.getWidth()/2,sprite.getY()-(saltoMov))!=-1||mapa.colisionInclinada(sprite.getX() + sprite.getWidth() / 2, sprite.getY() - (saltoMov + gravedad))||pisoLata){

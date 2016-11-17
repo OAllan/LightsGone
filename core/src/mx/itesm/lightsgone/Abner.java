@@ -725,6 +725,7 @@ public class Abner {
     }
 
 
+
     public void jump(float alturaMax){
 
         switch (salto){
@@ -836,7 +837,7 @@ public class Abner {
     public void ajusteCamara(int direccion){
 
             //sprite.setX(sprite.getX() - (float).1);
-            camara.position.set(camara.position.x - (float) 10 * direccion, sprite.getY(), 0);
+            camara.position.set(camara.position.x - (float) 10 * direccion, camara.position.y, 0);
 
     }
 
@@ -936,6 +937,16 @@ public class Abner {
     public int getMunicion() {
         return papas;
     }
+
+    public Sprite getluz(){
+        return luz;
+    }
+
+
+    public Texture getEncen(){
+        return encendidaOscuridad;
+    }
+
 
     public void dispose(){
         caminarTex.getTexture().dispose();

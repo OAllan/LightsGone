@@ -56,6 +56,14 @@ public class MapManager {
                 //enemigos.add(new Enemigo.Cucarachon(1500,150,abner,mapa));
                 //enemigos.add(new Enemigo.Gnomo(2500,150,abner,mapa));
                 //mapa.setEnemigos(enemigos);
+                //enemigos.add(new Enemigo.Telarana(1500,150,abner,mapa));
+                //enemigos.add(new Enemigo.Telarana(3000,150,abner,mapa));
+                //enemigos.add(new Enemigo.Telarana(4000,150,abner,mapa));
+                //enemigos.add(new Enemigo.Fantasma(1500,675,abner,mapa));
+                //enemigos.add(new Enemigo.ParedPicos(2300,100,abner,mapa));
+
+
+                mapa.setEnemigos(enemigos);
                 break;
 
             case 3:
@@ -219,19 +227,91 @@ public class MapManager {
                 mapa.setCajas(new CajaMovil(4100, 190+164*2,mapa));
                 break;
             case 13:
+                //Sotano 1
+                enemigos.add(new Enemigo.Fantasma(8910,630,abner,mapa));
+                enemigos.add(new Enemigo.Fantasma(8900,495,abner,mapa));
+                enemigos.add(new Enemigo.Fantasma(7785,900,abner,mapa));
+                enemigos.add(new Enemigo.Fantasma(7425,675,abner,mapa));
+                enemigos.add(new Enemigo.Fantasma(6165,405,abner,mapa));
+                enemigos.add(new Enemigo.Fantasma(3510,855,abner,mapa));
+                enemigos.add(new Enemigo.Fantasma(2250,855,abner,mapa));
+                enemigos.add(new Enemigo.Fantasma(1930,855,abner,mapa));
+                enemigos.add(new Enemigo.Fantasma(1758,675,abner,mapa));
+                enemigos.add(new Enemigo.Mosca(4770,540,abner,mapa));
+                enemigos.add(new Enemigo.Mosca(2340,720,abner,mapa));
+                mapa.setEnemigos(enemigos);
                 break;
             case 14:
+                //Sotano 2
+                enemigos.add(new Enemigo.Fantasma(225,3825,abner,mapa));
+                enemigos.add(new Enemigo.Fantasma(945,3420,abner,mapa));
+                enemigos.add(new Enemigo.Fantasma(315,2430,abner,mapa));
+                enemigos.add(new Enemigo.Fantasma(990,2610,abner,mapa));
+                enemigos.add(new Enemigo.Fantasma(270,1800,abner,mapa));
+                enemigos.add(new Enemigo.Fantasma(900,1800,abner,mapa));
+                enemigos.add(new Enemigo.Fantasma(495,1305,abner,mapa));
+                enemigos.add(new Enemigo.Fantasma(1800,1440,abner,mapa));
+                enemigos.add(new Enemigo.Telarana(1800,2160,abner,mapa));
+                enemigos.add(new Enemigo.Cucarachon(2295,450,abner,mapa));
+                enemigos.add(new Enemigo.Alfombra(4320,450,abner));
+                enemigos.add(new Enemigo.Alfombra(5040,450,abner));
+                enemigos.add(new Enemigo.Alfombra(6705,450,abner));
+                mapa.setEnemigos(enemigos);
+                break;
+            case 15:
+                //Sotano 3
+                enemigos.add(new Enemigo.ParedPicos(7545,3555,abner,mapa));
+                enemigos.add(new Enemigo.Fantasma(6345,5400,abner,mapa));
+                enemigos.add(new Enemigo.Fantasma(4545,5400,abner,mapa));
+                enemigos.add(new Enemigo.Fantasma(1575,5400,abner,mapa));
+                enemigos.add(new Enemigo.Fantasma(315,5000,abner,mapa));
+                enemigos.add(new Enemigo.Fantasma(990,4455,abner,mapa));
+                enemigos.add(new Enemigo.Fantasma(1395,3735,abner,mapa));
+                enemigos.add(new Enemigo.Fantasma(3690,3960,abner,mapa));
+                enemigos.add(new Enemigo.Fantasma(3690,3645,abner,mapa));
+                enemigos.add(new Enemigo.Fantasma(6165,3945,abner,mapa));
+                enemigos.add(new Enemigo.Fantasma(6530,3680,abner,mapa));
+                enemigos.add(new Enemigo.Telarana(2070,4230,abner,mapa));
+                enemigos.add(new Enemigo.Alfombra(5445,3510,abner));
+                enemigos.add(new Enemigo.Alfombra(3375,3510,abner));
+
+                enemigos.add(new Enemigo.Fantasma(5310,2385,abner,mapa));
+                enemigos.add(new Enemigo.Fantasma(4980,2010,abner,mapa));
+                enemigos.add(new Enemigo.Cucarachon(765,2250,abner,mapa));
+                enemigos.add(new Enemigo.Cucarachon(1395,2250,abner,mapa));
+                enemigos.add(new Enemigo.Cucarachon(2340,2250,abner,mapa));
+                enemigos.add(new Enemigo.Cucarachon(3285,2250,abner,mapa));
+                enemigos.add(new Enemigo.Mosca(2790,2430,abner,mapa));
+                enemigos.add(new Enemigo.Mosca(3780,1485,abner,mapa));
+
+                enemigos.add(new Enemigo.Cucarachon(900,180,abner,mapa));
+                enemigos.add(new Enemigo.Cucarachon(1100,180,abner,mapa));
+                enemigos.add(new Enemigo.Cucarachon(1300,180,abner,mapa));
+                enemigos.add(new Enemigo.Cucarachon(1500,180,abner,mapa));
+                enemigos.add(new Enemigo.Cucarachon(1700,180,abner,mapa));
+                enemigos.add(new Enemigo.Cucarachon(1900,180,abner,mapa));
+                enemigos.add(new Enemigo.Cucarachon(2100,180,abner,mapa));
+                enemigos.add(new Enemigo.Cucarachon(2300,180,abner,mapa));
+                enemigos.add(new Enemigo.Cucarachon(2500,180,abner,mapa));
+                enemigos.add(new Enemigo.Cucarachon(2700,180,abner,mapa));
+                enemigos.add(new Enemigo.Cucarachon(2900,180,abner,mapa));
+                enemigos.add(new Enemigo.Cucarachon(3100,180,abner,mapa));
+                mapa.setEnemigos(enemigos);
                 break;
             case 16:
                 enemigos.add(new Enemigo.OndaCoco(300,mapa.getHeight(), abner));
                 mapa.setEnemigos(enemigos);
                 break;
+
         }
     }
 
     public static void quitarEnemigo(Enemigo ene){
         if (enemigos.contains(ene,true)){
             if(ene.getClass().getSimpleName().equals("Hongo")){
+                enemigos.removeIndex(enemigos.indexOf(ene,true)-1);
+            }
+            if(ene.getClass().getSimpleName().equals("Telarana")){
                 enemigos.removeIndex(enemigos.indexOf(ene,true)-1);
             }
             if(!(ene instanceof Enemigo.GnomoL) && !(ene instanceof Enemigo.Gnomo)){
@@ -246,9 +326,14 @@ public class MapManager {
 
     }
 
+    public static void crearArana(Enemigo.Telarana ene){
+        enemigos.add(new Enemigo.Arana(ene.getX()+ene.sprite.getWidth()/2,ene.getY()+ene.sprite.getHeight()/2,ene.getAbner(),ene.getMapa(),ene.getRectangle()));
+
+    }
+
     public static void  invocarLluviaDeGnomos(Abner abner,Mapa mapa){
         Random rnd=new Random();
-        for (int i = 0; i <20 ; i++) {
+        for (int i = 0; i <4 ; i++) {
             enemigos.add(new Enemigo.GnomoL(rnd.nextInt(1410)+19200,rnd.nextInt(4000)+1900,abner,mapa));
         }
     }

@@ -53,7 +53,7 @@ public class LightsGone implements Screen, InputProcessor{
     private Juego juego;
     private AssetManager assetManager = new AssetManager();
     public static Texture plataforma;
-    private Texture  capa,municion, habilidadLanzaPapas, transicionCocina,transicionJardin, transicionArmario, transicionSotano, transicionCoco, transicionNeutral,  dano, nivelVida, gameOver,habilidadDes, habilidadPogo,save,pausaTex,quitTex, opciones,  botonSalto, JFondo, botonVida, habilidad, texPausa;
+    private Texture  capa,capa25,capa50,capa0,capa75,municion, habilidadLanzaPapas, transicionCocina,transicionJardin, transicionArmario, transicionSotano, transicionCoco, transicionNeutral,  dano, nivelVida, gameOver,habilidadDes, habilidadPogo,save,pausaTex,quitTex, opciones,  botonSalto, JFondo, botonVida, habilidad, texPausa;
     private Sprite transicionNivel, pausaActual, fondoCielo;
     private static Abner abner;
     private Texto vida, municionTex;
@@ -78,9 +78,13 @@ public class LightsGone implements Screen, InputProcessor{
     private Array<Sprite> vidas;
     private Arma estadoArma;
     private Sprite flechasArma, flechasHabilidad;
-    private boolean switchAtaque, switchHabilidad, switchedAtaque, switchedHabilidad;
+    private boolean switchAtaque, switchHabilidad, switchSalto, switchedSalto,switchedAtaque, switchedHabilidad;
+    private static boolean capaActiva;
     private static Array<Sprite> malteadas, papas;
     private int leftPointer, rightPointer;
+    private float timer, timerR;
+    private static Capa estadoCapa;
+    private Salto saltoActual;
 
 
     Array<Enemigo> enemigos;
@@ -88,6 +92,7 @@ public class LightsGone implements Screen, InputProcessor{
 
     private static Lampara estadoLampara;
     private Texture lamparaOff, lamparaOn;
+    private Sprite flechasSalto;
 
     public LightsGone(Juego juego) {
         this.juego = juego;
@@ -184,16 +189,18 @@ public class LightsGone implements Screen, InputProcessor{
         municionTex = new Texto("tipo.fnt", imgMunicion.getX(), MUNICIONY+60);
         transicionNivel = new Sprite(transicionNeutral);
         estadoLampara = Lampara.APAGADA;
-        if(gameInfo.isPogo())
-            habilidadActual = Habilidad.POGO;
+        if(gameInfo.isLampara())
+            habilidadActual = Habilidad.LAMPARA;
         else
             habilidadActual = Habilidad.VACIA;
+        saltoActual = Salto.NORMAL;
         transicionNivel.setSize(LightsGone.ANCHO_MUNDO, LightsGone.ALTO_MUNDO);
         enemigos = mapa.getEnemigos();
         gameInfo.setAbner(abner);
         estado = Estado.JUGANDO;
         botonHabilidad = new Boton(habilidadDes, ANCHO_MUNDO-habilidadDes.getWidth()-10,YBOTON,false);
         flechasHabilidad.setPosition(botonHabilidad.getX()+10, botonHabilidad.getY()+ALTOBOTON-flechasHabilidad.getHeight()+10);
+        flechasSalto.setPosition(botonSaltar.getX()+10, botonSaltar.getY()+ALTOBOTON-flechasSalto.getHeight()-10);
         estadoPausa = EstadoPausa.PRINCIPAL;
         menuGameOver = new Sprite(gameOver);
         pausaActual = new Sprite(pausaTex);
@@ -213,6 +220,10 @@ public class LightsGone implements Screen, InputProcessor{
         ambiente.setVolume(0.5f);
         leftPointer = -1;
         rightPointer = -1;
+        estadoCapa = Capa.CAPA100;
+        capaActiva = false;
+        timer = 8;
+        timerR = 0;
 
     }
 
@@ -251,7 +262,12 @@ public class LightsGone implements Screen, InputProcessor{
         assetManager.load("OscuridadConLampara.png", Texture.class);
         assetManager.load("FlechasArmas.png", Texture.class);
         assetManager.load("FlechasHabilidades.png",Texture.class);
-        assetManager.load("BotonHabCapa.png", Texture.class);
+        assetManager.load("FlechasSaltos.png", Texture.class);
+        assetManager.load("BotonHabCapa100.png", Texture.class);
+        assetManager.load("BotonHabCapa0.png", Texture.class);
+        assetManager.load("BotonHabCapa25.png", Texture.class);
+        assetManager.load("BotonHabCapa50.png", Texture.class);
+        assetManager.load("BotonHabCapa75.png", Texture.class);
         assetManager.load("ambiente.mp3", Music.class);
         assetManager.load("risa.mp3", Music.class);
         assetManager.load("leche.mp3", Music.class);
@@ -287,11 +303,16 @@ public class LightsGone implements Screen, InputProcessor{
         lamparaOff = assetManager.get("BotonHabLamparaOff.png");
         lamparaOn = assetManager.get("BotonHabLamparaOn.png");
         flechasArma = new Sprite((Texture)assetManager.get("FlechasArmas.png"));
-        flechasHabilidad = new Sprite((Texture)assetManager.get("FlechasHabilidades.png"));
+        flechasHabilidad = new Sprite((Texture)assetManager.get("FlechasHabilidades.png"));;
+        flechasSalto = new Sprite((Texture)assetManager.get("FlechasSaltos.png"));
         leche = assetManager.get("leche.mp3");
         papa = assetManager.get("PapaMundo.png");
         recarga = assetManager.get("recargar papas.mp3");
-        capa = assetManager.get("BotonHabCapa.png");
+        capa = assetManager.get("BotonHabCapa100.png");
+        capa0 = assetManager.get("BotonHabCapa0.png");
+        capa25 = assetManager.get("BotonHabCapa25.png");
+        capa50 = assetManager.get("BotonHabCapa50.png");
+        capa75 = assetManager.get("BotonHabCapa75.png");
     }
 
     @Override
@@ -299,8 +320,8 @@ public class LightsGone implements Screen, InputProcessor{
         Gdx.gl.glClearColor(1, 1, 1, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
-        if(abner.getPogo()&&habilidadActual == Habilidad.VACIA)
-            habilidadActual = Habilidad.POGO;
+        if(abner.getLampara()&&habilidadActual == Habilidad.VACIA)
+            habilidadActual = Habilidad.LAMPARA;
 
 
         estado = abner.isDead()?Estado.MUERTE:estado;
@@ -331,9 +352,6 @@ public class LightsGone implements Screen, InputProcessor{
             }
 
             switch (habilidadActual){
-                case POGO:
-                    botonHabilidad.setTexture(habilidadPogo);
-                    break;
                 case LAMPARA:
                     switch (estadoLampara){
                         case ENCENDIDA:
@@ -356,15 +374,107 @@ public class LightsGone implements Screen, InputProcessor{
                     }
                     break;
                 case CAPITA:
-                    botonHabilidad.setTexture(capa);
+                    switch (estadoCapa){
+                        case APAGADA:
+                            if(capaActiva){
+                                capaActiva = false;
+                                timer = 8;
+                            }
+                            timerR += Gdx.graphics.getDeltaTime();
+                            botonHabilidad.setTexture(capa0);
+                            if(timerR>=2.5){
+                                estadoCapa = Capa.CAPA25;
+                            }
+                            break;
+                        case CAPA25:
+                            botonHabilidad.setTexture(capa25);
+                            if(capaActiva){
+                                timer -= Gdx.graphics.getDeltaTime();
+                                if(timer<=0){
+                                    estadoCapa = Capa.APAGADA;
+                                }
+                            }
+                            else{
+                                timerR+=Gdx.graphics.getDeltaTime();
+                                if(timerR>=5){
+                                    estadoCapa = Capa.CAPA50;
+                                }
+                            }
+                            break;
+                        case CAPA50:
+                            botonHabilidad.setTexture(capa50);
+                            if(capaActiva){
+                                timer-=Gdx.graphics.getDeltaTime();
+                                if(timer<=2){
+                                    estadoCapa = Capa.CAPA25;
+                                }
+                            }
+                            else {
+                                timerR += Gdx.graphics.getDeltaTime();
+                                if(timerR>=7.5){
+                                    estadoCapa = Capa.CAPA75;
+                                }
+                            }
+                            break;
+                        case CAPA75:
+                            botonHabilidad.setTexture(capa75);
+                            if(capaActiva){
+                                timer-=Gdx.graphics.getDeltaTime();
+                                if(timer<=4){
+                                    estadoCapa = Capa.CAPA50;
+                                }
+                            }
+                            else {
+                                timerR += Gdx.graphics.getDeltaTime();
+                                if(timerR>=10){
+                                    estadoCapa = Capa.CAPA100;
+                                    timerR = 0;
+                                }
+                            }
+                            break;
+                        case CAPA100:
+                            botonHabilidad.setTexture(capa);
+                            if(capaActiva){
+                                timer-= Gdx.graphics.getDeltaTime();
+                                if(timer<=6){
+                                    estadoCapa = Capa.CAPA75;
+                                }
+                            }
+                        break;
+                    }
                     break;
                 case VACIA:
                     botonHabilidad.setTexture(habilidadDes);
                     break;
             }
 
-            //Inicio de los controles del teclado, si quieren habilitarlos quiten el /* al inicio y el */ al final
+            if(timerR!=0&&habilidadActual!=Habilidad.CAPITA){
+                timerR+=Gdx.graphics.getDeltaTime();
+                if(timerR>=10){
+                    estadoCapa = Capa.CAPA100;
+                    timerR = 0;
+                }
+                else if(timerR>=7.5){
+                    estadoCapa = Capa.CAPA75;
+                }
+                else if (timerR>=5){
+                    estadoCapa = Capa.CAPA50;
+                }
+                else if(timerR>=2.5){
+                    estadoCapa = Capa.CAPA25;
+                }
+            }
 
+            switch (saltoActual){
+                case NORMAL:
+                    botonSaltar.setTexture(botonSalto);
+                    break;
+                case POGO:
+                    botonSaltar.setTexture(habilidadPogo);
+                    break;
+            }
+
+            //Inicio de los controles del teclado, si quieren habilitarlos quiten el /* al inicio y el */ al final
 
             if(Gdx.app.getType()== Application.ApplicationType.Desktop){
                 if(Gdx.input.isKeyPressed(Input.Keys.DPAD_LEFT))
@@ -406,17 +516,21 @@ public class LightsGone implements Screen, InputProcessor{
 
 
             if(botonSaltar.isPressed()) {
-                abner.setEstadoVertical(Abner.Vertical.ACTIVADO);
-                abner.setSalto(Abner.Salto.SUBIENDO);
+                switch (saltoActual){
+                    case POGO:
+                        abner.setEstadoVertical(Abner.Vertical.POGO);
+                        abner.setSalto(Abner.Salto.SUBIENDO);
+                        break;
+                    case NORMAL:
+                        abner.setEstadoVertical(Abner.Vertical.ACTIVADO);
+                        abner.setSalto(Abner.Salto.SUBIENDO);
+                        break;
+                }
             }
 
 
             if(botonHabilidad.isPressed()){
                 switch (habilidadActual){
-                    case POGO:
-                        abner.setEstadoVertical(Abner.Vertical.POGO);
-                        abner.setSalto(Abner.Salto.SUBIENDO);
-                        break;
                     case LAMPARA:
                         switch (estadoLampara){
                             case ENCENDIDA: case ENCENDIDALUZ:
@@ -428,17 +542,25 @@ public class LightsGone implements Screen, InputProcessor{
                                 estadoLampara = sotano()?Lampara.ENCENDIDA:Lampara.ENCENDIDALUZ;
                                 break;
                         }
+                        break;
+                    case CAPITA:
+                        if(!capaActiva&&estadoCapa==Capa.CAPA100){
+                            capaActiva=true;
+                        }
+                        break;
                 }
             }
 
             if(botonArma.isPressed()){
-                switch(estadoArma){
-                    case LANZAPAPAS:
-                        abner.setEstadoAtaque(Abner.Ataque.LANZAPAPAS);
-                        break;
-                    case RESORTERA:
-                        abner.setEstadoAtaque(Abner.Ataque.ACTIVADO);
-                        break;
+                if(!capaActiva){
+                    switch(estadoArma){
+                        case LANZAPAPAS:
+                            abner.setEstadoAtaque(Abner.Ataque.LANZAPAPAS);
+                            break;
+                        case RESORTERA:
+                            abner.setEstadoAtaque(Abner.Ataque.ACTIVADO);
+                            break;
+                    }
                 }
             }
 
@@ -606,11 +728,14 @@ public class LightsGone implements Screen, InputProcessor{
             botonHabilidad.draw(batch);
             botonSave.draw(batch);
             botonArma.draw(batch);
-            if(abner.getLampara()){
+            if(abner.getCapita()){
                 flechasHabilidad.draw(batch);
             }
             if(abner.getLanzapapas()){
                 flechasArma.draw(batch);
+            }
+            if(abner.getPogo()){
+                flechasSalto.draw(batch);
             }
             pausa.draw(batch);
             imgVida.draw(batch);
@@ -676,20 +801,30 @@ public class LightsGone implements Screen, InputProcessor{
         return (abner.getLampara()&&mapaActual==12)||mapaActual == 13 || mapaActual ==14||mapaActual == 15;
     }
 
+    private void saltoSiguiente(){
+        if(abner.getPogo()){
+            if(saltoActual==Salto.POGO){
+                saltoActual = Salto.NORMAL;
+            }
+            else if(saltoActual == Salto.NORMAL){
+                saltoActual = Salto.POGO;
+            }
+        }
+    }
+
     private void habilidadSiguiente() {
         if(habilidadActual!= Habilidad.VACIA){
             switch (habilidadActual){
-                case POGO:
-                    if(abner.lampara)
-                        habilidadActual = Habilidad.LAMPARA;
-                    break;
                 case LAMPARA:
-                    estadoLampara = Lampara.APAGADA;
-                    abner.setLampara(estadoLampara);
-                    habilidadActual = abner.capita?Habilidad.CAPITA:Habilidad.POGO;
+                    if(abner.capita){
+                        estadoLampara = Lampara.APAGADA;
+                        abner.setLampara(estadoLampara);
+                        habilidadActual = Habilidad.CAPITA;
+                    }
                     break;
                 case CAPITA:
-                    habilidadActual = Habilidad.POGO;
+                    if(!capaActiva)
+                        habilidadActual = Habilidad.LAMPARA;
                     break;
             }
         }
@@ -784,8 +919,9 @@ public class LightsGone implements Screen, InputProcessor{
                 pad.getRight().setEstado(Boton.Estado.PRESIONADO);
                 leftPointer = pointer;
             }
-            if (botonSaltar.contiene(x, y) & (!abner.isJumping()) & (!abner.isAttacking())){
-                botonSaltar.setEstado(Boton.Estado.PRESIONADO);
+            if (botonSaltar.contiene(x, y)){
+                switchedSalto = false;
+                switchSalto = true;
                 rightPointer = pointer;
             }
             if (botonArma.contiene(x, y)){
@@ -802,15 +938,13 @@ public class LightsGone implements Screen, InputProcessor{
                 }
             }
 
-            if(abner.getPogo()){
+            if(abner.getLampara()){
                 if(botonHabilidad.contiene(x,y)) {
                     switchHabilidad = true;
                     rightPointer = pointer;
                     switchedHabilidad = false;
                 }
             }
-
-
         }
 
         if(estado == Estado.PAUSA){
@@ -905,11 +1039,17 @@ public class LightsGone implements Screen, InputProcessor{
                 switchAtaque = false;
                 rightPointer = -1;
             }
-            if(abner.getPogo()&&botonHabilidad.contiene(x,y)&&!abner.isJumping()&&!abner.isAttacking()&&!switchedHabilidad&&pointer==rightPointer){
+            if(abner.getLampara()&&botonHabilidad.contiene(x,y)&&!abner.isAttacking()&&!switchedHabilidad&&pointer==rightPointer){
                 botonHabilidad.setEstado(Boton.Estado.PRESIONADO);
                 switchHabilidad = false;
                 rightPointer = -1;
             }
+            if(botonSaltar.contiene(x,y)&&(!abner.isJumping())&&(!abner.isAttacking())&&!switchedSalto&&pointer==rightPointer){
+                switchSalto = false;
+                botonSaltar.setEstado(Boton.Estado.PRESIONADO);
+                rightPointer = -1;
+            }
+
         }
 
         return false;
@@ -941,6 +1081,12 @@ public class LightsGone implements Screen, InputProcessor{
                 switchedAtaque= true;
             }
 
+            if(!botonSaltar.contiene(x,y)&switchSalto&&rightPointer == pointer){
+                saltoSiguiente();
+                switchSalto = false;
+                switchedSalto = true;
+            }
+
             if(!botonHabilidad.contiene(x,y)&&switchHabilidad&&rightPointer==pointer){
                 habilidadSiguiente();
                 switchHabilidad = false;
@@ -949,6 +1095,10 @@ public class LightsGone implements Screen, InputProcessor{
         }
 
         return false;
+    }
+
+    public static boolean getCapa(){
+        return capaActiva;
     }
 
     private void ataqueSiguiente() {
@@ -1008,7 +1158,6 @@ public class LightsGone implements Screen, InputProcessor{
 
     public enum Habilidad{
         VACIA,
-        POGO,
         LAMPARA,
         CAPITA
     }
@@ -1018,10 +1167,23 @@ public class LightsGone implements Screen, InputProcessor{
         LANZAPAPAS
     }
 
+    public enum Salto{
+        POGO,
+        NORMAL
+    }
+
     public enum Lampara{
         ENCENDIDA,
         ENCENDIDALUZ,
         APAGADA
+    }
+
+    public enum Capa{
+        APAGADA,
+        CAPA25,
+        CAPA50,
+        CAPA75,
+        CAPA100
     }
 
 }

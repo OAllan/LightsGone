@@ -28,7 +28,7 @@ public class AcercaDe implements Screen, InputProcessor {
     private Texture texFondoL, texFondoSL, regresar,hector,rafa,allan,erick,luis;
     private Viewport vista;
     private final int ANCHO_MUNDO = 1280, ALTO_MUNDO = 800;
-    private Boton btnRegresar,btnAllan,btnErick,btnLuis,btnRafa,btnHector;
+    private Boton btnRegresar,btnAllan,btnErick,btnLuis,btnRafa,btnHector, btnFacebook;
     private AssetManager assetManager = new AssetManager();
     private Music luz;
     private Animation animation;
@@ -63,6 +63,7 @@ public class AcercaDe implements Screen, InputProcessor {
         btnHector = new Boton(219,272,148,173);
         btnLuis = new Boton(364,420,174,147);
         btnRafa = new Boton(417,262,154,144);
+        btnFacebook = new Boton(165, 622, 88,88);
         animation = new Animation(0.3f, new TextureRegion(texFondoSL), new TextureRegion(texFondoL));
         animation.setPlayMode(Animation.PlayMode.LOOP);
         estado = Estado.INICIO;
@@ -140,6 +141,10 @@ public class AcercaDe implements Screen, InputProcessor {
                 else if(btnErick.isPressed()){
                     estado = Estado.ERICK;
                     btnErick.setEstado(Boton.Estado.NOPRESIONADO);
+                }
+                else if(btnFacebook.isPressed()){
+                    btnFacebook.setEstado(Boton.Estado.NOPRESIONADO);
+                    Gdx.net.openURI("https://www.facebook.com/lightsgone1/");
                 }
                 if(btnRegresar.isPressed()){
                     juego.setScreen(new MenuPrincipal(juego, true));
@@ -259,6 +264,9 @@ public class AcercaDe implements Screen, InputProcessor {
             }
             else if(btnErick.contiene(x,y)){
                 btnErick.setEstado(Boton.Estado.PRESIONADO);
+            }
+            else if(btnFacebook.contiene(x,y)){
+                btnFacebook.setEstado(Boton.Estado.PRESIONADO);
             }
         }
         return false;

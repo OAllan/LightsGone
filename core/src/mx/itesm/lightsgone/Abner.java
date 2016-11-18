@@ -390,7 +390,7 @@ public class Abner {
         if(!cayendo){
             if(estadoHorizontal == Horizontal.INCLINADO){
                 sprite.setRotation(12);
-                if(estadoSalto==Vertical.DESACTIVADO&&estadoAtaque!= Ataque.ACTIVADO&&!danoA&& LightsGone.habilidadActual== LightsGone.Habilidad.CAPITA){
+                if(estadoSalto==Vertical.DESACTIVADO&&estadoAtaque!= Ataque.ACTIVADO&&!danoA&& LightsGone.getCapa()){
                     timerAnimation += Gdx.graphics.getDeltaTime();
                     sprite.setRegion(caminarCapa.getKeyFrame(timerAnimation));
                     if(!pasos.isPlaying()&&LightsGone.musica)
@@ -437,7 +437,7 @@ public class Abner {
 
             else if(estadoHorizontal == Horizontal.ACTIVADO){
                 sprite.setRotation(0);
-                if((estadoSalto==Vertical.DESACTIVADO&&estadoAtaque!= Ataque.ACTIVADO&&!danoA&& LightsGone.habilidadActual== LightsGone.Habilidad.CAPITA)||(escaleras&& LightsGone.habilidadActual== LightsGone.Habilidad.CAPITA)){
+                if((estadoSalto==Vertical.DESACTIVADO&&estadoAtaque!= Ataque.ACTIVADO&&!danoA&&LightsGone.getCapa())||(escaleras&&LightsGone.getCapa())){
                     timerAnimation += Gdx.graphics.getDeltaTime();
                     sprite.setRegion(caminarCapa.getKeyFrame(timerAnimation));
                     if(!pasos.isPlaying()&&LightsGone.musica)
@@ -500,7 +500,7 @@ public class Abner {
 
                 if(estadoAtaque != Ataque.ACTIVADO&&!danoA){
 
-                    if(LightsGone.habilidadActual== LightsGone.Habilidad.CAPITA){
+                    if(LightsGone.getCapa()){
                         if(cont>=0&&!escaleras){
                             sprite.setRegion(saltoCapa1);
                             cont--;
@@ -563,7 +563,7 @@ public class Abner {
             }
 
             if(estadoAtaque == Ataque.DESACTIVADO && estadoSalto == Vertical.DESACTIVADO && estadoHorizontal==Horizontal.DESACTIVADO&&!danoA){
-                if((mapa.colisionY(sprite.getX()+sprite.getWidth()/2,sprite.getY()-(saltoMov))!=-1||mapa.colisionInclinada(sprite.getX() + sprite.getWidth() / 2, sprite.getY() - (saltoMov + gravedad))||pisoLata)&& LightsGone.habilidadActual== LightsGone.Habilidad.CAPITA){
+                if((mapa.colisionY(sprite.getX()+sprite.getWidth()/2,sprite.getY()-(saltoMov))!=-1||mapa.colisionInclinada(sprite.getX() + sprite.getWidth() / 2, sprite.getY() - (saltoMov + gravedad))||pisoLata)&& LightsGone.getCapa()){
                     sprite.setRegion(neutralCapa);
                 }
                 else if((mapa.colisionY(sprite.getX()+sprite.getWidth()/2,sprite.getY()-(saltoMov))!=-1||mapa.colisionInclinada(sprite.getX() + sprite.getWidth() / 2, sprite.getY() - (saltoMov + gravedad))||pisoLata)&& LightsGone.habilidadActual== LightsGone.Habilidad.LAMPARA){
@@ -1030,6 +1030,5 @@ public class Abner {
         DESACTIVADO,
         POGO
     }
-
 
 }

@@ -3635,7 +3635,7 @@ public abstract class Enemigo {
                     break;
                 case BAJANDO:
                     sprite.translate(0,CAIDA);
-                    if(abner.getBoundingRectangle().overlaps(sprite.getBoundingRectangle())&&LightsGone.habilidadActual!= LightsGone.Habilidad.CAPITA){
+                    if(abner.getBoundingRectangle().overlaps(sprite.getBoundingRectangle())&&!LightsGone.getCapa()){
                         attack();
                     }
                     break;

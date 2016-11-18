@@ -295,7 +295,7 @@ public abstract class Enemigo {
 
 
         public Rectangle getRectangle(){
-            return new Rectangle(sprite.getX()+30,sprite.getY(),sprite.getWidth()-60,sprite.getHeight());
+            return new Rectangle(sprite.getX()+60,sprite.getY()+102,sprite.getWidth(),120);
         }
 
         @Override
@@ -518,7 +518,6 @@ public abstract class Enemigo {
                     estado = Estado.ATAQUE;
                 }
                 else{ estado= Estado.NEUTRAL;}
-
             }
             actualizar();
         }
@@ -545,7 +544,6 @@ public abstract class Enemigo {
                     timerA += Gdx.graphics.getDeltaTime();
                     sprite.setTexture(ataque.getKeyFrame(timerA).getTexture());
                     if(ataque.getKeyFrame(timerA).getTexture().equals(ataquetost2)){
-
 
                     }
 
@@ -635,7 +633,7 @@ public abstract class Enemigo {
 
         private void actualizar() {
             if(abner.getBoundingRectangle().overlaps(new Rectangle(sprite.getX()+100,sprite.getY()+20,sprite.getWidth()-100,sprite.getHeight()-40))){
-                if(ataco==false) {
+                if(!ataco) {
                     attack();
                     startTime = System.currentTimeMillis();
                 }
@@ -647,7 +645,7 @@ public abstract class Enemigo {
 
             direccion = "arriba";
 
-            if (sprite.getY()>=posicionInicial+900) {
+            if (sprite.getY()>=posicionInicial+1800) {
                 sprite.setY(posicionInicial);
             }
 

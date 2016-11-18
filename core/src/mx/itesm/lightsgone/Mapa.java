@@ -221,7 +221,7 @@ public class Mapa {
             }
         }
 
-        if(enemigos!=null){
+        if(enemigos!=null&&!LightsGone.sotano()){
             for(Enemigo enemigo: enemigos) {
                 if(enemigo.toString().equalsIgnoreCase("CajaPayaso")){
                     Enemigo.GeneradorCajasPayaso cajasPayaso = (Enemigo.GeneradorCajasPayaso)enemigo;
@@ -498,6 +498,11 @@ public class Mapa {
         if(detallesFondo!=null){
             renderer.renderTileLayer(detallesFondo);
         }
+        if(LightsGone.sotano()&&enemigos!=null){
+            for(Enemigo enemigo: enemigos){
+                enemigo.draw(batch);
+            }
+        }
     }
 
     public void stop(){
@@ -507,4 +512,5 @@ public class Mapa {
             }
         }
     }
+
 }

@@ -211,6 +211,8 @@ public class LightsGone implements Screen, InputProcessor{
         alphaGame = 0;
         estadoArma = Arma.RESORTERA;
         ambiente.setVolume(0.5f);
+        leftPointer = -1;
+        rightPointer = -1;
 
     }
 
@@ -363,6 +365,7 @@ public class LightsGone implements Screen, InputProcessor{
 
             //Inicio de los controles del teclado, si quieren habilitarlos quiten el /* al inicio y el */ al final
 
+
             if(Gdx.app.getType()== Application.ApplicationType.Desktop){
                 if(Gdx.input.isKeyPressed(Input.Keys.DPAD_LEFT))
                     pad.getLeft().setEstado(Boton.Estado.PRESIONADO);
@@ -388,6 +391,13 @@ public class LightsGone implements Screen, InputProcessor{
 
                 if(Gdx.input.isKeyJustPressed(Input.Keys.D)&&!abner.isJumping()&&!abner.isAttacking()&&abner.getPogo()){
                     botonHabilidad.setEstado(Boton.Estado.PRESIONADO);
+                }
+            }
+            else {
+                if(!Gdx.input.isTouched()){
+                    abner.setEstadoHorizontal(Abner.Horizontal.DESACTIVADO);
+                    pad.getLeft().setEstado(Boton.Estado.NOPRESIONADO);
+                    pad.getRight().setEstado(Boton.Estado.NOPRESIONADO);
                 }
             }
 
@@ -442,6 +452,7 @@ public class LightsGone implements Screen, InputProcessor{
                 abner.setEstadoHorizontal(Abner.Horizontal.ACTIVADO);
             }
 
+
             int cambio= abner.cambioNivel();
             if(cambio>=0){
                 if(mapaActual<=6||mapaActual>15)
@@ -488,6 +499,7 @@ public class LightsGone implements Screen, InputProcessor{
                         break;
                 }
                 mapa.stop();
+                mapa.dispose();
                 mapa = mapManager.getMapa(mapas.get(mapaActual), mapaActual, abner, gameInfo);
                 abner.setMapa(mapa);
                 abner.setInitialPosition(tempMapa);
@@ -503,10 +515,12 @@ public class LightsGone implements Screen, InputProcessor{
                 }
             }
             proyectiles = abner.getProyectiles();
-            batch.setProjectionMatrix(camaraHUD.combined);
-            batch.begin();
-            fondoCielo.draw(batch);
-            batch.end();
+            if(jardin()){
+                batch.setProjectionMatrix(camaraHUD.combined);
+                batch.begin();
+                fondoCielo.draw(batch);
+                batch.end();
+            }
             batch.setProjectionMatrix(camara.combined);
             mapa.draw();
             batch.begin();
@@ -654,6 +668,10 @@ public class LightsGone implements Screen, InputProcessor{
 
     }
 
+    private boolean jardin() {
+        return mapaActual == 6 || mapaActual ==7||mapaActual==8;
+    }
+
     public static boolean sotano() {
         return (abner.getLampara()&&mapaActual==12)||mapaActual == 13 || mapaActual ==14||mapaActual == 15;
     }
@@ -710,17 +728,28 @@ public class LightsGone implements Screen, InputProcessor{
 
 
     static void agregarItem(Enemigo enemigo){
-        Random rnd = new Random();
-        int i = rnd.nextInt(5);
-        if(i==0){
-            Sprite sprite = new Sprite(malteada);
-            sprite.setPosition(enemigo.getX(), enemigo.getY()+100);
-            malteadas.add(sprite);
+        if(!abner.getLanzapapas()){
+            Random rnd = new Random();
+            int i = rnd.nextInt(2);
+            if(i==0){
+                Sprite sprite = new Sprite(malteada);
+                sprite.setPosition(enemigo.getX(), enemigo.getY()+100);
+                malteadas.add(sprite);
+            }
         }
-        else if(i==1&&abner.getLanzapapas()){
-            Sprite sprite = new Sprite(papa);
-            sprite.setPosition(enemigo.getX(), enemigo.getY()+100);
-            papas.add(sprite);
+        else {
+            Random rnd = new Random();
+            int i = rnd.nextInt(3);
+            if(i==0){
+                Sprite sprite = new Sprite(malteada);
+                sprite.setPosition(enemigo.getX(), enemigo.getY()+100);
+                malteadas.add(sprite);
+            }
+            else if(i==1){
+                Sprite sprite = new Sprite(papa);
+                sprite.setPosition(enemigo.getX(), enemigo.getY()+100);
+                papas.add(sprite);
+            }
         }
 
     }
@@ -800,6 +829,7 @@ public class LightsGone implements Screen, InputProcessor{
                     if(botonYes.contiene(x,y)){
                         juego.setScreen(new MenuPrincipal(juego));
                         ambiente.stop();
+                        mapa.stop();
                     }
                     break;
                 case OPCIONES:
@@ -821,12 +851,14 @@ public class LightsGone implements Screen, InputProcessor{
                 juego.setScreen(new MenuPrincipal(juego));
                 if(gameover.isPlaying())
                     gameover.stop();
+                mapa.stop();
             }
             if(botonTry.contiene(x,y)){
                 reiniciarEscena();
                 gameover.stop();
                 estado = Estado.JUGANDO;
                 alphaGame = 0;
+                mapa.stop();
             }
         }
 
@@ -837,6 +869,7 @@ public class LightsGone implements Screen, InputProcessor{
         abner.reiniciar(gameInfo);
         mapaActual = gameInfo.getMapa();
         alpha = 0;
+        mapa.stop();
         mapa = mapManager.getNewMapa(mapas.get(mapaActual),mapaActual, abner, gameInfo);
         abner.setMapa(mapa);
         enemigos = mapa.getEnemigos();
@@ -872,7 +905,7 @@ public class LightsGone implements Screen, InputProcessor{
                 switchAtaque = false;
                 rightPointer = -1;
             }
-            if(abner.getPogo()&&botonHabilidad.contiene(x,y)&&!abner.isJumping()&&!abner.isAttacking()&&!switchedHabilidad){
+            if(abner.getPogo()&&botonHabilidad.contiene(x,y)&&!abner.isJumping()&&!abner.isAttacking()&&!switchedHabilidad&&pointer==rightPointer){
                 botonHabilidad.setEstado(Boton.Estado.PRESIONADO);
                 switchHabilidad = false;
                 rightPointer = -1;

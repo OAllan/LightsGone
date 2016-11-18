@@ -16,6 +16,7 @@ public class Pad {
         this.left = new Boton(100,30,100,188, true);
         this.right = new Boton(239,30,100,188, true);
         this.fondo.setPosition(100,30);
+        this.fondo.setAlpha(0.5f);
     }
 
     public Boton getLeft(){

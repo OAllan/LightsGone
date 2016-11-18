@@ -226,9 +226,9 @@ public class LightsGone implements Screen, InputProcessor{
         assetManager.load("BotonResortera.png", Texture.class);
         assetManager.load("nivel.png", Texture.class);
         assetManager.load("PlataformaInclinada.png", Texture.class);
-        assetManager.load("menuPausa.png", Texture.class);
-        assetManager.load("menuPausaQuit.png", Texture.class);
-        assetManager.load("opciones.png", Texture.class);
+        assetManager.load("menuPausa.jpg", Texture.class);
+        assetManager.load("menuPausaQuit.jpg", Texture.class);
+        assetManager.load("menuPausaAudio.jpg", Texture.class);
         assetManager.load("Save6.png", Texture.class);
         assetManager.load("BotonHabilidadDesactivado.png", Texture.class);
         assetManager.load("BotonHabPogo.png", Texture.class);
@@ -269,9 +269,9 @@ public class LightsGone implements Screen, InputProcessor{
         transicionArmario = assetManager.get("ropero.jpg");
         transicionSotano = assetManager.get("sotano.jpg");
         plataforma = assetManager.get("PlataformaInclinada.png");
-        pausaTex = assetManager.get("menuPausa.png");
-        opciones = assetManager.get("opciones.png");
-        quitTex = assetManager.get("menuPausaQuit.png");
+        pausaTex = assetManager.get("menuPausa.jpg");
+        opciones = assetManager.get("menuPausaAudio.jpg");
+        quitTex = assetManager.get("menuPausaQuit.jpg");
         save = assetManager.get("Save6.png");
         habilidadDes = assetManager.get("BotonHabilidadDesactivado.png");
         habilidadPogo = assetManager.get("BotonHabPogo.png");

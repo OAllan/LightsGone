@@ -20,6 +20,7 @@ public class Boton {
 
     public Boton(float x, float y, float width, float height){
         rectangle = new Rectangle(x,y,width,height);
+        this.pad = false;
     }
 
     public Boton(Texture boton, float x, float y, boolean pad) {

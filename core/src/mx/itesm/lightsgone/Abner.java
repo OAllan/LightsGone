@@ -49,7 +49,7 @@ public class Abner {
     private GameInfo gameInfo;
     private Sprite globo;
     private LightsGone.Lampara estadoLampara;
-    private TextureRegion caminarTex, saltoTex, pogoTex, caminarLamparaTex, lanzapapasTex, resorteraTex, capaTex,neutral, dano, neutralLampara, neutralCapa, saltar1,saltar2,saltarLampara1,saltarLampara2,saltoCapa1, saltoCapa2, saltarPogo1, saltarPogo2;
+    private TextureRegion caminarTex, saltoTex, pogoTex, caminarLamparaTex, lanzapapasTex, resorteraTex, capaTex,neutral, dano, neutralLampara, neutralCapa, saltar1,saltar2,saltarLampara1,saltarLampara2,saltoCapa1, saltoCapa2, saltarPogo1, saltarPogo2,saltoCapaPogo, saltoCapaPogo1, saltoCapaPogo2;
     private Texture globoPogo, globoCapita, globoLampara, globoLanzapapas, encendida, encendidaOscuridad, oscuridad;
     private boolean right, atrapado, cayendo;
     private Music puerta, pasos, lanzapapa, leche;
@@ -80,7 +80,9 @@ public class Abner {
         assetManager.load("Run Grass.mp3", Music.class);
         assetManager.load("Lanza Papas.mp3", Music.class);
         assetManager.load("leche.mp3", Music.class);
+        assetManager.load("PCapaPogo.png", Texture.class);
         assetManager.finishLoading();
+        saltoCapaPogo = new TextureRegion((Texture)assetManager.get("PCapaPogo.png"));
         capaTex = new TextureRegion((Texture)assetManager.get("PCapa.png"));
         caminarLamparaTex = new TextureRegion((Texture) assetManager.get("PLampara.png"));
         lanzapapasTex = new TextureRegion((Texture)assetManager.get("PLanzaPapa.png"));
@@ -132,6 +134,9 @@ public class Abner {
         caminarCapa.setPlayMode(Animation.PlayMode.LOOP);
         saltoCapa1 = textureRegions[0][3];
         saltoCapa2 = textureRegions[0][4];
+        textureRegions = saltoCapaPogo.split(ANCHO, ALTO);
+        saltoCapaPogo1 = textureRegions[0][0];
+        saltoCapaPogo2 = textureRegions[0][1];
         sprite = new Sprite(neutral);
         sprite.setPosition(gameInfo.getX(), gameInfo.getY());
         timerAnimation = 0;
@@ -163,6 +168,7 @@ public class Abner {
         this.globo = new Sprite(globoLanzapapas);
         puertaCerrada = false;
         cayendo = false;
+        armario = gameInfo.isArmario();
     }
 
 
@@ -179,7 +185,7 @@ public class Abner {
         if(!atrapado){
             if(LightsGone.habilidadActual== LightsGone.Habilidad.LAMPARA||LightsGone.sotano()){
                 luz.draw(batch);
-                if(LightsGone.sotano()&&estadoLampara == LightsGone.Lampara.APAGADA){
+                if(LightsGone.sotano()){
                     mapa.drawDetallefondo();
                 }
             }
@@ -482,13 +488,25 @@ public class Abner {
             }
 
             if(estadoSalto==Vertical.POGO) {
-                if (estadoAtaque != Ataque.ACTIVADO) {
+                if(estadoAtaque!= Ataque.ACTIVADO&&LightsGone.getCapa()){
+                    if (cont >= 0) {
+                        sprite.setRegion(saltoCapaPogo1);
+                        cont--;
+                    } else {
+                        sprite.setRegion(saltoCapaPogo2);
+                        jump(alturaMax + SALTOMAX);
+                    }
+                    if(!right){
+                        sprite.flip(true, false);
+                    }
+                }
+                else if (estadoAtaque != Ataque.ACTIVADO) {
                     if (cont >= 0) {
                         sprite.setRegion(saltarPogo1);
                         cont--;
                     } else {
                         sprite.setRegion(saltarPogo2);
-                        jump(alturaMax + SALTOMAX);
+                        jump(LightsGone.mapaActual==18?alturaMax+SALTOMAX+100:alturaMax + SALTOMAX);
                     }
                     if(!right){
                         sprite.flip(true, false);
@@ -1006,6 +1024,13 @@ public class Abner {
 
     public int getPapas() {
         return papas;
+    }
+
+    public void stop() {
+        if(pasos.isPlaying()){
+            pasos.stop();
+        }
+
     }
 
     public enum Salto{

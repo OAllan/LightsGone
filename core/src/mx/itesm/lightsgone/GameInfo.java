@@ -13,7 +13,7 @@ import java.util.Iterator;
  */
 public class GameInfo {
     private int vida, vidas;
-    private boolean pogo, capita, lanzapapas, lampara, armario;
+    private boolean pogo, capita, lanzapapas, lampara, armario, cinematicaInicio;
     private boolean pogoTemp, capitaTemp, lanzapapasTemp, lamparaTemp, armarioTemp;
     private int mapa;
     private float x, y, camaraX, camaraY;
@@ -33,6 +33,7 @@ public class GameInfo {
         camaraX = 640;
         camaraY = 400;
         armario = armarioTemp = false;
+        cinematicaInicio = false;
     }
 
     public GameInfo(String juego) {
@@ -63,6 +64,7 @@ public class GameInfo {
             vidas = Integer.parseInt(lineas[10].trim());
             lampara = lamparaTemp = Boolean.parseBoolean(lineas[11].trim());
             armario = armarioTemp = Boolean.parseBoolean(lineas[12].trim());
+            cinematicaInicio = Boolean.parseBoolean(lineas[13].trim());
 
         }
         catch (Exception e){
@@ -89,6 +91,7 @@ public class GameInfo {
             save.writeString(vidas + "\n", true);
             save.writeString(lampara + "\n",true);
             save.writeString(armario+"\n", true);
+            save.writeString(cinematicaInicio+"\n", true);
 
         }
         catch (Exception e){
@@ -110,6 +113,7 @@ public class GameInfo {
         vidas = abner.getVidas();
         lampara = abner.getLampara();
         armario = abner.getArmario();
+        cinematicaInicio = LightsGone.cinematicaInicio;
     }
 
     private String nombre(){
@@ -223,6 +227,10 @@ public class GameInfo {
 
     public boolean isArmario(){
         return armario;
+    }
+
+    public boolean isCinematicaInicio(){
+        return cinematicaInicio;
     }
 
     public void actualizarDatosTemp() {

@@ -132,7 +132,8 @@ public class Mapa {
     public float colisionY(float x, float y){
 
         if(enemigos!=null){
-            for(Enemigo enemigo:enemigos){
+            for(int i = 0;i<enemigos.size;i++){
+                Enemigo enemigo = enemigos.get(i);
                 if(enemigo.toString().equalsIgnoreCase("CajaPayaso")){
                     if(((Enemigo.GeneradorCajasPayaso)enemigo).floor(x,y)){
                         return ((Enemigo.GeneradorCajasPayaso) enemigo).getBoxRectangle().getY()+((Enemigo.GeneradorCajasPayaso) enemigo).getBoxRectangle().getHeight();
@@ -372,13 +373,13 @@ public class Mapa {
             layers.get("Capita").setVisible(false);
         }
         if(gameInfo.isLanzapapas()&&layers.get("LanzaPapa")!=null) {
-            mapa.getLayers().get("LanzaPapa").setVisible(false);
+            layers.get("LanzaPapa").setVisible(false);
         }
         if(gameInfo.isLampara()&&layers.get("Lampara")!=null){
-            mapa.getLayers().get("Lampara").setVisible(false);
+            layers.get("Lampara").setVisible(false);
         }
         if(gameInfo.isArmario()&&layers.get("PuertaCerrada")!=null){
-            mapa.getLayers().get("PuertaCerrada").setVisible(false);
+            layers.get("PuertaCerrada").setVisible(false);
         }
 
     }
@@ -397,13 +398,13 @@ public class Mapa {
             layers.get("Capita").setVisible(false);
         }
         if(gameInfo.isLanzapapasTemp()&&layers.get("LanzaPapa")!=null) {
-            mapa.getLayers().get("LanzaPapa").setVisible(false);
+            layers.get("LanzaPapa").setVisible(false);
         }
         if(gameInfo.isLamparaTemp()&&layers.get("Lampara")!=null){
-            mapa.getLayers().get("Lampara").setVisible(false);
+            layers.get("Lampara").setVisible(false);
         }
         if(gameInfo.isArmarioTemp()&&layers.get("PuertaCerrada")!=null){
-            mapa.getLayers().get("PuertaCerrada").setVisible(false);
+            layers.get("PuertaCerrada").setVisible(false);
         }
 
     }

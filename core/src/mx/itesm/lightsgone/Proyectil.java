@@ -63,6 +63,8 @@ public abstract class Proyectil {
         return proyectil.getBoundingRectangle();
     }
 
+    public abstract void play();
+
     static class Canica extends Proyectil{
         private static Texture canica;
 
@@ -84,6 +86,11 @@ public abstract class Proyectil {
         public boolean out(){
             if (right)return proyectil.getX() >= x+1000;
             else return proyectil.getX() <= x-1000;
+        }
+
+        @Override
+        public void play() {
+
         }
 
         @Override
@@ -149,6 +156,11 @@ public abstract class Proyectil {
         }
 
         @Override
+        public void play() {
+            splat.play();
+        }
+
+        @Override
         public String toString(){
             return "Papa";
         }
@@ -163,6 +175,11 @@ public abstract class Proyectil {
 
         public Rectangle getRectangle(){
             return proyectil.getBoundingRectangle();
+        }
+
+        @Override
+        public void play() {
+
         }
 
         @Override

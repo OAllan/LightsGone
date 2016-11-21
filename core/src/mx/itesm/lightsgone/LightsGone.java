@@ -45,6 +45,7 @@ public class LightsGone implements Screen, InputProcessor{
     private static final float ALTOBOTON = 134;
     private float velocidadTransicion = TRANSICIONNEUTRAL;
     public static final int LATAX = 4871;
+    private final float VIDACOCO = 12;
     private OrthographicCamera camara;
     private OrthographicCamera camaraHUD;
     private Viewport vista;
@@ -77,14 +78,18 @@ public class LightsGone implements Screen, InputProcessor{
     public static Habilidad habilidadActual;
     private Array<Sprite> vidas;
     private Arma estadoArma;
-    private Sprite flechasArma, flechasHabilidad;
-    private boolean switchAtaque, switchHabilidad, switchSalto, switchedSalto,switchedAtaque, switchedHabilidad;
+    private Sprite flechasArma, flechasHabilidad, cascaronBarraCoco, barraCoco;
+    private boolean switchAtaque, switchHabilidad, switchSalto, switchedSalto,switchedAtaque, switchedHabilidad, cinematicaPelea;
     private static boolean capaActiva;
+    public static boolean cinematicaInicio;
     private static Array<Sprite> malteadas, papas;
     private int leftPointer, rightPointer;
-    private float timer, timerR;
+    private float timer, timerR, timerG;
     private static Capa estadoCapa;
     private Salto saltoActual;
+    private Cinematica cinematica;
+    private int contador = 1;
+    private float anchBarra;
 
 
     Array<Enemigo> enemigos;
@@ -154,6 +159,8 @@ public class LightsGone implements Screen, InputProcessor{
         musica = true;
         switchAtaque = false;
         switchHabilidad = false;
+        cinematicaInicio = gameInfo.isCinematicaInicio();
+        cinematicaPelea = false;
     }
 
     private void iniciarCamara() {
@@ -224,6 +231,7 @@ public class LightsGone implements Screen, InputProcessor{
         capaActiva = false;
         timer = 8;
         timerR = 0;
+        timerG = 0;
 
     }
 
@@ -326,21 +334,46 @@ public class LightsGone implements Screen, InputProcessor{
 
         estado = abner.isDead()?Estado.MUERTE:estado;
 
-        if(musica){
-            switch(mapaActual){
-                case 0:case 1:case 2:default:
-                    if(!ambiente.isPlaying()){
-                        ambiente.play();
-                        ambiente.setLooping(true);
-                    }
-                    break;
-
+        if(estado == Estado.GANO){
+            batch.setProjectionMatrix(camara.combined);
+            mapa.draw();
+            batch.begin();
+            abner.draw(batch, right);
+            batch.end();
+            timerG+=Gdx.graphics.getDeltaTime();
+            if(timerG>=6){
+                batch.setProjectionMatrix(camaraHUD.combined);
+                batch.begin();
+                cinematica.play(batch);
+                batch.end();
+            }
+            if(cinematica.finished()){
+                stop();
+                juego.setScreen(new MenuPrincipal(juego));
             }
         }
-        else
-            ambiente.pause();
 
-        if(estado != Estado.PAUSA&&estado!=Estado.MUERTE){
+        else if(estado == Estado.CINEMATICA){
+            batch.setProjectionMatrix(camaraHUD.combined);
+            batch.begin();
+            cinematica.play(batch);
+            batch.end();
+            if(cinematica.finished()){
+                estado = Estado.CAMBIO;
+                transicion = Transicion.AUMENTANDO;
+            }
+            if(cinematicaPelea){
+                Array<Enemigo> enemigos = new Array<Enemigo>();
+                enemigos.add(new Enemigo.Coco(mapa, abner));
+                mapa.setEnemigos(enemigos);
+                Enemigo.Coco coco = (Enemigo.Coco)enemigos.get(0);
+                cascaronBarraCoco = coco.getCascaron();
+                barraCoco = coco.getBarra();
+                this.enemigos = mapa.getEnemigos();
+                anchBarra = barraCoco.getWidth();
+            }
+        }
+        else if(estado != Estado.PAUSA&&estado!=Estado.MUERTE){
 
             switch(estadoArma){
                 case LANZAPAPAS:
@@ -447,6 +480,22 @@ public class LightsGone implements Screen, InputProcessor{
                     botonHabilidad.setTexture(habilidadDes);
                     break;
             }
+
+            if(musica){
+                switch(mapaActual){
+                    case 0:case 1:case 2:default:
+                        if(!ambiente.isPlaying()){
+                            ambiente.play();
+                            ambiente.setLooping(true);
+                        }
+                        break;
+
+                }
+            }
+            else
+                ambiente.pause();
+
+
 
             if(timerR!=0&&habilidadActual!=Habilidad.CAPITA){
                 timerR+=Gdx.graphics.getDeltaTime();
@@ -574,6 +623,41 @@ public class LightsGone implements Screen, InputProcessor{
                 abner.setEstadoHorizontal(Abner.Horizontal.ACTIVADO);
             }
 
+
+            if(mapaActual==1&&abner.getX()>=1300&&!cinematicaInicio){
+                estado = Estado.CINEMATICA;
+                cinematica = new Cinematica.Inicio(abner);
+                cinematicaInicio = true;
+                pad.getLeft().setEstado(Boton.Estado.NOPRESIONADO);
+                pad.getRight().setEstado(Boton.Estado.NOPRESIONADO);
+                abner.setEstadoHorizontal(Abner.Horizontal.DESACTIVADO);
+                stop();
+            }
+
+            if(mapaActual==mapas.size-1&&abner.getX()<=1500&&!cinematicaPelea){
+                estado = Estado.CINEMATICA;
+                cinematica = new Cinematica.Pelea(abner);
+                cinematicaPelea = true;
+                pad.getLeft().setEstado(Boton.Estado.NOPRESIONADO);
+                pad.getRight().setEstado(Boton.Estado.NOPRESIONADO);
+                abner.setEstadoHorizontal(Abner.Horizontal.DESACTIVADO);
+                stop();
+            }
+
+            if(mapaActual==mapas.size-1&&cinematicaPelea&&enemigos!=null){
+                Enemigo.Coco coco = (Enemigo.Coco)mapa.getEnemigos().get(0);
+                float vidaCoco = coco.getVida();
+                float porcentaje = vidaCoco/VIDACOCO;
+                if(vidaCoco<=0){
+                    cinematica = new Cinematica.Final();
+                    estado = Estado.GANO;
+                }
+                barraCoco.setSize(anchBarra*porcentaje,barraCoco.getHeight());
+
+            }
+            if(enemigos!=null){
+                Gdx.app.log("Enemigos: ", enemigos.size+"");
+            }
 
             int cambio= abner.cambioNivel();
             if(cambio>=0){
@@ -723,11 +807,16 @@ public class LightsGone implements Screen, InputProcessor{
             else
                 botonSave.desaparecer(!saveB);
             batch.begin();
+            if(cinematicaPelea&&barraCoco!=null){
+                barraCoco.draw(batch);
+                cascaronBarraCoco.draw(batch);
+            }
             botonSaltar.draw(batch);
             pad.draw(batch);
             botonHabilidad.draw(batch);
             botonSave.draw(batch);
             botonArma.draw(batch);
+
             if(abner.getCapita()){
                 flechasHabilidad.draw(batch);
             }
@@ -861,6 +950,21 @@ public class LightsGone implements Screen, InputProcessor{
 
     }
 
+    static void agregarItem(float x, float y){
+        Random rnd = new Random();
+        switch (rnd.nextInt(2)){
+            case 0:
+                Sprite sprite = new Sprite(malteada);
+                sprite.setPosition(x,y);
+                malteadas.add(sprite);
+                break;
+            case 1:
+                Sprite sprite1 = new Sprite(papa);
+                sprite1.setPosition(x,y);
+                papas.add(sprite1);
+                break;
+        }
+    }
 
     static void agregarItem(Enemigo enemigo){
         if(!abner.getLanzapapas()){
@@ -1007,8 +1111,14 @@ public class LightsGone implements Screen, InputProcessor{
         mapa = mapManager.getNewMapa(mapas.get(mapaActual),mapaActual, abner, gameInfo);
         abner.setMapa(mapa);
         enemigos = mapa.getEnemigos();
-        if(!gameInfo.isPogo()){
+        if(cinematicaPelea){
+            cinematicaPelea = false;
+        }
+        if(!gameInfo.isLampara()){
             habilidadActual = Habilidad.VACIA;
+        }
+        if(!gameInfo.isLanzapapas()){
+            estadoArma = Arma.RESORTERA;
         }
         botonHabilidad.setEstado(Boton.Estado.NOPRESIONADO);
         botonSaltar.setEstado(Boton.Estado.NOPRESIONADO);
@@ -1136,6 +1246,7 @@ public class LightsGone implements Screen, InputProcessor{
             recarga.stop();
         }
         mapa.stop();
+        abner.stop();
     }
 
     private enum EstadoPausa{
@@ -1146,12 +1257,14 @@ public class LightsGone implements Screen, InputProcessor{
 
     private enum Estado{
         JUGANDO,
+        CINEMATICA,
         CAMBIO,
         PAUSA,
-        MUERTE
+        MUERTE,
+        GANO
     }
 
-    private enum Transicion{
+    public enum Transicion{
         AUMENTANDO,
         DISMINUYENDO
     }

@@ -208,7 +208,7 @@ public abstract class Cinematica {
         private Escena escena;
         private Abner abner;
         private boolean finished;
-        private Music grito;
+        private Music grito, caldera;
 
 
         {
@@ -230,6 +230,7 @@ public abstract class Cinematica {
             manager.load("CinematicaAntesCoco11.png", Texture.class);
             manager.load("CinematicaAntesCoco12.png", Texture.class);
             manager.load("rugido.mp3", Music.class);
+            manager.load("caldera.mp3", Music.class);
             manager.finishLoading();
             inicio = new Animation(0.4f, new TextureRegion((Texture)manager.get("CinematicaAntesCoco1.png")),new TextureRegion((Texture)manager.get("CinematicaAntesCoco2.png")));
             inicio.setPlayMode(Animation.PlayMode.LOOP);
@@ -241,6 +242,8 @@ public abstract class Cinematica {
             antes11 = manager.get("CinematicaAntesCoco11.png");
             antes12 = manager.get("CinematicaAntesCoco12.png");
             grito = manager.get("rugido.mp3");
+            caldera = manager.get("caldera.mp3");
+            caldera.setLooping(true);
 
         }
 
@@ -250,6 +253,7 @@ public abstract class Cinematica {
             escena = Escena.FUNDIDO;
             finished = false;
             alpha = 1;
+            caldera.play();
         }
 
         @Override
@@ -287,6 +291,7 @@ public abstract class Cinematica {
                     if(timer>=2){
                         timer = 0;
                         escena = Escena.ENOJADO;
+                        caldera.stop();
                     }
                     break;
                 case ENOJADO:
@@ -345,7 +350,7 @@ public abstract class Cinematica {
             antes11.dispose();
             antes12.dispose();
             manager.dispose();
-            grito.play();
+            grito.dispose();
         }
 
         private enum Escena{

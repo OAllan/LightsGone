@@ -199,7 +199,7 @@ public class MapManager {
                 enemigos.add(new Enemigo.GeneradorCajasPayaso(6075, 315, mapa, abner));
                 enemigos.add(new Enemigo.MonstruoRopa(4185,270,abner));
                 enemigos.add(new Enemigo.MonstruoRopa(10215,270,abner));
-                enemigos.add(new Enemigo.MonstruoRopa(630,540,abner));
+                enemigos.add(new Enemigo.MonstruoRopa(990,540,abner));
                 mapa.setEnemigos(enemigos);
                 mapa.setCajas(new CajaMovil(8055,270,mapa), new CajaMovil(8055, 400, mapa));
                 mapa.setCajasFijas(new Caja(6200, 270), new Caja(6200, 270 + 164), new Caja(5795, 270),new Caja(5795, 270+164));
@@ -214,6 +214,7 @@ public class MapManager {
                 enemigos.add(new Enemigo.GeneradorCajasPayaso(4970,315,mapa,abner));
                 enemigos.add(new Enemigo.Robot(11115, 540, abner));
                 enemigos.add(new Enemigo.Robot(5534, 315, abner));
+                enemigos.add(new Enemigo.Oso(720,1035, abner, mapa));
                 mapa.setEnemigos(enemigos);
                 mapa.setCajasFijas(new Caja(8400, 765), new Caja(4680, 315));
                 break;
@@ -222,6 +223,7 @@ public class MapManager {
                 enemigos.add(new Enemigo.GeneradorCajasPayaso(7470,900,mapa,abner));
                 enemigos.add(new Enemigo.GeneradorCajasPayaso(3150,225,mapa,abner));
                 enemigos.add(new Enemigo.Robot(990, 900,abner));
+                enemigos.add(new Enemigo.Oso(7965,945, abner, mapa));
                 mapa.setEnemigos(enemigos);
                 mapa.setCajasFijas(new Caja(6920,900), new Caja(6920, 900+164), new Caja(7190, 900), new Caja(7190, 900+164), new Caja(4050,190), new Caja(4050,190+164));
                 mapa.setCajas(new CajaMovil(4100, 190+164*2,mapa));

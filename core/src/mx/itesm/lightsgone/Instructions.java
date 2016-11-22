@@ -52,7 +52,7 @@ public class Instructions implements Screen {
         //Boton regresar
         TextureRegionDrawable trBtnRegresar = new TextureRegionDrawable(new TextureRegion(regresar));
         btnRegresar = new ImageButton(trBtnRegresar);
-        btnRegresar.setPosition(3*ANCHO_MUNDO/4-180, ALTO_MUNDO/4-87);
+        btnRegresar.setPosition(0, 0);
         escena.addActor(btnRegresar);
 
         btnRegresar.addListener(new ClickListener() {
@@ -67,10 +67,10 @@ public class Instructions implements Screen {
 
     private void cargarTexturas() {
         assetManager.load("instructionsFondo.png", Texture.class);
-        assetManager.load("backI.png", Texture.class);
+        assetManager.load("back.png", Texture.class);
         assetManager.finishLoading();
         texFondo = assetManager.get("instructionsFondo.png");
-        regresar = assetManager.get("backI.png");
+        regresar = assetManager.get("back.png");
     }
 
     @Override

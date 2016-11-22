@@ -1,6 +1,7 @@
 package mx.itesm.lightsgone;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.audio.Music;
@@ -8,8 +9,10 @@ import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
@@ -25,19 +28,22 @@ import java.util.Iterator;
 /**
  * Created by allanruiz on 08/09/16.
  */
-public class CargarJuego implements Screen {
+public class CargarJuego implements Screen, InputProcessor {
     private final Juego juego;
     private OrthographicCamera camara;
     private Viewport vista;
-    private Stage escena;
     private AssetManager assetManager = new AssetManager();
     private final int ANCHO_MUNDO = 1280, ALTO_MUNDO = 800;
-    private Texture texFondo, regresar, juego1Tex, juego2Tex, empty;
-    private Texto fecha;
+    private Texture texFondo, regresar, juego1Tex, juego2Tex, empty, transicion;
+    private Texto nombre;
+    private String nombre1, nombre2;
     private GameInfo gameInfo;
-    //private Music audio;
-    private ImageButton btnRegresar, juego1, juego2;
+    private Boton btnRegresar, juego1, juego2;
     private SpriteBatch batch;
+    private Sprite fondo;
+    private int numeroJuegos = juegos();
+    private boolean transicionB, juegoUno;
+    private float timer;
 
     public CargarJuego(Juego juego) {
         this.juego = juego;
@@ -45,70 +51,31 @@ public class CargarJuego implements Screen {
 
     @Override
     public void show() {
-        cargarTexturas();
         //Cargando assets
         cargarTexturas();
         //Creando escena
-        int numeroJuegos = juegos();
+        numeroJuegos = juegos();
         batch = new SpriteBatch();
-        escena = new Stage();
-        fecha = new Texto("tipo.fnt",0,0);
-        Gdx.input.setInputProcessor(escena);
+        Gdx.input.setInputProcessor(this);
         //Creando camara
         camara = new OrthographicCamera(ANCHO_MUNDO, ALTO_MUNDO);
         camara.position.set(ANCHO_MUNDO / 2, ALTO_MUNDO / 2, 0);
         camara.update();
         vista = new StretchViewport(ANCHO_MUNDO, ALTO_MUNDO, camara);
         //Agregando fondo
-        Image fondo = new Image(texFondo);
-        escena.addActor(fondo);
-        /*audio.play();
-        audio.setLooping(true);
-        audio.setVolume(0.5f);*/
-
-        TextureRegionDrawable trBtnRegresar = new TextureRegionDrawable(new TextureRegion(regresar));
-        btnRegresar = new ImageButton(trBtnRegresar);
-        btnRegresar.setPosition(0, 0);
-        escena.addActor(btnRegresar);
-
-        final TextureRegionDrawable trBtnJuego1 = new TextureRegionDrawable(new TextureRegion(numeroJuegos!=1&&numeroJuegos!=3?empty:juego1Tex));
-        juego1 = new ImageButton(trBtnJuego1);
-        juego1.setPosition(693, 455);
-        escena.addActor(juego1);
-
-        final TextureRegionDrawable trBtnJuego2 = new TextureRegionDrawable(new TextureRegion(numeroJuegos!=2&&numeroJuegos!=3?empty:juego2Tex));
-        juego2 = new ImageButton(trBtnJuego2);
-        juego2.setPosition(693,216);
-        escena.addActor(juego2);
-
-
-
-        btnRegresar.addListener(new ClickListener() {
-            @Override
-            public void clicked(InputEvent event, float x, float y) {
-                juego.setScreen(new MenuPrincipal(juego, false));
-            }
-        });
-
-        juego1.addListener(new ClickListener(){
-            @Override
-            public void clicked(InputEvent event, float x, float y) {
-                if(!trBtnJuego1.getRegion().getTexture().equals(empty)){
-                    juego.setScreen(new LightsGone(juego,"Juego1.txt"));
-                    Juego.audio.stop();
-                }
-            }
-        });
-
-        juego2.addListener(new ClickListener(){
-            @Override
-            public void clicked(InputEvent event, float x, float y) {
-                if(!trBtnJuego2.getRegion().getTexture().equals(empty)){
-                    juego.setScreen(new LightsGone(juego,"Juego2.txt"));
-                    Juego.audio.stop();
-                }
-            }
-        });
+        fondo = new Sprite(texFondo);
+        btnRegresar = new Boton(regresar,0,0, false);
+        juego1 = new Boton(numeroJuegos!=1&&numeroJuegos!=3?empty:juego1Tex,693,455,false);
+        juego2 = new Boton(numeroJuegos!=2&&numeroJuegos!=3?empty:juego2Tex, 693, 216, false);
+        nombre = new Texto("font.fnt", 0,0);
+        if(numeroJuegos==1||numeroJuegos==3){
+            gameInfo = new GameInfo("Juego1.txt");
+            nombre1 = getNombre(gameInfo.getMapa());
+        }
+        if(numeroJuegos==2||numeroJuegos ==3){
+            gameInfo = new GameInfo("Juego2.txt");
+            nombre2 = getNombre(gameInfo.getMapa());
+        }
 
     }
 
@@ -119,6 +86,7 @@ public class CargarJuego implements Screen {
         assetManager.load("Empty.png", Texture.class);
         assetManager.load("Load1.png", Texture.class);
         assetManager.load("Load2.png", Texture.class);
+        assetManager.load("transicionMenuLoad.png", Texture.class);
         assetManager.finishLoading();
         texFondo = assetManager.get("cargarMenu.png");
         //audio = assetManager.get("Sonido2.wav");
@@ -126,14 +94,46 @@ public class CargarJuego implements Screen {
         juego1Tex = assetManager.get("Load1.png");
         juego2Tex = assetManager.get("Load2.png");
         empty = assetManager.get("Empty.png");
+        transicion = assetManager.get("transicionMenuLoad.png");
     }
 
     @Override
     public void render(float delta) {
         Gdx.gl.glClearColor(0, 0, 0, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
-        escena.setViewport(vista);
-        escena.draw();
+        batch.setProjectionMatrix(camara.combined);
+
+        if(transicionB){
+            timer += Gdx.graphics.getDeltaTime();
+            batch.begin();
+            fondo.draw(batch);
+            batch.end();
+        }
+        else {
+            batch.begin();
+            fondo.draw(batch);
+            btnRegresar.draw(batch);
+            juego1.draw(batch);
+            juego2.draw(batch);
+            if(numeroJuegos==1||numeroJuegos==3){
+                nombre.setPosition(693+empty.getWidth()/2,455);
+                nombre.mostrarMensaje(batch, nombre1);
+            }
+            if(numeroJuegos==2||numeroJuegos==3){
+                nombre.setPosition(693+empty.getWidth()/2,216);
+                nombre.mostrarMensaje(batch, nombre2);
+            }
+            batch.end();
+        }
+
+        if(timer>=1){
+            if(juegoUno){
+                juego.setScreen(new LightsGone(juego, "Juego1.txt"));
+            }
+            else{
+                juego.setScreen(new LightsGone(juego, "Juego2.txt"));
+            }
+        }
     }
 
     @Override
@@ -192,7 +192,7 @@ public class CargarJuego implements Screen {
         texFondo.dispose();
         //audio.dispose();
         regresar.dispose();
-        escena.dispose();
+
 
     }
 
@@ -209,6 +209,80 @@ public class CargarJuego implements Screen {
             }
         }catch (Exception e){
 
+        }
+    }
+
+    @Override
+    public boolean keyDown(int keycode) {
+        return false;
+    }
+
+    @Override
+    public boolean keyUp(int keycode) {
+        return false;
+    }
+
+    @Override
+    public boolean keyTyped(char character) {
+        return false;
+    }
+
+    @Override
+    public boolean touchDown(int screenX, int screenY, int pointer, int button) {
+        Vector3 v = new Vector3(screenX, screenY, 0);
+        camara.unproject(v);
+        float x = v.x;
+        float y = v.y;
+        if(btnRegresar.contiene(x,y)){
+            juego.setScreen(new MenuPrincipal(juego));
+        }
+        if(juego1.contiene(x,y) && (numeroJuegos==1||numeroJuegos==3)){
+            fondo.setTexture(transicion);
+            juegoUno = true;
+            transicionB = true;
+        }
+        if(juego2.contiene(x,y) && (numeroJuegos==2||numeroJuegos==3)){
+            fondo.setTexture(transicion);
+            juegoUno = false;
+            transicionB = true;
+        }
+        return false;
+    }
+
+    @Override
+    public boolean touchUp(int screenX, int screenY, int pointer, int button) {
+        return false;
+    }
+
+    @Override
+    public boolean touchDragged(int screenX, int screenY, int pointer) {
+        return false;
+    }
+
+    @Override
+    public boolean mouseMoved(int screenX, int screenY) {
+        return false;
+    }
+
+    @Override
+    public boolean scrolled(int amount) {
+        return false;
+    }
+
+    public String getNombre(int i) {
+        switch (i){
+            case 0:case 1:case 2:
+                return "Living Room";
+            case 3:case 4:case 5:
+                return "The Kitchen";
+            case 6:case 7:case 8:
+                return "The Garden";
+            case 9:case 10:case 11:case 12:
+                return "The Wardrobe";
+            case 13:case 14:case 15:
+                return "The Basement";
+            default:
+                return "El Coco";
         }
     }
 }

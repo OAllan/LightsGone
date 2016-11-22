@@ -1,7 +1,10 @@
 package mx.itesm.lightsgone;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.files.FileHandle;
+import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 
 import java.util.ArrayList;
@@ -17,12 +20,14 @@ public class GameInfo {
     private boolean pogo, capita, lanzapapas, lampara, armario, cinematicaInicio;
     private boolean pogoTemp, capitaTemp, lanzapapasTemp, lamparaTemp, armarioTemp;
     private int mapa;
-    private float x, y, camaraX, camaraY, timer;
+    private float x, y, camaraX, camaraY, timer, alpha;
     private String nombre;
     private Calendar fecha;
     private Abner abner;
     private boolean mensaje;
-    private Texto guardado;
+    private Sprite guardado;
+    private AssetManager manager;
+    private LightsGone.Transicion transicion;
 
     public GameInfo(){
         vidas = 0;
@@ -37,15 +42,23 @@ public class GameInfo {
         camaraY = 400;
         armario = armarioTemp = false;
         cinematicaInicio = false;
-        guardado = new Texto("font.fnt", LightsGone.ANCHO_MUNDO/2, LightsGone.ALTO_MUNDO/2);
         timer = 0;
+        cargar();
     }
 
     public GameInfo(String juego) {
         cargarJuego(juego);
         nombre = juego;
-        guardado = new Texto("font.fnt", LightsGone.ANCHO_MUNDO/2, LightsGone.ALTO_MUNDO/2);
         timer = 0;
+        cargar();
+    }
+
+    private void cargar(){
+        manager = new AssetManager();
+        manager.load("SavedFile.png", Texture.class);
+        manager.finishLoading();
+        guardado = new Sprite(manager.get("SavedFile.png", Texture.class));
+        guardado.setPosition(900,200);
     }
 
     public void setAbner(Abner abner){
@@ -54,12 +67,31 @@ public class GameInfo {
 
     public void draw(SpriteBatch batch){
         if(mensaje){
-            timer += Gdx.graphics.getDeltaTime();
-            guardado.mostrarMensaje(batch,"Game saved");
-            if(timer>=3){
-                mensaje = false;
-                timer=0;
-            }
+            guardado.setAlpha(alpha);
+            guardado.draw(batch);
+            guardado();
+        }
+    }
+
+    private void guardado() {
+        switch (transicion){
+            case AUMENTANDO:
+                alpha += Gdx.graphics.getDeltaTime()/2;
+                if(alpha>=1){
+                    alpha = 1;
+                    transicion = LightsGone.Transicion.DISMINUYENDO;
+                }
+                break;
+            case DISMINUYENDO:
+                timer+=Gdx.graphics.getDeltaTime();
+                if(timer>=2){
+                    alpha -= Gdx.graphics.getDeltaTime()/2;
+                    timer = 2;
+                    if(alpha<=0){
+                        alpha = 0;
+                        mensaje=false;
+                    }
+                }
         }
     }
 
@@ -117,6 +149,7 @@ public class GameInfo {
         }
         finally {
             mensaje = true;
+            transicion = LightsGone.Transicion.AUMENTANDO;
         }
 
     }

@@ -49,10 +49,6 @@ public class AcercaDe implements Screen, InputProcessor {
         iniciarCamara();
         //Iniciar escena
         iniciarEscena();
-
-
-
-
     }
 
     private void iniciarEscena() {

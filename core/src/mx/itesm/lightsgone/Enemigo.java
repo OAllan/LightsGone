@@ -3294,7 +3294,7 @@ public abstract class Enemigo {
                     break;
                 case ESPERANDO:
                     sprite.setTexture(esperando);
-                    if (abner.getBoundingRectangle().overlaps(sprite.getBoundingRectangle()) && !abner.getDano()&&!LightsGone.getCapa()) {
+                    if (abner.getBoundingRectangle().overlaps(getRectangle()) && !abner.getDano()&&!LightsGone.getCapa()) {
                         attack();
                         estadoAlfombra = Estado.ATAQUE;
                         rotation = 5;
@@ -3331,6 +3331,10 @@ public abstract class Enemigo {
         @Override
         public boolean muerte() {
             return false;
+        }
+
+        public Rectangle getRectangle() {
+            return new Rectangle(sprite.getX()+181, sprite.getY()+57, 300, 127);
         }
     }
 
@@ -3929,6 +3933,157 @@ public abstract class Enemigo {
         }
     }
 
+    static class Oso extends Enemigo{
+        private final Mapa mapa;
+        private Abner abner;
+        private static Texture neutral, salto1, salto2;
+        private static Animation caminar;
+        private EstadoOso estadoOso;
+        private SaltoOso saltoOso;
+        private boolean right;
+        private float timer, timerSalto, alturaMax;
+        private final float SALTOMAX = 285;
+
+        static {
+            cargarTexturas();
+        }
+
+        private static void cargarTexturas() {
+            manager.load("OsoJump1.png", Texture.class);
+            manager.load("OsoJump2.png", Texture.class);
+            manager.load("OsoNeutral.png", Texture.class);
+            manager.load("OsoWalk1.png", Texture.class);
+            manager.load("OsoWalk2.png", Texture.class);
+            manager.load("OsoWalk3.png", Texture.class);
+            manager.finishLoading();
+            neutral = manager.get("OsoJump1.png");
+            caminar = new Animation(0.3f,new TextureRegion(manager.get("OsoWalk1.png", Texture.class)),new TextureRegion(manager.get("OsoWalk2.png", Texture.class)),new TextureRegion(manager.get("OsoWalk3.png", Texture.class)));
+            caminar.setPlayMode(Animation.PlayMode.LOOP);
+            salto1 = manager.get("OsoJump1.png");
+            salto2 = manager.get("OsoJump2.png");
+        }
+
+        public Oso(float x, float y, Abner abner, Mapa mapa){
+            super(neutral,x,y);
+            this.abner = abner;
+            this.mapa = mapa;
+            estadoOso = EstadoOso.NEUTRAL;
+            saltoOso = SaltoOso.SUBIENDO;
+            timer = 0;
+            alturaMax = y+SALTOMAX;
+        }
+
+        @Override
+        public void attack() {
+            if(!abner.getDano()&&getRectangle().overlaps(abner.getBoundingRectangle())&&!LightsGone.getCapa()){
+                abner.setCantVida(abner.getcantVida()-8);
+                abner.setDano(true);
+            }
+        }
+
+        @Override
+        public void setEstado(Estado estado) {
+
+        }
+
+        private Rectangle getRectangle(){
+            return new Rectangle(sprite.getX()+119, sprite.getY(),114,304);
+        }
+
+        @Override
+        public void draw(SpriteBatch batch) {
+            sprite.draw(batch);
+            actualizar();
+            if(sprite.getY()<0){
+                MapManager.quitarEnemigo(this);
+            }
+            attack();
+        }
+
+        private void actualizar() {
+            if((abner.getX() - sprite.getX()) < 0){
+                right = false;
+            }
+            else{
+                right = true;
+            }
+            if((!right&&sprite.isFlipX())||(right&&!sprite.isFlipX())){
+                sprite.flip(true, false);
+            }
+            switch (estadoOso){
+                case NEUTRAL:
+                    sprite.setTexture(neutral);
+                    if(Math.abs(abner.getX()-sprite.getX())<=400){
+                        estadoOso = EstadoOso.CAMINADO;
+                    }
+                    break;
+                case CAMINADO:
+                    timer+= Gdx.graphics.getDeltaTime();
+                    sprite.setTexture(caminar.getKeyFrame(timer).getTexture());
+                    if(!mapa.colisionX(right?sprite.getX()+sprite.getWidth():sprite.getX(), sprite.getY()+30))
+                        sprite.translate(right?3:-3,0);
+                    if(abner.getY()>sprite.getY()+100&&Math.abs(abner.getX()-sprite.getX())<100&&!abner.isJumping()){
+                        estadoOso = EstadoOso.SALTANDO;
+                        saltoOso = SaltoOso.SUBIENDO;
+                    }
+                    if(mapa.colisionY(sprite.getX()+sprite.getWidth()/2,sprite.getY()-20)==-1){
+                        estadoOso = EstadoOso.SALTANDO;
+                        saltoOso = SaltoOso.BAJANDO;
+                    }
+                    break;
+                case SALTANDO:
+                    switch (saltoOso){
+                        case SUBIENDO:
+                            timerSalto+= Gdx.graphics.getDeltaTime();
+                            if(timerSalto>=2){
+                                timerSalto = 2;
+                                sprite.setTexture(salto2);
+                                sprite.translate(0,7);
+                                if(sprite.getY()>=alturaMax){
+                                    sprite.setY(alturaMax);
+                                    saltoOso = SaltoOso.BAJANDO;
+                                    timerSalto = 0;
+                                }
+                            }
+                            else{
+                                sprite.setTexture(salto1);
+                            }
+                            break;
+                        case BAJANDO:
+                            sprite.translate(0,-15);
+                            sprite.setTexture(salto2);
+                            float nuevaY = mapa.colisionY(sprite.getX()+sprite.getWidth()/2,sprite.getY());
+                            if(nuevaY!=-1){
+                                sprite.setY(nuevaY);
+                                estadoOso = EstadoOso.CAMINADO;
+                                alturaMax = nuevaY + SALTOMAX;
+                            }
+                            break;
+                    }
+                    break;
+            }
+        }
+
+        @Override
+        public void stop() {
+
+        }
+
+        @Override
+        public boolean muerte() {
+            return false;
+        }
+        private enum EstadoOso{
+            NEUTRAL,
+            CAMINADO,
+            SALTANDO
+        }
+        private enum SaltoOso{
+            SUBIENDO,
+            BAJANDO
+        }
+    }
+
     static class ParedPicos extends Enemigo {
         private static Texture pared;
         private Estado estado;
@@ -4494,7 +4649,7 @@ public abstract class Enemigo {
                 case AGONIZANDO:
                     sprite.setAlpha(alpha);
                     sprite.setRegion(muerteCoco);
-                    alpha-=Gdx.graphics.getDeltaTime()/3;
+                    alpha-=Gdx.graphics.getDeltaTime()/2;
                     if(!right){
                         sprite.flip(true, false);
                     }

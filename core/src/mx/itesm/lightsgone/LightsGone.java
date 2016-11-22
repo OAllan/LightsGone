@@ -681,9 +681,6 @@ public class LightsGone implements Screen, InputProcessor{
                 barraCoco.setSize(anchBarra*porcentaje,barraCoco.getHeight());
 
             }
-            if(enemigos!=null){
-                Gdx.app.log("Enemigos: ", enemigos.size+"");
-            }
 
             int cambio= abner.cambioNivel();
             if(cambio>=0){

@@ -179,7 +179,11 @@ public abstract class Enemigo {
             if(estado==Estado.ATAQUE){
                 rec=sprite.getBoundingRectangle();
             }else{
-                rec= new Rectangle(sprite.getX()+145,sprite.getY(),sprite.getWidth()-145,sprite.getHeight());
+                if(!sprite.isFlipX()) {
+                    rec = new Rectangle(sprite.getX() + 145, sprite.getY(), sprite.getWidth() - 145, sprite.getHeight());
+                }else{
+                    rec = new Rectangle(sprite.getX() - 290, sprite.getY(), sprite.getWidth() + 145, sprite.getHeight());
+                }
             }
 
             if (!abner.getProyectiles().isEmpty() && sprite.getTexture() != low) {

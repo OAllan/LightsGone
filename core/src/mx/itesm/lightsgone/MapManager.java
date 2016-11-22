@@ -115,7 +115,7 @@ public class MapManager {
                 //Enemigos cocina 2
                 //Sopas
                 enemigos.add(new Enemigo.Sopa(5265,180,abner,mapa));
-                enemigos.add(new Enemigo.Sopa(4005,225,abner,mapa));
+                enemigos.add(new Enemigo.Sopa(3875,225,abner,mapa));
                 enemigos.add(new Enemigo.Sopa(1395,1125,abner,mapa));
                 //Brocolis
                 enemigos.add(new Enemigo.Sandwich(765,495,abner,mapa));

@@ -2,6 +2,7 @@ package mx.itesm.lightsgone;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.assets.AssetManager;
+import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.Sprite;
@@ -60,6 +61,8 @@ public abstract class Cinematica {
         private Animation corriendo, escapando;
         private Escena escena;
         private boolean finished;
+        private Texto texto;
+        private Music grito, pasos;
 
 
         {
@@ -79,6 +82,8 @@ public abstract class Cinematica {
             manager.load("CinematicaInicio9.png", Texture.class);
             manager.load("CinematicaInicio10.png", Texture.class);
             manager.load("CinematicaInicio11.png", Texture.class);
+            manager.load("rugido.mp3", Music.class);
+            manager.load("Run Grass.mp3", Music.class);
             manager.finishLoading();
             inicio = manager.get("CinematicaInicio1.png");
             corriendo = new Animation(0.1f, new TextureRegion((Texture)manager.get("CinematicaInicio2.png")),new TextureRegion((Texture)manager.get("CinematicaInicio3.png")),new TextureRegion((Texture)manager.get("CinematicaInicio4.png")),new TextureRegion((Texture)manager.get("CinematicaInicio5.png")));
@@ -86,6 +91,9 @@ public abstract class Cinematica {
             inicio7 = manager.get("CinematicaInicio7.png");
             escapando = new Animation(0.3f, new TextureRegion((Texture)manager.get("CinematicaInicio8.png")),new TextureRegion((Texture)manager.get("CinematicaInicio9.png")), new TextureRegion((Texture)manager.get("CinematicaInicio10.png")));
             inicio11 = manager.get("CinematicaInicio11.png");
+            grito = manager.get("rugido.mp3");
+            pasos = manager.get("Run Grass.mp3");
+            pasos.setLooping(true);
 
         }
 
@@ -95,6 +103,7 @@ public abstract class Cinematica {
             escena = Escena.FUNDIDO;
             finished = false;
             alpha = 1;
+            texto = new Texto("font.fnt", LightsGone.ANCHO_MUNDO/2, 100);
         }
 
         @Override
@@ -115,6 +124,7 @@ public abstract class Cinematica {
                     if(timer>=1.5){
                         escena = Escena.CORRIENDO;
                         timer=0;
+                        pasos.play();
                     }
                     break;
                 case CORRIENDO:
@@ -123,20 +133,23 @@ public abstract class Cinematica {
                     if(timer>=corriendo.getAnimationDuration()){
                         escena = Escena.NEUTRAL;
                         timer = 0;
+                        pasos.stop();
                     }
                     break;
                 case NEUTRAL:
                     timer += Gdx.graphics.getDeltaTime();
                     sprite.setTexture(inicio6);
-                    if(timer>=1.5){
+                    texto.mostrarMensaje(batch,"Mom?...Dad?");
+                    if(timer>=2){
                         escena = Escena.GRITO;
                         timer = 0;
+                        grito.play();
                     }
                     break;
                 case GRITO:
                     timer += Gdx.graphics.getDeltaTime();
                     sprite.setTexture(inicio7);
-                    if(timer>=1.5){
+                    if(timer>=2.5){
                         escena = Escena.ESCAPE;
                         timer = 0;
                     }
@@ -169,7 +182,13 @@ public abstract class Cinematica {
 
         @Override
         public void dispose() {
-
+            inicio.dispose();
+            inicio6.dispose();
+            inicio7.dispose();
+            inicio11.dispose();
+            manager.dispose();
+            grito.dispose();
+            pasos.dispose();
         }
 
         private enum Escena{
@@ -189,6 +208,7 @@ public abstract class Cinematica {
         private Escena escena;
         private Abner abner;
         private boolean finished;
+        private Music grito;
 
 
         {
@@ -209,6 +229,7 @@ public abstract class Cinematica {
             manager.load("CinematicaAntesCoco10.png", Texture.class);
             manager.load("CinematicaAntesCoco11.png", Texture.class);
             manager.load("CinematicaAntesCoco12.png", Texture.class);
+            manager.load("rugido.mp3", Music.class);
             manager.finishLoading();
             inicio = new Animation(0.4f, new TextureRegion((Texture)manager.get("CinematicaAntesCoco1.png")),new TextureRegion((Texture)manager.get("CinematicaAntesCoco2.png")));
             inicio.setPlayMode(Animation.PlayMode.LOOP);
@@ -219,6 +240,7 @@ public abstract class Cinematica {
             saltando = new Animation(0.2f, new TextureRegion((Texture)manager.get("CinematicaAntesCoco9.png")), new TextureRegion((Texture)manager.get("CinematicaAntesCoco10.png")));
             antes11 = manager.get("CinematicaAntesCoco11.png");
             antes12 = manager.get("CinematicaAntesCoco12.png");
+            grito = manager.get("rugido.mp3");
 
         }
 
@@ -262,7 +284,7 @@ public abstract class Cinematica {
                 case VUELTA:
                     timer+=Gdx.graphics.getDeltaTime();
                     sprite.setTexture(antes5);
-                    if(timer>=1){
+                    if(timer>=2){
                         timer = 0;
                         escena = Escena.ENOJADO;
                     }
@@ -297,12 +319,13 @@ public abstract class Cinematica {
                     if(timer>=1){
                         timer = 0;
                         escena = Escena.GRITO;
+                        grito.play();
                     }
                     break;
                 case GRITO:
                     timer += Gdx.graphics.getDeltaTime();
                     sprite.setTexture(antes12);
-                    if(timer>=1.5){
+                    if(timer>=2.5){
                         finished = true;
                         abner.setX(1035);
                     }
@@ -317,7 +340,12 @@ public abstract class Cinematica {
 
         @Override
         public void dispose() {
-
+            antes5.dispose();
+            antes8.dispose();
+            antes11.dispose();
+            antes12.dispose();
+            manager.dispose();
+            grito.play();
         }
 
         private enum Escena{
@@ -423,7 +451,7 @@ public abstract class Cinematica {
                 case INICIO:
                     timer += Gdx.graphics.getDeltaTime();
                     sprite.setTexture(final1);
-                    if(timer>=1){
+                    if(timer>=2){
                         sprite.setTexture(final2);
                         escena = Escena.ESCENA1;
                         timer = 0;
@@ -456,7 +484,7 @@ public abstract class Cinematica {
                 case ESCENA4:
                     timer += Gdx.graphics.getDeltaTime();
                     sprite.setTexture(final6);
-                    if(timer>=1){
+                    if(timer>=3){
                         escena = Escena.LIGHTSGONE;
                         timer = 0;
                         transicionFundido.setTexture(lightsgone);

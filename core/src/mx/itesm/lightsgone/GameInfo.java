@@ -2,6 +2,7 @@ package mx.itesm.lightsgone;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.files.FileHandle;
+import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -16,10 +17,12 @@ public class GameInfo {
     private boolean pogo, capita, lanzapapas, lampara, armario, cinematicaInicio;
     private boolean pogoTemp, capitaTemp, lanzapapasTemp, lamparaTemp, armarioTemp;
     private int mapa;
-    private float x, y, camaraX, camaraY;
+    private float x, y, camaraX, camaraY, timer;
     private String nombre;
     private Calendar fecha;
     private Abner abner;
+    private boolean mensaje;
+    private Texto guardado;
 
     public GameInfo(){
         vidas = 0;
@@ -34,15 +37,30 @@ public class GameInfo {
         camaraY = 400;
         armario = armarioTemp = false;
         cinematicaInicio = false;
+        guardado = new Texto("font.fnt", LightsGone.ANCHO_MUNDO/2, LightsGone.ALTO_MUNDO/2);
+        timer = 0;
     }
 
     public GameInfo(String juego) {
         cargarJuego(juego);
         nombre = juego;
+        guardado = new Texto("font.fnt", LightsGone.ANCHO_MUNDO/2, LightsGone.ALTO_MUNDO/2);
+        timer = 0;
     }
 
     public void setAbner(Abner abner){
         this.abner = abner;
+    }
+
+    public void draw(SpriteBatch batch){
+        if(mensaje){
+            timer += Gdx.graphics.getDeltaTime();
+            guardado.mostrarMensaje(batch,"Game saved");
+            if(timer>=3){
+                mensaje = false;
+                timer=0;
+            }
+        }
     }
 
     private void cargarJuego(String juego) {
@@ -96,6 +114,9 @@ public class GameInfo {
         }
         catch (Exception e){
             Gdx.app.log("Exception ", e.getMessage());
+        }
+        finally {
+            mensaje = true;
         }
 
     }

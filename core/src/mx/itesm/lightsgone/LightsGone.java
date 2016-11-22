@@ -50,7 +50,7 @@ public class LightsGone implements Screen, InputProcessor{
     private OrthographicCamera camaraHUD;
     private Viewport vista;
     private SpriteBatch batch;
-    private Music ambiente, gameover, leche, recarga;
+    private Music ambiente, gameover, leche, recarga, sonidos;
     private Juego juego;
     private AssetManager assetManager = new AssetManager();
     public static Texture plataforma;
@@ -192,8 +192,8 @@ public class LightsGone implements Screen, InputProcessor{
         imgVida.setPosition(0, 780 - imgVida.getHeight());
         imgMunicion = new Sprite(municion);
         imgMunicion.setPosition(MUNICIONX, MUNICIONY);
-        vida = new Texto("tipo.fnt", imgVida.getWidth(),690);
-        municionTex = new Texto("tipo.fnt", imgMunicion.getX(), MUNICIONY+60);
+        vida = new Texto("font.fnt", imgVida.getWidth(),690);
+        municionTex = new Texto("font.fnt", imgMunicion.getX(), MUNICIONY+60);
         transicionNivel = new Sprite(transicionNeutral);
         estadoLampara = Lampara.APAGADA;
         if(gameInfo.isLampara())
@@ -280,6 +280,7 @@ public class LightsGone implements Screen, InputProcessor{
         assetManager.load("risa.mp3", Music.class);
         assetManager.load("leche.mp3", Music.class);
         assetManager.load("recargar papas.mp3", Music.class);
+        assetManager.load("Sonidos.mp3", Music.class);
         assetManager.finishLoading();
         botonSalto = assetManager.get("BotonSalto.png");
         JFondo = assetManager.get("JoystickBoton.png");
@@ -321,6 +322,8 @@ public class LightsGone implements Screen, InputProcessor{
         capa25 = assetManager.get("BotonHabCapa25.png");
         capa50 = assetManager.get("BotonHabCapa50.png");
         capa75 = assetManager.get("BotonHabCapa75.png");
+        sonidos = assetManager.get("Sonidos.mp3");
+        sonidos.setVolume(0.5f);
     }
 
     @Override
@@ -341,7 +344,7 @@ public class LightsGone implements Screen, InputProcessor{
             abner.draw(batch, right);
             batch.end();
             timerG+=Gdx.graphics.getDeltaTime();
-            if(timerG>=6){
+            if(timerG>=3){
                 batch.setProjectionMatrix(camaraHUD.combined);
                 batch.begin();
                 cinematica.play(batch);
@@ -361,6 +364,7 @@ public class LightsGone implements Screen, InputProcessor{
             if(cinematica.finished()){
                 estado = Estado.CAMBIO;
                 transicion = Transicion.AUMENTANDO;
+                cinematica.dispose();
             }
             if(cinematicaPelea){
                 Array<Enemigo> enemigos = new Array<Enemigo>();
@@ -483,17 +487,39 @@ public class LightsGone implements Screen, InputProcessor{
 
             if(musica){
                 switch(mapaActual){
-                    case 0:case 1:case 2:default:
-                        if(!ambiente.isPlaying()){
+                    case 0:
+                        if(!cinematicaInicio&&!sonidos.isPlaying()){
+                            sonidos.play();
+                            ambiente.stop();
+                        }
+                        else if(cinematicaInicio&&!ambiente.isPlaying()){
                             ambiente.play();
-                            ambiente.setLooping(true);
+                            sonidos.stop();
                         }
                         break;
-
+                    case 1:
+                        if(sonidos.isPlaying()){
+                            sonidos.stop();
+                        }
+                        if(!cinematicaInicio&&ambiente.isPlaying()){
+                            ambiente.stop();
+                        }
+                        else if(cinematicaInicio&&!ambiente.isPlaying()){
+                            ambiente.play();
+                        }
+                        break;
+                    default:
+                        if(!ambiente.isPlaying()){
+                            ambiente.play();
+                        }
+                        break;
                 }
             }
-            else
+            else{
                 ambiente.pause();
+                sonidos.pause();
+            }
+
 
 
 
@@ -833,6 +859,7 @@ public class LightsGone implements Screen, InputProcessor{
                 municionTex.mostrarMensaje(batch, abner.getMunicion()+"");
             }
             vida.mostrarMensaje(batch, "" + abner.getcantVida());
+            gameInfo.draw(batch);
             for(int i = 0;i<abner.getVidas();i++)
                 vidas.get(i).draw(batch);
             transicionNivel.draw(batch);
@@ -1235,6 +1262,9 @@ public class LightsGone implements Screen, InputProcessor{
     public void stop(){
         if(ambiente.isPlaying()){
             ambiente.stop();
+        }
+        if(sonidos.isPlaying()){
+            sonidos.stop();
         }
         if(gameover.isPlaying()){
             gameover.stop();

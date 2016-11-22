@@ -231,6 +231,11 @@ public class Abner {
                 atrapado = false;
                 clics = 0;
             }
+            if(LightsGone.sotano()){
+                luz.draw(batch);
+                luz.setTexture(oscuridad);
+                mapa.drawDetallefondo();
+            }
 
         }
     }
@@ -977,12 +982,11 @@ public class Abner {
         neutral.getTexture().dispose();
         dano.getTexture().dispose();
         neutralLampara.getTexture().dispose();
-        //neutralCapa.getTexture().dispose();
+        neutralCapa.getTexture().dispose();
         saltar1.getTexture().dispose();
         saltar2.getTexture().dispose();
         saltarLampara1.getTexture().dispose();
         saltarLampara2.getTexture().dispose();
-        //saltoCapa.getTexture().dispose();
         saltarPogo1.getTexture().dispose();
         saltarPogo2.getTexture().dispose();
         encendida.dispose();

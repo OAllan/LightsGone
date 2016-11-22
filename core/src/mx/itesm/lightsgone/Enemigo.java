@@ -130,7 +130,7 @@ public abstract class Enemigo {
 
         @Override
         public void attack() {
-            if (!abner.getDano()) {
+            if (!abner.getDano()&&!LightsGone.getCapa()) {
                 abner.setCantVida(abner.getcantVida() - 5);
                 ataco = true;
                 abner.setDano(true);
@@ -309,7 +309,7 @@ public abstract class Enemigo {
         @Override
         public void attack() {
 
-            if (!abner.getDano()) {
+            if (!abner.getDano()&&!LightsGone.getCapa()) {
                 abner.setCantVida(abner.getcantVida() - 5);
                 ataco = true;
                 abner.setDano(true);
@@ -613,7 +613,7 @@ public abstract class Enemigo {
 
         @Override
         public void attack() {
-            if (!abner.getDano()) {
+            if (!abner.getDano()&&!LightsGone.getCapa()) {
                 abner.setCantVida(abner.getcantVida() - 3);
                 ataco = true;
                 abner.setDano(true);
@@ -724,7 +724,7 @@ public abstract class Enemigo {
 
         @Override
         public void attack() {
-            if (!abner.getDano()) {
+            if (!abner.getDano()&&!LightsGone.getCapa()) {
                 abner.setCantVida(abner.getcantVida() - 3);
                 ataco = true;
                 abner.setDano(true);
@@ -929,7 +929,7 @@ public abstract class Enemigo {
         @Override
         public void attack() {
 
-            if (!abner.getDano()) {
+            if (!abner.getDano()&&!LightsGone.getCapa()) {
                 abner.setCantVida(abner.getcantVida() - 1);
                 abner.setDano(true);
             }
@@ -1211,7 +1211,7 @@ public abstract class Enemigo {
         @Override
         public void attack() {
 
-            if (!abner.getDano()) {
+            if (!abner.getDano()&&!LightsGone.getCapa()) {
                 abner.setCantVida(abner.getcantVida() - 8);
                 ataco = true;
                 abner.setDano(true);
@@ -1556,7 +1556,7 @@ public abstract class Enemigo {
 
         @Override
         public void attack() {
-            if (!abner.getDano()) {
+            if (!abner.getDano()&&!LightsGone.getCapa()) {
                 abner.setCantVida(abner.getcantVida() - 6);
                 ataco = true;
                 abner.setDano(true);
@@ -1703,7 +1703,7 @@ public abstract class Enemigo {
 
         @Override
         public void attack() {
-            if (!abner.getDano()) {
+            if (!abner.getDano()&&!LightsGone.getCapa()) {
                 abner.setCantVida(abner.getcantVida() - 8);
                 ataco = true;
                 abner.setDano(true);
@@ -1870,7 +1870,7 @@ public abstract class Enemigo {
 
         @Override
         public void attack() {
-            if (!abner.getDano()) {
+            if (!abner.getDano()&&!LightsGone.getCapa()) {
                 abner.setCantVida(abner.getcantVida() - 8);
                 ataco = true;
                 abner.setDano(true);
@@ -2044,7 +2044,7 @@ public abstract class Enemigo {
         @Override
         public void attack() {
 
-            if (!abner.getDano()) {
+            if (!abner.getDano()&&!LightsGone.getCapa()) {
                 abner.setCantVida(abner.getcantVida() - 5);
                 ataco = true;
                 abner.setDano(true);
@@ -2228,7 +2228,7 @@ public abstract class Enemigo {
         @Override
         public void attack() {
 
-            if (!abner.getDano()) {
+            if (!abner.getDano()&&!LightsGone.getCapa()) {
                 abner.setCantVida(abner.getcantVida() - 1);
                 abner.setDano(true);
             }
@@ -2362,7 +2362,7 @@ public abstract class Enemigo {
         @Override
         public void attack() {
 
-            if (!abner.getDano()) {
+            if (!abner.getDano()&&!LightsGone.getCapa()) {
                 abner.setCantVida(abner.getcantVida() - 1);
                 abner.setDano(true);
             }
@@ -2493,7 +2493,7 @@ public abstract class Enemigo {
         @Override
         public void attack() {
 
-            if (!abner.getDano()) {
+            if (!abner.getDano()&&!LightsGone.getCapa()) {
                 abner.setCantVida(abner.getcantVida() - 1);
                 abner.setDano(true);
             }
@@ -2662,7 +2662,7 @@ public abstract class Enemigo {
         @Override
         public void attack() {
             if (abner.getBoundingRectangle().overlaps(getAttackRectangle()) && isAttacking()) {
-                if (!abner.getDano()) {
+                if (!abner.getDano()&&!LightsGone.getCapa()) {
                     abner.setDano(true);
                     abner.setCantVida(abner.getcantVida() - 10);
                 }
@@ -2955,7 +2955,7 @@ public abstract class Enemigo {
 
             for (int i = 0; i < proyectiles.size; i++) {
                 Proyectil.Bola proyectil = proyectiles.get(i);
-                if (proyectil.getRectangle().overlaps(abner.getBoundingRectangle()) && !abner.getDano()) {
+                if (proyectil.getRectangle().overlaps(abner.getBoundingRectangle()) && !abner.getDano()&&!LightsGone.getCapa()) {
                     abner.setCantVida(abner.getcantVida() - 10);
                     abner.setDano(true);
                     proyectiles.removeIndex(i--);
@@ -3118,7 +3118,7 @@ public abstract class Enemigo {
 
         @Override
         public void attack() {
-            if (timer >= 0.3f && abner.getBoundingRectangle().overlaps(sprite.getBoundingRectangle()) && !abner.getDano()) {
+            if (timer >= 0.3f && abner.getBoundingRectangle().overlaps(sprite.getBoundingRectangle()) && !abner.getDano()&&!LightsGone.getCapa()) {
                 abner.setAtrapado(true);
                 estadoRopa = EstadoRopa.ATRAPADO;
                 timer = 0;
@@ -3294,7 +3294,7 @@ public abstract class Enemigo {
                     break;
                 case ESPERANDO:
                     sprite.setTexture(esperando);
-                    if (abner.getBoundingRectangle().overlaps(sprite.getBoundingRectangle()) && !abner.getDano()) {
+                    if (abner.getBoundingRectangle().overlaps(sprite.getBoundingRectangle()) && !abner.getDano()&&!LightsGone.getCapa()) {
                         attack();
                         estadoAlfombra = Estado.ATAQUE;
                         rotation = 5;
@@ -3381,13 +3381,11 @@ public abstract class Enemigo {
 
         @Override
         public void attack() {
-            if (!abner.getDano()) {
+            if (!abner.getDano()&&!LightsGone.getCapa()) {
                 abner.setCantVida(abner.getcantVida() - 3);
                 ataco = true;
                 abner.setDano(true);
             }
-
-
         }
 
         @Override
@@ -3567,7 +3565,7 @@ public abstract class Enemigo {
             if(estadoOnda == EstadoOnda.BAJANDO)
                 abner.setCayendo(true);
             if(estadoOnda == EstadoOnda.AVAZANDO){
-                if(getRectangle().overlaps(abner.getBoundingRectangle())&&!abner.getDano()){
+                if(getRectangle().overlaps(abner.getBoundingRectangle())&&!abner.getDano()&&!LightsGone.getCapa()){
                     abner.setCantVida(abner.getcantVida()-15);
                     abner.setDano(true);
                 }
@@ -3971,7 +3969,7 @@ public abstract class Enemigo {
         @Override
         public void attack() {
 
-            if (!abner.getDano()) {
+            if (!abner.getDano()&&!LightsGone.getCapa()) {
                 abner.setCantVida(0);
                 abner.setDano(true);
             }
@@ -4075,7 +4073,7 @@ public abstract class Enemigo {
 
         @Override
         public void attack() {
-            if(sprite.getBoundingRectangle().overlaps(abner.getBoundingRectangle())&&!abner.getDano()){
+            if(sprite.getBoundingRectangle().overlaps(abner.getBoundingRectangle())&&!abner.getDano()&&!LightsGone.getCapa()){
                 abner.setCantVida(abner.getcantVida()-15);
                 abner.setDano(true);
             }
@@ -4120,6 +4118,10 @@ public abstract class Enemigo {
         public boolean muerte() {
             return false;
         }
+
+        public float getTime() {
+            return animation.getAnimationDuration();
+        }
     }
 
     private static class Cocos extends Enemigo{
@@ -4145,7 +4147,7 @@ public abstract class Enemigo {
 
         @Override
         public void attack() {
-            if(sprite.getBoundingRectangle().overlaps(abner.getBoundingRectangle())&&!abner.getDano()){
+            if(sprite.getBoundingRectangle().overlaps(abner.getBoundingRectangle())&&!abner.getDano()&&!LightsGone.getCapa()){
                 abner.setCantVida(abner.getcantVida()-10);
                 abner.setDano(true);
             }
@@ -4193,10 +4195,10 @@ public abstract class Enemigo {
         private EstadoCoco estadoCoco;
         private FaseCoco faseCoco;
         private Ataque ataque;
-        private float timer, vida, timerC, timerD, timerItem;
+        private float timer, vida, timerC, timerD, timerItem, timerG;
         private final float VELOCIDAD = 8, CAIDA = 18, SALTO = 8, SALTOMAX = 400;
         private float alturaMax;
-        private boolean right;
+        private boolean right, garraB;
         private Mapa mapa;
         private Abner abner;
         private Array<OndaCoco> ondaCocos;
@@ -4204,6 +4206,7 @@ public abstract class Enemigo {
         private Array<Cocos> cocos;
         private Abner.Salto salto;
         private EstadoCoco estadoTemp;
+        private float alpha;
 
 
         static {
@@ -4249,7 +4252,7 @@ public abstract class Enemigo {
             estadoCoco = EstadoCoco.NEUTRAL;
             faseCoco = FaseCoco.TERCERA;
             ataque = Ataque.ONDA;
-            vida = 12;
+            vida = 1;
             right = true;
             timer = 2;
             this.mapa = mapa;
@@ -4265,6 +4268,7 @@ public abstract class Enemigo {
             barra = new Sprite(manager.get("BarraVidaCoco2.png", Texture.class));
             cascaron.setPosition(LightsGone.ANCHO_MUNDO/2-cascaron.getWidth()/2+120, LightsGone.ALTO_MUNDO-cascaron.getHeight());
             barra.setPosition(cascaron.getX()+112,cascaron.getY()+43);
+            alpha = 1;
         }
 
         public Rectangle getRectangle(){
@@ -4309,11 +4313,13 @@ public abstract class Enemigo {
                         if(!right){
                             sprite.flip(true, false);
                         }
+                        if(timerA>=0.4f&&timerA<=0.4f+Gdx.graphics.getDeltaTime()){
+                            garraB = true;
+                        }
                         if(timerA>=garrazo.getAnimationDuration()){
                             estadoCoco = EstadoCoco.NEUTRAL;
                             timerA = 0;
                             timer = 2;
-                            garra.reiniciar();
                         }
                     }
                     break;
@@ -4360,8 +4366,18 @@ public abstract class Enemigo {
                 }
             }
 
-            if(estadoCoco==EstadoCoco.ATACANDO&&ataque == Ataque.GARRA&&timerA!=0){
+            if(getRectangle().overlaps(abner.getBoundingRectangle())&&!abner.getDano()&&!LightsGone.getCapa()){
+                abner.setCantVida(abner.getcantVida()-10);
+                abner.setDano(true);
+            }
+
+            if(garraB){
+                timerG += Gdx.graphics.getDeltaTime();
                 garra.draw(batch, right?sprite.getX()+sprite.getWidth()-50:sprite.getX(), sprite.getY()+100);
+                if(timerG>=garra.getTime()){
+                    garraB = false;
+                    garra.reiniciar();
+                }
             }
 
             if(cocos.size!= 0){
@@ -4476,9 +4492,14 @@ public abstract class Enemigo {
                     }
                     break;
                 case AGONIZANDO:
+                    sprite.setAlpha(alpha);
                     sprite.setRegion(muerteCoco);
+                    alpha-=Gdx.graphics.getDeltaTime()/3;
                     if(!right){
                         sprite.flip(true, false);
+                    }
+                    if(alpha<=0){
+                        alpha = 0;
                     }
                     break;
             }
@@ -4512,7 +4533,7 @@ public abstract class Enemigo {
         private void jump(){
             switch (salto){
                 case SUBIENDO:
-                    sprite.translate(3, SALTO);
+                    sprite.translate(right?3:-3, SALTO);
                     if(sprite.getY()>= alturaMax){
                         sprite.setY(alturaMax);
                         salto = Abner.Salto.BAJANDO;

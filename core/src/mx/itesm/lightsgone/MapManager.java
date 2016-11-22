@@ -52,6 +52,13 @@ public class MapManager {
     public static void setExtras(Mapa mapa, int mapaActual, Abner abner) {
         enemigos = new Array<Enemigo>();
         switch (mapaActual){
+            case 0:
+                //enemigos.add(new Enemigo.PlantaCarnivora(450,150,abner,mapa));
+
+
+                mapa.setEnemigos(enemigos);
+                break;
+
             case 1:
                 //enemigos.add(new Enemigo.Cucarachon(1500,150,abner,mapa));
                 //enemigos.add(new Enemigo.Gnomo(2500,150,abner,mapa));
@@ -61,6 +68,7 @@ public class MapManager {
                 //enemigos.add(new Enemigo.Telarana(4000,150,abner,mapa));
                 //enemigos.add(new Enemigo.Fantasma(1500,675,abner,mapa));
                 //enemigos.add(new Enemigo.ParedPicos(2300,100,abner,mapa));
+               // enemigos.add(new Enemigo.Sandwich(1500,150,abner,mapa));
 
 
                 mapa.setEnemigos(enemigos);
@@ -70,9 +78,9 @@ public class MapManager {
                 //Moscas
                 //enemigos.add(new Enemigo.Cucarachon(2295,293,abner,mapa));
                //enemigos.add(new Enemigo.Sopa(2295,293,abner,mapa));
-                enemigos.add(new Enemigo.Mosca(2295, 293, abner, mapa));
-                enemigos.add(new Enemigo.Mosca(2745, 2295, abner, mapa));
-                enemigos.add(new Enemigo.Mosca(3420, 2295, abner, mapa));
+                enemigos.add(new Enemigo.Mosca(2295, 250, abner, mapa));
+                enemigos.add(new Enemigo.Mosca(2745, 2400, abner, mapa));
+                enemigos.add(new Enemigo.Mosca(3420, 2400, abner, mapa));
 
 
                 //Flamas
@@ -98,7 +106,7 @@ public class MapManager {
                 enemigos.add(new Enemigo.Brocoli(3285, 500, abner, mapa));
                 enemigos.add(new Enemigo.Brocoli(4410, 90, abner, mapa));
                 enemigos.add(new Enemigo.Brocoli(5085, 90, abner, mapa));
-                enemigos.add(new Enemigo.Brocoli(6435, 900, abner, mapa));
+                enemigos.add(new Enemigo.Sandwich(6435, 900, abner, mapa));
                 enemigos.add(new Enemigo.Brocoli(9900, 1620, abner, mapa));
                 enemigos.add(new Enemigo.Brocoli(8865, 2025, abner, mapa));
                 mapa.setEnemigos(enemigos);
@@ -107,10 +115,10 @@ public class MapManager {
                 //Enemigos cocina 2
                 //Sopas
                 enemigos.add(new Enemigo.Sopa(5265,180,abner,mapa));
-                enemigos.add(new Enemigo.Sopa(4005,225,abner,mapa));
+                enemigos.add(new Enemigo.Sopa(3875,225,abner,mapa));
                 enemigos.add(new Enemigo.Sopa(1395,1125,abner,mapa));
                 //Brocolis
-                enemigos.add(new Enemigo.Brocoli(765,495,abner,mapa));
+                enemigos.add(new Enemigo.Sandwich(765,495,abner,mapa));
                 enemigos.add(new Enemigo.Lata(LightsGone.LATAX,mapa.getHeight(),mapa));
                 enemigos.add(new Enemigo.Lata(LightsGone.LATAX, mapa.getHeight()+3300, mapa));
                 enemigos.add(new Enemigo.Lata(LightsGone.LATAX, mapa.getHeight()+6600, mapa));
@@ -125,8 +133,8 @@ public class MapManager {
             case 5:
                 //Enemigos cocina 3
                 //Moscas
-                enemigos.add(new Enemigo.Mosca(3330,765,abner,mapa));
-                enemigos.add(new Enemigo.Mosca(5355,1125,abner,mapa));
+                enemigos.add(new Enemigo.Mosca(3330,700,abner,mapa));
+                enemigos.add(new Enemigo.Mosca(5355,1050,abner,mapa));
 
 
                 //Sopas
@@ -151,8 +159,7 @@ public class MapManager {
                 enemigos.add(new Enemigo.Hongo(5805,1300,abner,mapa));
                 enemigos.add(new Enemigo.ProyectilHongo(7560,1370,abner,mapa));
                 enemigos.add(new Enemigo.Hongo(7470,1300,abner,mapa));
-                enemigos.add(new Enemigo.ProyectilHongo(11895,1870,abner,mapa));
-                enemigos.add(new Enemigo.Hongo(11835,1800,abner,mapa));
+                enemigos.add(new Enemigo.PlantaCarnivora(11835,1800,abner,mapa));
                 enemigos.add(new Enemigo.ProyectilHongo(12210,1870,abner,mapa));
                 enemigos.add(new Enemigo.Hongo(12150,1800,abner,mapa));
                 enemigos.add(new Enemigo.Serpiente(13095,1800,abner,mapa));
@@ -171,16 +178,14 @@ public class MapManager {
                 enemigos.add(new Enemigo.EspinasD(7605,540,abner,mapa));
                 enemigos.add(new Enemigo.EspinasD(8775,540,abner,mapa));
                 enemigos.add(new Enemigo.Serpiente(6165,540,abner,mapa));
-                enemigos.add(new Enemigo.ProyectilHongo(7260,610,abner,mapa));
-                enemigos.add(new Enemigo.Hongo(7200,540,abner,mapa));
+                enemigos.add(new Enemigo.PlantaCarnivora(7200,540,abner,mapa));
                 enemigos.add(new Enemigo.Serpiente(8190,540,abner,mapa));
                 enemigos.add(new Enemigo.ProyectilHongo(9645,835,abner,mapa));
                 enemigos.add(new Enemigo.Hongo(9585,765,abner,mapa));
                 enemigos.add(new Enemigo.Cucarachon(9990,315,abner,mapa));
                 enemigos.add(new Enemigo.ProyectilHongo(15045,385,abner,mapa));
                 enemigos.add(new Enemigo.Hongo(14985,315,abner,mapa));
-                enemigos.add(new Enemigo.ProyectilHongo(16045,385,abner,mapa));
-                enemigos.add(new Enemigo.Hongo(15975,315,abner,mapa));
+                enemigos.add(new Enemigo.PlantaCarnivora(15975,315,abner,mapa));
                 mapa.setEnemigos(enemigos);
                 break;
             case 8:

@@ -15,7 +15,7 @@ import java.util.Iterator;
 /**
  * Created by allanruiz on 21/10/16.
  */
-public class GameInfo {
+public class InfoJuego {
     private int vida, vidas;
     private boolean pogo, capita, lanzapapas, lampara, armario, cinematicaInicio;
     private boolean pogoTemp, capitaTemp, lanzapapasTemp, lamparaTemp, armarioTemp;
@@ -29,7 +29,7 @@ public class GameInfo {
     private AssetManager manager;
     private LightsGone.Transicion transicion;
 
-    public GameInfo(){
+    public InfoJuego(){
         vidas = 0;
         vida = 99;
         pogo = capita = lanzapapas = lampara = false;
@@ -46,7 +46,7 @@ public class GameInfo {
         cargar();
     }
 
-    public GameInfo(String juego) {
+    public InfoJuego(String juego) {
         cargarJuego(juego);
         nombre = juego;
         timer = 0;

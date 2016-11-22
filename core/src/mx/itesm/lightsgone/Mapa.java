@@ -1,6 +1,5 @@
 package mx.itesm.lightsgone;
 
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.assets.loaders.resolvers.InternalFileHandleResolver;
 import com.badlogic.gdx.graphics.OrthographicCamera;
@@ -15,8 +14,6 @@ import com.badlogic.gdx.maps.tiled.TmxMapLoader;
 import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.utils.Array;
-
-import java.util.Iterator;
 
 /**
  * Created by allanruiz on 13/10/16.
@@ -359,7 +356,7 @@ public class Mapa {
         mapa.dispose();
     }
 
-    public void reiniciar(GameInfo gameInfo) {
+    public void reiniciar(InfoJuego gameInfo) {
         MapLayers layers = mapa.getLayers();
 
         for(MapLayer layer:layers){
@@ -384,7 +381,7 @@ public class Mapa {
 
     }
 
-    public void reiniciarTemp(GameInfo gameInfo) {
+    public void reiniciarTemp(InfoJuego gameInfo) {
         MapLayers layers = mapa.getLayers();
 
         for (MapLayer layer: layers){

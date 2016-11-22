@@ -4,16 +4,13 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.graphics.Color;
-import com.badlogic.gdx.graphics.Cursor;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
-import com.badlogic.gdx.maps.Map;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.utils.Array;
-import com.badlogic.gdx.utils.TimeUtils;
 
 import java.util.ArrayList;
 import java.util.Random;
@@ -382,7 +379,7 @@ public abstract class Enemigo {
             }
 
             if (vida <= 0) {
-                MapManager.quitarEnemigo(this);
+                AdministradorMapa.quitarEnemigo(this);
             }
             if (sprite.getY() != 1620 && sprite.getY() != 495) {
                 if (sprite.getX() >= xInicial + 400)
@@ -828,8 +825,8 @@ public abstract class Enemigo {
             }
 
             if ((time >= 3)) {
-                MapManager.crearNuevaMosca(xInicial, yInicial, this);
-                MapManager.quitarEnemigo(this);
+                AdministradorMapa.crearNuevaMosca(xInicial, yInicial, this);
+                AdministradorMapa.quitarEnemigo(this);
                 time = 0;
             }
 
@@ -1291,7 +1288,7 @@ public abstract class Enemigo {
                 xInicial = sprite.getX() + sprite.getWidth() / 2;
                 yInicial = sprite.getY();
                 muerte = true;
-                MapManager.quitarEnemigo(this);
+                AdministradorMapa.quitarEnemigo(this);
             }
             if (sprite.getY() != 1620 && sprite.getY() != 495) {
                 if (sprite.getX() >= xInicial + 400)
@@ -1473,7 +1470,7 @@ public abstract class Enemigo {
 
             if (vida <= 0) {
                 muerte = true;
-                MapManager.quitarEnemigo(this);
+                AdministradorMapa.quitarEnemigo(this);
             }
 
             if (abner.getX() > sprite.getX()) {
@@ -1766,7 +1763,7 @@ public abstract class Enemigo {
 
             if (vida <= 0) {
                 //muerte = true;
-                MapManager.quitarEnemigo(this);
+                AdministradorMapa.quitarEnemigo(this);
             }
 
             if (Math.abs(abner.getX() - sprite.getX()) <= 700 && Math.abs(abner.getX() - sprite.getX()) > 600 && lanzado == false) {
@@ -1795,7 +1792,7 @@ public abstract class Enemigo {
             }
 
             if (timerA > 1) {
-                MapManager.quitarEnemigo(this);
+                AdministradorMapa.quitarEnemigo(this);
             }
 
             if (estado == Estado.ATAQUE) {
@@ -1933,7 +1930,7 @@ public abstract class Enemigo {
 
             if (vida <= 0) {
                 //muerte = true;
-                MapManager.quitarEnemigo(this);
+                AdministradorMapa.quitarEnemigo(this);
             }
 
 
@@ -1968,8 +1965,8 @@ public abstract class Enemigo {
             }
 
             if (timerA > 1) {
-                //MapManager.invocarLluviaDeGnomos(abner,mapa);
-                MapManager.quitarEnemigo(this);
+                //AdministradorMapa.invocarLluviaDeGnomos(abner,mapa);
+                AdministradorMapa.quitarEnemigo(this);
 
             }
 
@@ -2114,7 +2111,7 @@ public abstract class Enemigo {
 
                 muerte = true;
                 ///sprite.setPosition(20000,20000);
-                MapManager.quitarEnemigo(this);
+                AdministradorMapa.quitarEnemigo(this);
             }
 
             if (abner.getX() > sprite.getX() && Math.abs(abner.getX() - sprite.getX()) > 400) {
@@ -2433,7 +2430,7 @@ public abstract class Enemigo {
                     sprite.setTexture(ataque);
                     contador++;
                     if (contador % 120 == 0)
-                        MapManager.invocarLluviaDeGnomos(abner, mapa);
+                        AdministradorMapa.invocarLluviaDeGnomos(abner, mapa);
                     if (contador % 600 == 0) {
                         bandera = false;
                         estado = Estado.NEUTRAL;
@@ -2711,7 +2708,7 @@ public abstract class Enemigo {
             }
 
             if(vida<=0) {
-                MapManager.quitarEnemigo(this);
+                AdministradorMapa.quitarEnemigo(this);
                 xInicial = sprite.getX()+sprite.getWidth()/2;
                 yInicial = sprite.getY();
                 muerte = true;
@@ -2920,7 +2917,7 @@ public abstract class Enemigo {
             }
 
             if(vida<=0) {
-                MapManager.quitarEnemigo(this);
+                AdministradorMapa.quitarEnemigo(this);
                 xInicial = sprite.getX()+sprite.getWidth()/2;
                 yInicial = sprite.getY();
                 muerte = true;
@@ -3095,7 +3092,7 @@ public abstract class Enemigo {
                 case CAJAMOVIL:
                     timer += Gdx.graphics.getDeltaTime();
                     sprite.setTexture(cajaMovil.getKeyFrame(timer).getTexture());
-                    if (!sonidoCaja.isPlaying()) {
+                    if (!sonidoCaja.isPlaying()&&LightsGone.musica) {
                         sonidoCaja.play();
                     }
                     if (timer >= 5) {
@@ -3114,14 +3111,15 @@ public abstract class Enemigo {
                     break;
                 case NEUTRALPAYASO:
                     timer += Gdx.graphics.getDeltaTime();
-                    if (!risaPayaso.isPlaying()) {
+                    if (!risaPayaso.isPlaying()&&LightsGone.musica) {
                         risaPayaso.play();
                     }
                     if (timer >= 4) {
                         estadoCaja = EstadoCaja.CAJAATAQUE;
                         timer = 0;
                         risaPayaso.stop();
-                        explosion.play();
+                        if(LightsGone.musica)
+                            explosion.play();
                     }
                     break;
                 case CAJAATAQUE:
@@ -3426,7 +3424,7 @@ public abstract class Enemigo {
             }
 
             if (vida <= 0) {
-                MapManager.quitarEnemigo(this);
+                AdministradorMapa.quitarEnemigo(this);
             }
         }
 
@@ -3861,7 +3859,7 @@ public abstract class Enemigo {
                 timerA += Gdx.graphics.getDeltaTime();
                 sprite.setTexture(muerte.getKeyFrame(timerA).getTexture());
                 if (timer >= 1.5)
-                    MapManager.quitarEnemigo(this);
+                    AdministradorMapa.quitarEnemigo(this);
             }
 
 
@@ -3909,7 +3907,7 @@ public abstract class Enemigo {
         }
     }
 
-    static class OndaCoco extends Enemigo {
+    static class OndaCoco extends Enemigo{
 
         private static Texture ondaGrande;
         private Abner abner;
@@ -4079,7 +4077,7 @@ public abstract class Enemigo {
             vida = 3;
             posXOriginal = sprite.getX();
             vida = 1;
-            MapManager.crearArana(this);
+            AdministradorMapa.crearArana(this);
 
         }
 
@@ -4115,7 +4113,7 @@ public abstract class Enemigo {
         public void draw(SpriteBatch batch) {
             sprite.draw(batch);
             /*if(primera) {
-                MapManager.crearArana(this);
+                AdministradorMapa.crearArana(this);
             }*/
             actualizar();
 
@@ -4165,7 +4163,7 @@ public abstract class Enemigo {
                 timer += Gdx.graphics.getDeltaTime();
                 sprite.setTexture(destruccion.getKeyFrame(timer).getTexture());
                 if (timer >= .5)
-                    MapManager.quitarEnemigo(this);
+                    AdministradorMapa.quitarEnemigo(this);
             }
 
 
@@ -4292,8 +4290,8 @@ public abstract class Enemigo {
 
 
             if (vida <= 0) {
-                //MapManager.crearNuevaMosca(xInicial,yInicial,this);
-                //MapManager.quitarEnemigo(this);
+                //AdministradorMapa.crearNuevaMosca(xInicial,yInicial,this);
+                //AdministradorMapa.quitarEnemigo(this);
             }
 
 
@@ -4387,7 +4385,7 @@ public abstract class Enemigo {
             sprite.draw(batch);
             actualizar();
             if(sprite.getY()<0){
-                MapManager.quitarEnemigo(this);
+                AdministradorMapa.quitarEnemigo(this);
             }
             attack();
         }
@@ -4688,7 +4686,7 @@ public abstract class Enemigo {
 
         public Cocos(float x, Mapa mapa, Abner abner){
             super(coco, x, mapa.getHeight());
-            sprite.setY(new Random().nextInt(LightsGone.ANCHO_MUNDO/2)+mapa.getHeight());
+            sprite.setY(new Random().nextInt(LightsGone.ANCHO_MUNDO/2)+(3*mapa.getHeight()/4));
             this.abner = abner;
         }
 
@@ -4743,7 +4741,7 @@ public abstract class Enemigo {
         private FaseCoco faseCoco;
         private Ataque ataque;
         private float timer, vida, timerC, timerD, timerItem, timerG;
-        private final float VELOCIDAD = 8, CAIDA = 18, SALTO = 8, SALTOMAX = 400;
+        private final float VELOCIDAD = 8, CAIDA = 18, SALTO = 11, SALTOMAX = 400;
         private float alturaMax;
         private boolean right, garraB;
         private Mapa mapa;
@@ -4819,7 +4817,7 @@ public abstract class Enemigo {
         }
 
         public Rectangle getRectangle(){
-            return new Rectangle(sprite.getX()+170,sprite.getY()+10, 133, 433);
+            return new Rectangle(sprite.getX()+170,sprite.getY()+100, 133, 433);
         }
 
         @Override
@@ -4924,6 +4922,7 @@ public abstract class Enemigo {
                 if(timerG>=garra.getTime()){
                     garraB = false;
                     garra.reiniciar();
+                    timerG = 0;
                 }
             }
 
@@ -4981,7 +4980,7 @@ public abstract class Enemigo {
             switch (estadoCoco){
                 case NEUTRAL:
                     for(Proyectil proyectil: abner.getProyectiles()){
-                        if((Math.abs(proyectil.getRectangle().getX()-sprite.getX())<800&&right)||(Math.abs(proyectil.getRectangle().getX()-sprite.getX())<800-ANCHO&&!right)){
+                        if((Math.abs(proyectil.getRectangle().getX()-sprite.getX())<1200&&right)||(Math.abs(proyectil.getRectangle().getX()-sprite.getX())<1200-ANCHO&&!right)){
                             estadoCoco = EstadoCoco.SALTANDO;
                             salto = Abner.Salto.SUBIENDO;
                             estadoTemp = EstadoCoco.NEUTRAL;

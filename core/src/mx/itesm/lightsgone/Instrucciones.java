@@ -19,7 +19,7 @@ import com.badlogic.gdx.utils.viewport.Viewport;
 /**
  * Created by allanruiz on 08/09/16.
  */
-public class Instructions implements Screen {
+public class Instrucciones implements Screen {
     private final Juego juego;
     private Stage escena;
     private OrthographicCamera camara;
@@ -30,7 +30,7 @@ public class Instructions implements Screen {
     private Texture regresar;
     private ImageButton btnRegresar;
 
-    public Instructions(Juego juego) {
+    public Instrucciones(Juego juego) {
         this.juego = juego;
     }
 

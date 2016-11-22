@@ -372,6 +372,7 @@ public abstract class Cinematica {
         private Escena escena;
         private int imagenActual;
         private Array<Texture> creditos;
+        private Music musicFinal;
 
         {
             super.cargarTexturas();
@@ -393,6 +394,7 @@ public abstract class Cinematica {
             manager.load("CinematicaFinal12.png", Texture.class);
             manager.load("CinematicaFinal13.png", Texture.class);
             manager.load("CocoMuerteFondo.png", Texture.class);
+            manager.load("final.mp3", Music.class);
             manager.finishLoading();
             transicionFundido.setTexture((Texture)manager.get("CocoMuerteFondo.png"));
             final1 = manager.get("CinematicaFinal1.png", Texture.class);
@@ -415,6 +417,8 @@ public abstract class Cinematica {
             creditos.add(allan);
             creditos.add(rafa);
             creditos.add(fin);
+            musicFinal = manager.get("final.mp3");
+            musicFinal.setLooping(true);
 
         }
 
@@ -429,7 +433,7 @@ public abstract class Cinematica {
         public void start(SpriteBatch batch){
             switch (transicion){
                 case AUMENTANDO:
-                    alpha+=velocidadTransicion/4;
+                    alpha+=velocidadTransicion/2;
                     if(alpha>=1){
                         alpha=1;
                         transicion = LightsGone.Transicion.DISMINUYENDO;
@@ -441,6 +445,7 @@ public abstract class Cinematica {
                     if(alpha<=0){
                         alpha = 0;
                         escena = Escena.INICIO;
+                        musicFinal.play();
                     }
             }
             transicionFundido.setAlpha(alpha);
@@ -496,6 +501,7 @@ public abstract class Cinematica {
                     }
                     break;
                 case LIGHTSGONE:
+                    sprite.draw(batch);
                     alpha+=Gdx.graphics.getDeltaTime();
                     if(alpha>=1){
                         alpha =1;
@@ -505,7 +511,6 @@ public abstract class Cinematica {
                             escena = Escena.CREDITOS;
                         }
                     }
-                    sprite.draw(batch);
                     transicionFundido.setAlpha(alpha);
                     transicionFundido.draw(batch);
                     break;
@@ -515,6 +520,7 @@ public abstract class Cinematica {
                     if(timer>=4){
                         if(imagenActual==creditos.size-1){
                             finished = true;
+                            musicFinal.stop();
                         }
                         else{
                             imagenActual++;

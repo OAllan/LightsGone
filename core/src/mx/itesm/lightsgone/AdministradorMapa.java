@@ -12,7 +12,7 @@ import java.util.Random;
  * Created by allanruiz on 07/11/16.
  */
 
-public class MapManager {
+public class AdministradorMapa {
     private OrthographicCamera camara;
     private SpriteBatch batch;
     private final float[] cuartoAbnerX ={530, 2295, 530}, pasilloX = {270, 4140,2160}, salaX = {450, 450,2280,2280}, cocina1X = {315,1305}, cocina2X = {5895,5895}, cocina3X = {630}, jardin1X = {1395, 20745,2170}, jardin2X ={540,18360}, jardin3X = {7740,400}, armario1X = {12510, 315},
@@ -30,19 +30,19 @@ public class MapManager {
     private final float[][] posicionY = {cuartoAbnerY, pasilloY, salaY, cocina1Y, cocina2Y, cocina3Y, jardin1Y, jardin2Y, jardin3Y, armario1Y, armario2Y, armario3Y, armario4Y, sotano1Y, sotano2Y, sotano3Y, caminoY, atico1Y, atico2Y};
     private static Array<Enemigo> enemigos;
 
-    public MapManager(OrthographicCamera camara, SpriteBatch batch){
+    public AdministradorMapa(OrthographicCamera camara, SpriteBatch batch){
         this.camara = camara;
         this.batch = batch;
     }
 
-    public Mapa getNewMapa(String nombre, int mapaActual, Abner abner, GameInfo gameInfo){
+    public Mapa getNewMapa(String nombre, int mapaActual, Abner abner, InfoJuego gameInfo){
         Mapa mapa = new Mapa(nombre, batch, camara,numPuertas[mapaActual], right[mapaActual], posicionX[mapaActual], posicionY[mapaActual]);
         mapa.reiniciar(gameInfo);
         setExtras(mapa, mapaActual, abner);
         return mapa;
     }
 
-    public Mapa getMapa(String nombre, int mapaActual, Abner abner, GameInfo gameInfo){
+    public Mapa getMapa(String nombre, int mapaActual, Abner abner, InfoJuego gameInfo){
         Mapa mapa = new Mapa(nombre, batch, camara,numPuertas[mapaActual], right[mapaActual], posicionX[mapaActual], posicionY[mapaActual]);
         mapa.reiniciarTemp(gameInfo);
         setExtras(mapa, mapaActual, abner);

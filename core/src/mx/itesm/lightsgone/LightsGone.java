@@ -72,9 +72,9 @@ public class LightsGone implements Screen, InputProcessor{
     private Transicion transicion;
     private Estado estado;
     private EstadoPausa estadoPausa;
-    private GameInfo gameInfo;
+    private InfoJuego gameInfo;
     private float alphaGame;
-    private MapManager mapManager;
+    private AdministradorMapa mapManager;
     public static Habilidad habilidadActual;
     private Array<Sprite> vidas;
     private Arma estadoArma;
@@ -103,14 +103,14 @@ public class LightsGone implements Screen, InputProcessor{
         this.juego = juego;
         right = true;
         saveB = false;
-        gameInfo = new GameInfo();
+        gameInfo = new InfoJuego();
     }
 
     public LightsGone(Juego juego, String nombre){
         this.juego = juego;
         right = true;
         saveB = false;
-        gameInfo = new GameInfo(nombre);
+        gameInfo = new InfoJuego(nombre);
     }
 
     public static boolean getLampara() {
@@ -130,7 +130,7 @@ public class LightsGone implements Screen, InputProcessor{
 
     private void crearMapas() {
         mapas = new Array<String>(18);
-        mapManager = new MapManager(camara, batch);
+        mapManager = new AdministradorMapa(camara, batch);
         abner = new Abner(camara, null, gameInfo);
         mapas.add("CuartoAbner.tmx");
         mapas.add("Pasillo.tmx");
@@ -338,10 +338,14 @@ public class LightsGone implements Screen, InputProcessor{
         estado = abner.isDead()?Estado.MUERTE:estado;
 
         if(estado == Estado.GANO){
+            Enemigo.Coco coco = (Enemigo.Coco) enemigos.get(0);
             batch.setProjectionMatrix(camara.combined);
             mapa.draw();
+            //camara.position.set(coco.getX()-530,camara.position.y,0);
+            //camara.update();
             batch.begin();
-            abner.draw(batch, right);
+            abner.draw(batch, right, false);
+
             batch.end();
             timerG+=Gdx.graphics.getDeltaTime();
             if(timerG>=3){
@@ -675,8 +679,16 @@ public class LightsGone implements Screen, InputProcessor{
                 float vidaCoco = coco.getVida();
                 float porcentaje = vidaCoco/VIDACOCO;
                 if(vidaCoco<=0){
+                    camara.position.set(coco.getX()-530,camara.position.y,0);
+                    camara.update();
                     cinematica = new Cinematica.Final();
                     estado = Estado.GANO;
+                    abner.setEstadoHorizontal(Abner.Horizontal.DESACTIVADO);
+                    pad.getRight().setEstado(Boton.Estado.NOPRESIONADO);
+                    pad.getLeft().setEstado(Boton.Estado.NOPRESIONADO);
+                    ambiente.stop();
+                    mapa.stop();
+                    abner.stop();
                 }
                 barraCoco.setSize(anchBarra*porcentaje,barraCoco.getHeight());
 
@@ -753,7 +765,7 @@ public class LightsGone implements Screen, InputProcessor{
             batch.setProjectionMatrix(camara.combined);
             mapa.draw();
             batch.begin();
-            abner.draw(batch, right);
+            abner.draw(batch, right,true);
             for(Sprite sprite:malteadas) {
                 if(abner.getBoundingRectangle().overlaps(sprite.getBoundingRectangle())){
                     abner.setCantVida(abner.getcantVida()+10);

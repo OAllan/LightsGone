@@ -46,7 +46,7 @@ public class Abner {
     private boolean arrastrado, arrastradoPiso, puertaCerrada;
     private float movPiso;
     private int papas, clics;
-    private GameInfo gameInfo;
+    private InfoJuego gameInfo;
     private Sprite globo;
     private LightsGone.Lampara estadoLampara;
     private TextureRegion caminarTex, saltoTex, pogoTex, caminarLamparaTex, lanzapapasTex, resorteraTex, capaTex,neutral, dano, neutralLampara, neutralCapa, saltar1,saltar2,saltarLampara1,saltarLampara2,saltoCapa1, saltoCapa2, saltarPogo1, saltarPogo2,saltoCapaPogo, saltoCapaPogo1, saltoCapaPogo2;
@@ -105,7 +105,7 @@ public class Abner {
 
     }
 
-    public Abner(OrthographicCamera camara, Mapa mapa, GameInfo gameInfo){
+    public Abner(OrthographicCamera camara, Mapa mapa, InfoJuego gameInfo){
         TextureRegion[][] textureRegions = caminarTex.split(ANCHO, ALTO);
         neutral = textureRegions[0][0];
         dano = textureRegions[0][1];
@@ -172,7 +172,7 @@ public class Abner {
     }
 
 
-    public void draw(SpriteBatch batch, boolean right){
+    public void draw(SpriteBatch batch, boolean right, boolean camaraB){
         if(cantVida<=0&&vidas<=0){
             muerte =true;
         }
@@ -220,7 +220,7 @@ public class Abner {
                 globo.setPosition(getBoundingRectangle().x+100, sprite.getY()+200);
                 globo.draw(batch);
             }
-            actualizar(right);
+            actualizar(right, camaraB);
         }
         else {
             if(estadoAtaque!=Ataque.DESACTIVADO){
@@ -240,7 +240,7 @@ public class Abner {
         }
     }
 
-    private void actualizar(boolean right) {
+    private void actualizar(boolean right, boolean camaraB) {
         this.right = right;
 
         if(sprite.getY()<= 0||mapa.colisionMuerte(sprite.getX(),sprite.getY())) {
@@ -614,11 +614,11 @@ public class Abner {
             estadoAtaque = Ataque.DESACTIVADO;
         }
 
-        if(limiteCamara()){
+        if(limiteCamara()&&camaraB){
             camara.position.set(camara.position.x, 265 + sprite.getY(), 0);
         }
 
-        if(limiteCamaraX()){
+        if(limiteCamaraX()&&camaraB){
             camara.position.set(110+sprite.getX(),camara.position.y,0);
         }
         camara.update();
@@ -926,7 +926,7 @@ public class Abner {
 
     public float getWidth(){return sprite.getWidth();}
 
-    public void reiniciar(GameInfo gameInfo) {
+    public void reiniciar(InfoJuego gameInfo) {
         sprite.setPosition(gameInfo.getX(), gameInfo.getY());
         luz.setPosition(sprite.getX()+sprite.getWidth()- LAMPARAX,sprite.getY()- LAMPARAY +120);
         camara.position.set(gameInfo.getCamaraX(), gameInfo.getCamaraY(), gameInfo.getY());

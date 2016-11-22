@@ -83,7 +83,7 @@ public class MenuPrincipal implements Screen {
 		btnCargar = new ImageButton(trBtnCargar);
 		btnCargar.setPosition(ANCHO_MUNDO / 2 - 100, ALTO_MUNDO / 2 + 75);
 		escena.addActor(btnCargar);
-		//Instructions
+		//Instrucciones
 		TextureRegionDrawable trBtnSettings = new TextureRegionDrawable(new TextureRegion(instructions));
 		btnInstructions = new ImageButton(trBtnSettings);
 		btnInstructions.setPosition(ANCHO_MUNDO / 2 - 220, ALTO_MUNDO / 2 - 190);
@@ -95,7 +95,7 @@ public class MenuPrincipal implements Screen {
 			public void clicked(InputEvent event, float x, float y) {
 				if(CargarJuego.juegos()==3){
 					Random rnd = new Random();
-					GameInfo.borrarJuego("Juego"+ (rnd.nextInt(2)+1) +".txt");
+					InfoJuego.borrarJuego("Juego"+ (rnd.nextInt(2)+1) +".txt");
 				}
 				Image transicion = new Image(texTransicion);
 				escena.addActor(transicion);
@@ -128,7 +128,7 @@ public class MenuPrincipal implements Screen {
 			@Override
 			public void clicked(InputEvent event, float x, float y) {
 
-				juego.setScreen(new Instructions(juego));
+				juego.setScreen(new Instrucciones(juego));
 			}
 		});
 	}

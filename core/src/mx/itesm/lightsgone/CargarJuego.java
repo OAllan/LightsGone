@@ -11,14 +11,7 @@ import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector3;
-import com.badlogic.gdx.scenes.scene2d.InputEvent;
-import com.badlogic.gdx.scenes.scene2d.Stage;
-import com.badlogic.gdx.scenes.scene2d.ui.Image;
-import com.badlogic.gdx.scenes.scene2d.ui.ImageButton;
-import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
-import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.badlogic.gdx.utils.viewport.StretchViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 
@@ -37,7 +30,7 @@ public class CargarJuego implements Screen, InputProcessor {
     private Texture texFondo, regresar, juego1Tex, juego2Tex, empty, transicion;
     private Texto nombre;
     private String nombre1, nombre2;
-    private GameInfo gameInfo;
+    private InfoJuego gameInfo;
     private Boton btnRegresar, juego1, juego2;
     private SpriteBatch batch;
     private Sprite fondo;
@@ -69,11 +62,11 @@ public class CargarJuego implements Screen, InputProcessor {
         juego2 = new Boton(numeroJuegos!=2&&numeroJuegos!=3?empty:juego2Tex, 693, 216, false);
         nombre = new Texto("font.fnt", 0,0);
         if(numeroJuegos==1||numeroJuegos==3){
-            gameInfo = new GameInfo("Juego1.txt");
+            gameInfo = new InfoJuego("Juego1.txt");
             nombre1 = getNombre(gameInfo.getMapa());
         }
         if(numeroJuegos==2||numeroJuegos ==3){
-            gameInfo = new GameInfo("Juego2.txt");
+            gameInfo = new InfoJuego("Juego2.txt");
             nombre2 = getNombre(gameInfo.getMapa());
         }
 
@@ -237,11 +230,15 @@ public class CargarJuego implements Screen, InputProcessor {
             juego.setScreen(new MenuPrincipal(juego));
         }
         if(juego1.contiene(x,y) && (numeroJuegos==1||numeroJuegos==3)){
+            Juego.audio.stop();
+            Juego.audio.dispose();
             fondo.setTexture(transicion);
             juegoUno = true;
             transicionB = true;
         }
         if(juego2.contiene(x,y) && (numeroJuegos==2||numeroJuegos==3)){
+            Juego.audio.stop();
+            Juego.audio.dispose();
             fondo.setTexture(transicion);
             juegoUno = false;
             transicionB = true;

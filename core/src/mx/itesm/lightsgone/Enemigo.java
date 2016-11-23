@@ -4803,7 +4803,7 @@ public abstract class Enemigo {
             estadoCoco = EstadoCoco.NEUTRAL;
             faseCoco = FaseCoco.TERCERA;
             ataque = Ataque.ONDA;
-            vida = 1;
+            vida = 12;
             right = true;
             timer = 2;
             this.mapa = mapa;

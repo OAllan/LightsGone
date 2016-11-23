@@ -379,6 +379,32 @@ public class Mapa {
             layers.get("PuertaCerrada").setVisible(false);
         }
 
+        if(layers.get("VidaExtra")!=null){
+            switch (LightsGone.mapaActual){
+                case 3:
+                    if(gameInfo.isVida1()){
+                        layers.get("VidaExtra").setVisible(false);
+                    }
+                    break;
+                case 7:
+                    if(gameInfo.isVida2()){
+                        layers.get("VidaExtra").setVisible(false);
+                    }
+                    break;
+                case 11:
+                    if(gameInfo.isVida3()){
+                        layers.get("VidaExtra").setVisible(false);
+                    }
+                    break;
+                case 14:
+                    if(gameInfo.isVida4()){
+                        layers.get("VidaExtra").setVisible(false);
+                    }
+                    break;
+
+            }
+        }
+
     }
 
     public void reiniciarTemp(InfoJuego gameInfo) {
@@ -402,6 +428,32 @@ public class Mapa {
         }
         if(gameInfo.isArmarioTemp()&&layers.get("PuertaCerrada")!=null){
             layers.get("PuertaCerrada").setVisible(false);
+        }
+
+        if(layers.get("VidaExtra")!=null) {
+            switch (LightsGone.mapaActual) {
+                case 3:
+                    if (gameInfo.isVida1()) {
+                        layers.get("VidaExtra").setVisible(false);
+                    }
+                    break;
+                case 7:
+                    if (gameInfo.isVida2()) {
+                        layers.get("VidaExtra").setVisible(false);
+                    }
+                    break;
+                case 11:
+                    if (gameInfo.isVida3()) {
+                        layers.get("VidaExtra").setVisible(false);
+                    }
+                    break;
+                case 14:
+                    if (gameInfo.isVida4()) {
+                        layers.get("VidaExtra").setVisible(false);
+                    }
+                    break;
+
+            }
         }
 
     }

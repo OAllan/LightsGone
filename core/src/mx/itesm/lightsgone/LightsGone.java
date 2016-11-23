@@ -90,6 +90,7 @@ public class LightsGone implements Screen, InputProcessor{
     private Cinematica cinematica;
     private int contador = 1;
     private float anchBarra;
+    private Music lampara;
 
 
     Array<Enemigo> enemigos;
@@ -187,6 +188,7 @@ public class LightsGone implements Screen, InputProcessor{
         flechasArma.setPosition(botonArma.getX() + ANCHOBOTON-flechasArma.getWidth()-10, botonArma.getY()+ALTOBOTON-flechasArma.getHeight()-8);
         pausa = new Boton(texPausa, ANCHO_MUNDO- texPausa.getWidth(), ALTO_MUNDO - texPausa.getHeight(), false);
         imgVida = new Sprite(botonVida);
+        Gdx.input.setCatchBackKey(true);
         malteadas = new Array<Sprite>();
         papas = new Array<Sprite>();
         imgVida.setPosition(0, 780 - imgVida.getHeight());
@@ -281,6 +283,7 @@ public class LightsGone implements Screen, InputProcessor{
         assetManager.load("leche.mp3", Music.class);
         assetManager.load("recargar papas.mp3", Music.class);
         assetManager.load("Sonidos.mp3", Music.class);
+        assetManager.load("lamparita.mp3", Music.class);
         assetManager.finishLoading();
         botonSalto = assetManager.get("BotonSalto.png");
         JFondo = assetManager.get("JoystickBoton.png");
@@ -324,6 +327,7 @@ public class LightsGone implements Screen, InputProcessor{
         capa75 = assetManager.get("BotonHabCapa75.png");
         sonidos = assetManager.get("Sonidos.mp3");
         sonidos.setVolume(0.5f);
+        lampara = assetManager.get("lamparita.mp3");
     }
 
     @Override
@@ -611,6 +615,7 @@ public class LightsGone implements Screen, InputProcessor{
             if(botonHabilidad.isPressed()){
                 switch (habilidadActual){
                     case LAMPARA:
+                        lampara.play();
                         switch (estadoLampara){
                             case ENCENDIDA: case ENCENDIDALUZ:
                                 estadoLampara = Lampara.APAGADA;
@@ -1031,7 +1036,24 @@ public class LightsGone implements Screen, InputProcessor{
 
     @Override
     public boolean keyDown(int keycode) {
-        return false;
+        if(keycode == Input.Keys.BACK){
+            if(estado==Estado.JUGANDO||estado == Estado.CAMBIO){
+                estado = Estado.PAUSA;
+                estadoPausa = EstadoPausa.QUIT;
+                abner.setEstadoHorizontal(Abner.Horizontal.DESACTIVADO);
+                pad.getLeft().setEstado(Boton.Estado.NOPRESIONADO);
+                pad.getRight().setEstado(Boton.Estado.NOPRESIONADO);
+            }
+            else if(estado == Estado.PAUSA){
+                if(estadoPausa == EstadoPausa.PRINCIPAL){
+                    estado = Estado.JUGANDO;
+                }
+                else if(estadoPausa==EstadoPausa.QUIT||estadoPausa == EstadoPausa.OPCIONES){
+                    estadoPausa = EstadoPausa.PRINCIPAL;
+                }
+            }
+        }
+        return true;
     }
 
     @Override

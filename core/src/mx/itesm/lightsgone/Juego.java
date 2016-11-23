@@ -10,6 +10,6 @@ public class Juego extends Game {
     public static Music audio;
     @Override
     public void create() {
-        setScreen(new MenuPrincipal(this));
+        setScreen(new Splash(this));
     }
 }

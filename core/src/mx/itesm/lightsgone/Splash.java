@@ -51,11 +51,13 @@ public class Splash implements Screen{
         assetManager.load("splash 1.png", Texture.class);
         assetManager.load("nivel.png", Texture.class);
         assetManager.load("SplashLG.png",Texture.class);
+        assetManager.load("lamparita.mp3", Music.class);
         assetManager.finishLoading();
         tec = new Sprite(assetManager.get("splash 1.png", Texture.class));
         lights = new Sprite(assetManager.get("nivel.png", Texture.class));
         lights.setSize(LightsGone.ANCHO_MUNDO, LightsGone.ALTO_MUNDO);
         lg = assetManager.get("SplashLG.png");
+        lampara = assetManager.get("lamparita.mp3");
     }
 
     @Override
@@ -78,6 +80,7 @@ public class Splash implements Screen{
                 if(timer>=1){
                     estadoSplash = Estado.LIGHTSGONE;
                     timer =0;
+                    lampara.play();
                 }
                 lights.draw(batch);
                 break;
@@ -87,6 +90,7 @@ public class Splash implements Screen{
                 if(timer>=2.5){
                     timer=0;
                     juego.setScreen(new MenuPrincipal(juego));
+                    assetManager.dispose();
                 }
                 lights.draw(batch);
                 break;

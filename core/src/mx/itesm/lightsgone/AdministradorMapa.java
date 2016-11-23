@@ -4,6 +4,7 @@ package mx.itesm.lightsgone;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.utils.Array;
 
 import java.util.Random;
@@ -54,6 +55,7 @@ public class AdministradorMapa {
         switch (mapaActual){
             case 0:
                 //enemigos.add(new Enemigo.PlantaCarnivora(450,150,abner,mapa));
+                enemigos.add(new Enemigo.Sopa(900,150,abner,mapa));
 
 
                 mapa.setEnemigos(enemigos);

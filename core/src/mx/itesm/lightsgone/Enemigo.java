@@ -2984,6 +2984,8 @@ public abstract class Enemigo {
         }
     }
 
+
+
     private static class CajaPayaso extends Enemigo {
         public static final int ANCHOCAJA = 223;
         private Abner abner;

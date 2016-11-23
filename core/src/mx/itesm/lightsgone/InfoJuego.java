@@ -24,6 +24,7 @@ public class InfoJuego {
     private String nombre;
     private Calendar fecha;
     private Abner abner;
+    private String fechaS;
     private boolean mensaje;
     private Sprite guardado;
     private AssetManager manager;
@@ -51,6 +52,41 @@ public class InfoJuego {
         nombre = juego;
         timer = 0;
         cargar();
+    }
+
+    public String getFecha(){
+        String[] fecha = fechaS.split("/");
+        String mes = getMes(Integer.parseInt(fecha[1]));
+        return fecha[0] + "/"+ mes+"/"+fecha[2];
+    }
+
+    private String getMes(int i) {
+        switch (i){
+            case 0:
+                return "Jan";
+            case 1:
+                return "Feb";
+            case 2:
+                return "Mar";
+            case 3:
+                return "Apr";
+            case 4:
+                return "May";
+            case 5:
+                return "Jun";
+            case 6:
+                return "Jul";
+            case 7:
+                return "Aug";
+            case 8:
+                return "Sep";
+            case 9:
+                return "Oct";
+            case 10:
+                return "Nov";
+            default:
+                return "Dec";
+        }
     }
 
     private void cargar(){
@@ -102,6 +138,7 @@ public class InfoJuego {
             fileHandle = Gdx.files.local(juego);
             String archivo = fileHandle.readString();
             String[] lineas = archivo.split("\n");
+            fechaS = lineas[0].trim();
             mapa = Integer.parseInt(lineas[1].trim());
             x = Float.parseFloat(lineas[2].trim());
             y = Float.parseFloat(lineas[3].trim());

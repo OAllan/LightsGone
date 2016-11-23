@@ -187,6 +187,7 @@ public class LightsGone implements Screen, InputProcessor{
         flechasArma.setPosition(botonArma.getX() + ANCHOBOTON-flechasArma.getWidth()-10, botonArma.getY()+ALTOBOTON-flechasArma.getHeight()-8);
         pausa = new Boton(texPausa, ANCHO_MUNDO- texPausa.getWidth(), ALTO_MUNDO - texPausa.getHeight(), false);
         imgVida = new Sprite(botonVida);
+        Gdx.input.setCatchBackKey(true);
         malteadas = new Array<Sprite>();
         papas = new Array<Sprite>();
         imgVida.setPosition(0, 780 - imgVida.getHeight());
@@ -1031,7 +1032,24 @@ public class LightsGone implements Screen, InputProcessor{
 
     @Override
     public boolean keyDown(int keycode) {
-        return false;
+        if(keycode == Input.Keys.BACK){
+            if(estado==Estado.JUGANDO||estado == Estado.CAMBIO){
+                estado = Estado.PAUSA;
+                estadoPausa = EstadoPausa.QUIT;
+                abner.setEstadoHorizontal(Abner.Horizontal.DESACTIVADO);
+                pad.getLeft().setEstado(Boton.Estado.NOPRESIONADO);
+                pad.getRight().setEstado(Boton.Estado.NOPRESIONADO);
+            }
+            else if(estado == Estado.PAUSA){
+                if(estadoPausa == EstadoPausa.PRINCIPAL){
+                    estado = Estado.JUGANDO;
+                }
+                else if(estadoPausa==EstadoPausa.QUIT||estadoPausa == EstadoPausa.OPCIONES){
+                    estadoPausa = EstadoPausa.PRINCIPAL;
+                }
+            }
+        }
+        return true;
     }
 
     @Override

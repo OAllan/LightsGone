@@ -1,6 +1,7 @@
 package mx.itesm.lightsgone;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Input;
 import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.assets.AssetManager;
@@ -65,6 +66,7 @@ public class AcercaDe implements Screen, InputProcessor {
         estado = Estado.INICIO;
         timer = 0;
         Gdx.input.setInputProcessor(this);
+        Gdx.input.setCatchBackKey(true);
         luz.play();
     }
 
@@ -221,7 +223,10 @@ public class AcercaDe implements Screen, InputProcessor {
 
     @Override
     public boolean keyDown(int keycode) {
-        return false;
+        if(keycode == Input.Keys.BACK){
+            juego.setScreen(new MenuPrincipal(juego));
+        }
+        return true;
     }
 
     @Override

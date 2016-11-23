@@ -53,28 +53,6 @@ public class AdministradorMapa {
     public static void setExtras(Mapa mapa, int mapaActual, Abner abner) {
         enemigos = new Array<Enemigo>();
         switch (mapaActual){
-            case 0:
-                //enemigos.add(new Enemigo.PlantaCarnivora(450,150,abner,mapa));
-                enemigos.add(new Enemigo.Sopa(900,150,abner,mapa));
-
-
-                mapa.setEnemigos(enemigos);
-                break;
-
-            case 1:
-                //enemigos.add(new Enemigo.Cucarachon(1500,150,abner,mapa));
-                //enemigos.add(new Enemigo.Gnomo(2500,150,abner,mapa));
-                //mapa.setEnemigos(enemigos);
-                //enemigos.add(new Enemigo.Telarana(1500,150,abner,mapa));
-                //enemigos.add(new Enemigo.Telarana(3000,150,abner,mapa));
-                //enemigos.add(new Enemigo.Telarana(4000,150,abner,mapa));
-                //enemigos.add(new Enemigo.Fantasma(1500,675,abner,mapa));
-                //enemigos.add(new Enemigo.ParedPicos(2300,100,abner,mapa));
-               // enemigos.add(new Enemigo.Sandwich(1500,150,abner,mapa));
-
-
-                mapa.setEnemigos(enemigos);
-                break;
 
             case 3:
                 //Moscas

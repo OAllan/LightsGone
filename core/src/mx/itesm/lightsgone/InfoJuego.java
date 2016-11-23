@@ -20,6 +20,7 @@ public class InfoJuego {
     private boolean pogo, capita, lanzapapas, lampara, armario, cinematicaInicio;
     private boolean pogoTemp, capitaTemp, lanzapapasTemp, lamparaTemp, armarioTemp;
     private int mapa;
+    private boolean vida1, vida2, vida3, vida4;
     private float x, y, camaraX, camaraY, timer, alpha;
     private String nombre;
     private Calendar fecha;
@@ -152,6 +153,10 @@ public class InfoJuego {
             lampara = lamparaTemp = Boolean.parseBoolean(lineas[11].trim());
             armario = armarioTemp = Boolean.parseBoolean(lineas[12].trim());
             cinematicaInicio = Boolean.parseBoolean(lineas[13].trim());
+            vida1 = Boolean.parseBoolean(lineas[14].trim());
+            vida2 = Boolean.parseBoolean(lineas[15].trim());
+            vida3 = Boolean.parseBoolean(lineas[16].trim());
+            vida4 = Boolean.parseBoolean(lineas[17].trim());
 
         }
         catch (Exception e){
@@ -179,6 +184,10 @@ public class InfoJuego {
             save.writeString(lampara + "\n",true);
             save.writeString(armario+"\n", true);
             save.writeString(cinematicaInicio+"\n", true);
+            save.writeString(vida1+"\n", true);
+            save.writeString(vida2+"\n", true);
+            save.writeString(vida3+"\n", true);
+            save.writeString(vida4+"\n", true);
 
         }
         catch (Exception e){
@@ -329,5 +338,25 @@ public class InfoJuego {
         pogoTemp = abner.getPogo();
         lanzapapasTemp = abner.getLanzapapas();
         armarioTemp = abner.getArmario();
+        vida1 = abner.getVida1();
+        vida2 = abner.getVida2();
+        vida3 = abner.getVida3();
+        vida4 = abner.getVida4();
+    }
+
+    public boolean isVida1(){
+        return vida1;
+    }
+
+    public boolean isVida2(){
+        return vida2;
+    }
+
+    public boolean isVida3(){
+        return vida3;
+    }
+
+    public boolean isVida4(){
+        return vida4;
     }
 }

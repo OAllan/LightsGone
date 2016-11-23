@@ -54,6 +54,10 @@ public class Abner {
     private boolean right, atrapado, cayendo;
     private Music puerta, pasos, lanzapapa, leche;
     private boolean armario;
+    private boolean vida1;
+    private boolean vida2;
+    private boolean vida3;
+    private boolean vida4;
 
     {
         assetManager = new AssetManager();
@@ -331,6 +335,24 @@ public class Abner {
             leche.play();
             if(vidas<3)
                 vidas++;
+            switch (LightsGone.mapaActual){
+                case 3:
+                    vida1 = true;
+                    gameInfo.actualizarDatosTemp();
+                    break;
+                case 7:
+                    vida2 = true;
+                    gameInfo.actualizarDatosTemp();
+                    break;
+                case 11:
+                    vida3 = true;
+                    gameInfo.actualizarDatosTemp();
+                    break;
+                case 14:
+                    vida4 = true;
+                    gameInfo.actualizarDatosTemp();
+                    break;
+            }
         }
 
         if(mapa.colisionItem(sprite.getX()+sprite.getWidth(), sprite.getY(), "Malteada")){
@@ -1035,6 +1057,22 @@ public class Abner {
             pasos.stop();
         }
 
+    }
+
+    public boolean getVida1() {
+        return vida1;
+    }
+
+    public boolean getVida2() {
+        return vida2;
+    }
+
+    public boolean getVida3() {
+        return vida3;
+    }
+
+    public boolean getVida4() {
+        return vida4;
     }
 
     public enum Salto{

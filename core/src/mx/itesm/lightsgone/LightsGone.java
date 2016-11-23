@@ -91,6 +91,7 @@ public class LightsGone implements Screen, InputProcessor{
     private int contador = 1;
     private float anchBarra;
     private Music lampara;
+    private boolean sonidoInicial;
 
 
     Array<Enemigo> enemigos;
@@ -198,10 +199,7 @@ public class LightsGone implements Screen, InputProcessor{
         municionTex = new Texto("font.fnt", imgMunicion.getX(), MUNICIONY+60);
         transicionNivel = new Sprite(transicionNeutral);
         estadoLampara = Lampara.APAGADA;
-        if(gameInfo.isLampara())
-            habilidadActual = Habilidad.LAMPARA;
-        else
-            habilidadActual = Habilidad.VACIA;
+        habilidadActual = Habilidad.VACIA;
         saltoActual = Salto.NORMAL;
         transicionNivel.setSize(LightsGone.ANCHO_MUNDO, LightsGone.ALTO_MUNDO);
         enemigos = mapa.getEnemigos();
@@ -335,9 +333,9 @@ public class LightsGone implements Screen, InputProcessor{
         Gdx.gl.glClearColor(1, 1, 1, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
-        if(abner.getLampara()&&habilidadActual == Habilidad.VACIA)
+        if(abner.getLampara()&&habilidadActual == Habilidad.VACIA) {
             habilidadActual = Habilidad.LAMPARA;
-
+        }
 
         estado = abner.isDead()?Estado.MUERTE:estado;
 
@@ -496,9 +494,10 @@ public class LightsGone implements Screen, InputProcessor{
             if(musica){
                 switch(mapaActual){
                     case 0:
-                        if(!cinematicaInicio&&!sonidos.isPlaying()){
+                        if(!cinematicaInicio&&!sonidos.isPlaying()&&!sonidoInicial){
                             sonidos.play();
                             ambiente.stop();
+                            sonidoInicial = true;
                         }
                         else if(cinematicaInicio&&!ambiente.isPlaying()){
                             ambiente.play();
@@ -1124,8 +1123,7 @@ public class LightsGone implements Screen, InputProcessor{
                         estadoPausa = EstadoPausa.PRINCIPAL;
                     if(botonYes.contiene(x,y)){
                         juego.setScreen(new MenuPrincipal(juego));
-                        ambiente.stop();
-                        mapa.stop();
+                        stop();
                     }
                     break;
                 case OPCIONES:

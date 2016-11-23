@@ -1,6 +1,7 @@
 package mx.itesm.lightsgone;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Input;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.audio.Music;
@@ -53,6 +54,7 @@ public class MenuPrincipal implements Screen {
 		//Creando escena
 		escena = new Stage();
 		Gdx.input.setInputProcessor(escena);
+		Gdx.input.setCatchBackKey(true);
 		//Creando camara
 		camara = new OrthographicCamera(ANCHO_MUNDO, ALTO_MUNDO);
 		camara.position.set(ANCHO_MUNDO / 2, ALTO_MUNDO / 2, 0);
@@ -139,6 +141,9 @@ public class MenuPrincipal implements Screen {
 		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 		escena.setViewport(vista);
 		escena.draw();
+		if(Gdx.input.isKeyJustPressed(Input.Keys.BACK)){
+			Gdx.app.exit();
+		}
 	}
 
 	@Override

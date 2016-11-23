@@ -2,6 +2,7 @@ package mx.itesm.lightsgone;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.assets.AssetManager;
+import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.Sprite;
@@ -23,6 +24,7 @@ public class Caja {
     private boolean romper;
     private float timer;
     private boolean rota;
+    private static Music explosion;
 
     private static Array<TextureRegion> textureRegions;
 
@@ -46,6 +48,7 @@ public class Caja {
         manager.load("cexplotando4.png", Texture.class);
         manager.load("cexplotando5.png", Texture.class);
         manager.load("cexplotando6.png", Texture.class);
+        manager.load("Wood Explosion1.mp3", Music.class);
         manager.finishLoading();
         neutral = manager.get("caja1.png");
         textureRegions = new Array<TextureRegion>();
@@ -55,6 +58,7 @@ public class Caja {
         textureRegions.add(new TextureRegion((Texture)manager.get("cexplotando4.png")));
         textureRegions.add(new TextureRegion((Texture)manager.get("cexplotando5.png")));
         textureRegions.add(new TextureRegion((Texture)manager.get("cexplotando6.png")));
+        explosion = manager.get("Wood Explosion1.mp3");
     }
 
     public Caja(float x, float y){
@@ -87,11 +91,20 @@ public class Caja {
 
     private void actualizar() {
         if(romper){
+            if(!explosion.isPlaying()&&LightsGone.musica){
+                explosion.play();
+            }
             timer += Gdx.graphics.getDeltaTime();
             sprite.setTexture(rompiendo.getKeyFrame(timer).getTexture());
             if(timer>=rompiendo.getAnimationDuration()){
                 rota = true;
             }
+        }
+    }
+
+    public void stop(){
+        if(explosion.isPlaying()){
+            explosion.stop();
         }
     }
 }

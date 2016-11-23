@@ -12,6 +12,7 @@ import com.badlogic.gdx.math.Rectangle;
 public class CajaMovil {
     private static AssetManager manager;
     private static Texture cajaTex;
+    private final boolean zonaMuerte;
     private Sprite caja;
     private Mapa mapa;
 
@@ -26,10 +27,11 @@ public class CajaMovil {
         cajaTex = manager.get("CajaMovilDer.png");
     }
 
-    public CajaMovil(float x, float y, Mapa mapa){
+    public CajaMovil(float x, float y, Mapa mapa, boolean zonaMuerte){
         this.caja = new Sprite(cajaTex);
         this.caja.setPosition(x,y);
         this.mapa = mapa;
+        this.zonaMuerte = zonaMuerte;
     }
 
     public void draw(SpriteBatch batch){
@@ -47,7 +49,7 @@ public class CajaMovil {
                 }
             }
         }
-        if(!mapa.colisionCaja(caja.getX()+caja.getWidth()/2, caja.getY(), false,index)){
+        if(!mapa.colisionCaja(caja.getX()+caja.getWidth()/2, caja.getY(), false,index, zonaMuerte)){
             caer();
         }
     }

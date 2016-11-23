@@ -153,7 +153,7 @@ public class AdministradorMapa {
                 break;
             case 6:
                 //Jardin 1
-                mapa.setCajas(new CajaMovil(14850, 1700, mapa));
+                mapa.setCajas(new CajaMovil(14850, 1700, mapa, true));
                 enemigos.add(new Enemigo.Scarecrow(2745,1300,abner,mapa));
                 enemigos.add(new Enemigo.ProyectilHongo(5865,1370,abner,mapa));
                 enemigos.add(new Enemigo.Hongo(5805,1300,abner,mapa));
@@ -171,7 +171,7 @@ public class AdministradorMapa {
                 break;
             case 7:
                 //Jardin 2
-                mapa.setCajas(new CajaMovil(13815, 315, mapa));
+                mapa.setCajas(new CajaMovil(13815, 315, mapa, true));
                 enemigos.add(new Enemigo.Cucarachon(90,315,abner,mapa));
                 enemigos.add(new Enemigo.EspinasD(5670,540,abner,mapa));
                 enemigos.add(new Enemigo.EspinasD(6840,540,abner,mapa));
@@ -206,7 +206,7 @@ public class AdministradorMapa {
                 enemigos.add(new Enemigo.MonstruoRopa(10215,270,abner));
                 enemigos.add(new Enemigo.MonstruoRopa(990,540,abner));
                 mapa.setEnemigos(enemigos);
-                mapa.setCajas(new CajaMovil(8055,270,mapa), new CajaMovil(8055, 400, mapa));
+                mapa.setCajas(new CajaMovil(8055,270,mapa, false), new CajaMovil(8055, 400, mapa, false));
                 mapa.setCajasFijas(new Caja(6200, 270), new Caja(6200, 270 + 164), new Caja(5795, 270),new Caja(5795, 270+164));
                 break;
             case 10:
@@ -231,7 +231,7 @@ public class AdministradorMapa {
                 enemigos.add(new Enemigo.Oso(7965,945, abner, mapa));
                 mapa.setEnemigos(enemigos);
                 mapa.setCajasFijas(new Caja(6920,900), new Caja(6920, 900+164), new Caja(7190, 900), new Caja(7190, 900+164), new Caja(4050,190), new Caja(4050,190+164));
-                mapa.setCajas(new CajaMovil(4100, 190+164*2,mapa));
+                mapa.setCajas(new CajaMovil(4100, 190+164*2,mapa, false));
                 break;
             case 13:
                 //Sotano 1

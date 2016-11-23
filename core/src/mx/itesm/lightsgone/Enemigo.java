@@ -3162,7 +3162,7 @@ public abstract class Enemigo {
                         }
                     }
                 }
-                if (!mapa.colisionCaja(sprite.getX() + sprite.getWidth() / 2, sprite.getY(), true, -1)) {
+                if (!mapa.colisionCaja(sprite.getX() + sprite.getWidth() / 2, sprite.getY(), true, -1, false)) {
                     caer();
                 }
             }

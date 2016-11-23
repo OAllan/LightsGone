@@ -240,6 +240,7 @@ public class Abner {
                 luz.setTexture(oscuridad);
                 mapa.drawDetallefondo();
             }
+            stop();
 
         }
     }

@@ -493,7 +493,7 @@ public class Mapa {
         }
     }
 
-    public boolean colisionCaja(float x, float y, boolean enem, int index) {
+    public boolean colisionCaja(float x, float y, boolean enem, int index, boolean zonaMuerte) {
         if(enemigos!=null&&!enem){
             for(Enemigo enemigo:enemigos){
                 if(enemigo.toString().equalsIgnoreCase("CajaPayaso")){
@@ -533,7 +533,7 @@ public class Mapa {
             }
         }
 
-        return colision(x,y,muerte);
+        return zonaMuerte?colision(x,y,muerte):false;
     }
 
     public boolean colisionTecho(float x, float y) {

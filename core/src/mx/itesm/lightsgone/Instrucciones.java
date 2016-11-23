@@ -82,7 +82,7 @@ public class Instrucciones implements Screen {
         escena.setViewport(vista);
         escena.draw();
         if(Gdx.input.isKeyJustPressed(Input.Keys.BACK)){
-            juego.setScreen(new MenuPrincipal(juego));
+            juego.setScreen(new MenuPrincipal(juego, false));
         }
     }
 

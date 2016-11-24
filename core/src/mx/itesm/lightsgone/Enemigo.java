@@ -2984,8 +2984,6 @@ public abstract class Enemigo {
         }
     }
 
-
-
     private static class CajaPayaso extends Enemigo {
         public static final int ANCHOCAJA = 223;
         private Abner abner;
@@ -4550,7 +4548,7 @@ public abstract class Enemigo {
         }
 
         private void actualizar() {
-            if (abner.getBoundingRectangle().overlaps(new Rectangle(sprite.getX() + 100, sprite.getY(), sprite.getWidth() - 100, sprite.getHeight()))) {
+            if (abner.getBoundingRectangle().overlaps(new Rectangle(sprite.getX()+40, sprite.getY()+66, 133, 628))) {
                 attack();
             }
             if (Math.abs(sprite.getX() - posXOriginal) < 4230) {
@@ -4803,7 +4801,7 @@ public abstract class Enemigo {
             estadoCoco = EstadoCoco.NEUTRAL;
             faseCoco = FaseCoco.TERCERA;
             ataque = Ataque.ONDA;
-            vida = 12;
+            vida = 1;
             right = true;
             timer = 2;
             this.mapa = mapa;
@@ -4917,7 +4915,7 @@ public abstract class Enemigo {
                 }
             }
 
-            if(getRectangle().overlaps(abner.getBoundingRectangle())&&!abner.getDano()&&!LightsGone.getCapa()){
+            if(getRectangle().overlaps(abner.getBoundingRectangle())&&!abner.getDano()&&!LightsGone.getCapa()&&vida>0){
                 abner.setCantVida(abner.getcantVida()-10);
                 abner.setDano(true);
             }

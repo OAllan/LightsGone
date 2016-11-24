@@ -517,14 +517,12 @@ public abstract class Cinematica {
                 case CREDITOS:
                     timer += Gdx.graphics.getDeltaTime();
                     transicionFundido.setTexture(creditos.get(imagenActual));
-                    if(timer>=4){
-                        if(imagenActual==creditos.size-1){
-                            finished = true;
-                            musicFinal.stop();
-                        }
-                        else{
-                            imagenActual++;
-                        }
+                    if(imagenActual==creditos.size-1&&timer>=7){
+                        finished = true;
+                        musicFinal.stop();
+                    }
+                    else if(imagenActual!= creditos.size-1 && timer>=4){
+                        imagenActual++;
                         timer = 0;
                     }
                     transicionFundido.draw(batch);

@@ -69,7 +69,7 @@ public class Abner {
         assetManager.load("PCapa.png",Texture.class);
         assetManager.load("PLampara.png",Texture.class);
         assetManager.load("PLanzaPapa.png",Texture.class);
-        assetManager.load("PNeutralDañoCorrer.png",Texture.class);
+        assetManager.load("PNeutralDanioCorrer.png",Texture.class);
         assetManager.load("PPogo.png",Texture.class);
         assetManager.load("PResortera.png",Texture.class);
         assetManager.load("PSalto.png",Texture.class);
@@ -90,7 +90,7 @@ public class Abner {
         capaTex = new TextureRegion((Texture)assetManager.get("PCapa.png"));
         caminarLamparaTex = new TextureRegion((Texture) assetManager.get("PLampara.png"));
         lanzapapasTex = new TextureRegion((Texture)assetManager.get("PLanzaPapa.png"));
-        caminarTex = new TextureRegion((Texture)assetManager.get("PNeutralDañoCorrer.png"));
+        caminarTex = new TextureRegion((Texture)assetManager.get("PNeutralDanioCorrer.png"));
         pogoTex = new TextureRegion((Texture)assetManager.get("PPogo.png"));
         resorteraTex = new TextureRegion((Texture)assetManager.get("PResortera.png"));
         saltoTex = new TextureRegion((Texture)assetManager.get("PSalto.png"));

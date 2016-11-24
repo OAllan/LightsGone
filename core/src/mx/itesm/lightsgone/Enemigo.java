@@ -2895,7 +2895,7 @@ public abstract class Enemigo {
 
         private void actualizar() {
             if(abner.getBoundingRectangle().overlaps(getRectangle())){
-                if(ataco==false && estado== Estado.ATAQUE) {
+                if(!ataco && estado== Estado.ATAQUE) {
                     attack();
                     startTime = System.currentTimeMillis();
                 }

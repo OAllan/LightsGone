@@ -1176,6 +1176,9 @@ public class LightsGone implements Screen, InputProcessor{
         if(!gameInfo.isLanzapapas()){
             estadoArma = Arma.RESORTERA;
         }
+        if(!gameInfo.isPogo()){
+            saltoActual = Salto.NORMAL;
+        }
         botonHabilidad.setEstado(Boton.Estado.NOPRESIONADO);
         botonSaltar.setEstado(Boton.Estado.NOPRESIONADO);
         pad.getLeft().setEstado(Boton.Estado.NOPRESIONADO);

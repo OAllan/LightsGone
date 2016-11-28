@@ -184,7 +184,7 @@ public class AdministradorMapa {
                 enemigos.add(new Enemigo.GeneradorCajasPayaso(6075, 315, mapa, abner));
                 enemigos.add(new Enemigo.MonstruoRopa(4185,270,abner));
                 enemigos.add(new Enemigo.MonstruoRopa(10215,270,abner));
-                enemigos.add(new Enemigo.MonstruoRopa(990,540,abner));
+                enemigos.add(new Enemigo.MonstruoRopa(990,990,abner));
                 mapa.setEnemigos(enemigos);
                 mapa.setCajas(new CajaMovil(8055,270,mapa, false), new CajaMovil(8055, 400, mapa, false));
                 mapa.setCajasFijas(new Caja(6200, 270), new Caja(6200, 270 + 164), new Caja(5795, 270),new Caja(5795, 270+164));

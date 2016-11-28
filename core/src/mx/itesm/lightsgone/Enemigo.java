@@ -4381,7 +4381,7 @@ public abstract class Enemigo {
         }
 
         private Rectangle getRectangle(){
-            return new Rectangle(sprite.getX()+119, sprite.getY(),114,304);
+            return new Rectangle(sprite.getX()+119, sprite.getY()+150,114,100);
         }
 
         @Override

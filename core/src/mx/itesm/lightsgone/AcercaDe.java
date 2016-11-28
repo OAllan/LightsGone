@@ -223,14 +223,14 @@ public class AcercaDe implements Screen, InputProcessor {
 
     @Override
     public boolean keyDown(int keycode) {
-        if(keycode == Input.Keys.BACK){
-            juego.setScreen(new MenuPrincipal(juego));
-        }
-        return true;
+        return false;
     }
 
     @Override
     public boolean keyUp(int keycode) {
+        if(keycode == Input.Keys.BACK){
+            juego.setScreen(new MenuPrincipal(juego));
+        }
         return false;
     }
 

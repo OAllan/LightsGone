@@ -816,8 +816,14 @@ public class LightsGone implements Screen, InputProcessor{
 
             }
 
-            mapa.drawE();
-
+            if(mapaActual!=2&&mapaActual!=6&&!abner.subiendo())
+                mapa.drawE();
+            else if(mapaActual==2&&!abner.subiendo()){
+                mapa.drawE();
+            }
+            else if(mapaActual == 6&&!abner.subiendo()){
+                mapa.drawE();
+            }
 
             batch.end();
 
@@ -1153,9 +1159,7 @@ public class LightsGone implements Screen, InputProcessor{
             if(botonTry.contiene(x,y)){
                 reiniciarEscena();
                 gameover.stop();
-                estado = Estado.JUGANDO;
                 alphaGame = 0;
-                mapa.stop();
             }
         }
 
@@ -1167,6 +1171,7 @@ public class LightsGone implements Screen, InputProcessor{
         mapaActual = gameInfo.getMapa();
         alpha = 0;
         mapa.stop();
+        mapa.dispose();
         mapa = mapManager.getNewMapa(mapas.get(mapaActual),mapaActual, abner, gameInfo);
         abner.setMapa(mapa);
         enemigos = mapa.getEnemigos();
@@ -1187,6 +1192,7 @@ public class LightsGone implements Screen, InputProcessor{
         pad.getLeft().setEstado(Boton.Estado.NOPRESIONADO);
         pad.getRight().setEstado(Boton.Estado.NOPRESIONADO);
         botonArma.setEstado(Boton.Estado.NOPRESIONADO);
+        estado = Estado.JUGANDO;
     }
 
     @Override

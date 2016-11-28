@@ -952,7 +952,8 @@ public class Abner {
     public void reiniciar(InfoJuego gameInfo) {
         sprite.setPosition(gameInfo.getX(), gameInfo.getY());
         luz.setPosition(sprite.getX()+sprite.getWidth()- LAMPARAX,sprite.getY()- LAMPARAY +120);
-        camara.position.set(gameInfo.getCamaraX(), gameInfo.getCamaraY(), gameInfo.getY());
+        camara.position.set(gameInfo.getCamaraX(), gameInfo.getCamaraY(), 0);
+        camara.update();
         if(cayendo){
             cayendo = false;
         }
@@ -962,6 +963,7 @@ public class Abner {
         estadoSalto = Vertical.DESACTIVADO;
         pogo = gameInfo.isPogo();
         capita = gameInfo.isCapita();
+        lampara = gameInfo.isLampara();
         sprite.setAlpha(1);
         lanzapapas = gameInfo.isLanzapapas();
         if(muerte){
@@ -974,6 +976,7 @@ public class Abner {
         muerte = false;
         danoB = false;
         danoA = false;
+
     }
 
     public int getVidas() {
@@ -988,6 +991,9 @@ public class Abner {
         return luz;
     }
 
+    public boolean subiendo(){
+        return salto == Salto.SUBIENDO && estadoSalto != Vertical.DESACTIVADO;
+    }
 
     public Texture getEncen(){
         return encendidaOscuridad;

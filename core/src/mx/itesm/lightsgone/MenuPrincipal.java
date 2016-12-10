@@ -1,7 +1,9 @@
 package mx.itesm.lightsgone;
 
+import com.badlogic.gdx.Application;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
+import com.badlogic.gdx.Preferences;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.audio.Music;
@@ -19,7 +21,13 @@ import com.badlogic.gdx.utils.Timer;
 import com.badlogic.gdx.utils.viewport.StretchViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 
+
 import java.util.Random;
+
+import de.tomgrill.gdxdialogs.core.GDXDialogs;
+import de.tomgrill.gdxdialogs.core.GDXDialogsSystem;
+import de.tomgrill.gdxdialogs.core.dialogs.GDXButtonDialog;
+import de.tomgrill.gdxdialogs.core.listener.ButtonClickListener;
 
 public class MenuPrincipal implements Screen {
 
@@ -35,6 +43,7 @@ public class MenuPrincipal implements Screen {
 	//private Music audio;
 	private Music rugido;
 	private Texture texTransicion;
+	private GDXButtonDialog buttonDialog;
 
 
 
@@ -63,6 +72,38 @@ public class MenuPrincipal implements Screen {
 		//Agregando fondo
 		Image fondo = new Image(texFondo);
 		escena.addActor(fondo);
+		final Preferences preferences = Gdx.app.getPreferences("LightsGoneSettings");
+		Gdx.app.log("ejecuciones", preferences.getInteger("ejecuciones")+"");
+		if(preferences.getInteger("ejecuciones")==0){
+			GDXDialogs dialogs = GDXDialogsSystem.install();
+			buttonDialog = dialogs.newDialog(GDXButtonDialog.class);
+			buttonDialog.setTitle("Rate this app");
+			buttonDialog.setMessage("Do you enjoy playing Lights Gone? Please, take a minute to rate it. \nThank you for your support! :)");
+			buttonDialog.addButton("Rate now");
+			buttonDialog.addButton("Remind me later");
+			buttonDialog.addButton("No, thanks");
+			buttonDialog.setClickListener(new ButtonClickListener() {
+				@Override
+				public void click(int button) {
+					if(button == 0){
+						if(Application.ApplicationType.Android == Gdx.app.getType()){
+							Gdx.net.openURI("https://play.google.com/store/apps/details?id=mx.itesm.lightsgone");
+						}
+						else{
+							Gdx.net.openURI("https://itunes.apple.com/us/app/id1179503765");
+						}
+					}
+					else if(button==1){
+						preferences.putInteger("ejecuciones", 15);
+					}
+					else {
+						preferences.putInteger("ejecuciones", -1);
+					}
+				}
+			});
+			buttonDialog.build().show();
+		}
+
 		//Iniciando audio
 		if(flag) {
 			Juego.audio.play();
@@ -144,7 +185,10 @@ public class MenuPrincipal implements Screen {
 		if(Gdx.input.isKeyJustPressed(Input.Keys.BACK)){
 			Gdx.app.exit();
 		}
+
 	}
+
+
 
 	@Override
 	public void resize(int width, int height) {
@@ -208,4 +252,6 @@ public class MenuPrincipal implements Screen {
 			Juego.audio = assetManager.get("Sonido1.wav");
 		instructions = assetManager.get("instructions.png");
 	}
+
+
 }

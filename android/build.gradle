@@ -16,7 +16,7 @@ android {
     }
     defaultConfig {
         applicationId "mx.itesm.lightsgone"
-        minSdkVersion 8
+        minSdkVersion 9
         targetSdkVersion 23
     }
 }

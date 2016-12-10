@@ -40,6 +40,7 @@ project(":desktop") {
         compile project(":core")
         compile "com.badlogicgames.gdx:gdx-backend-lwjgl:$gdxVersion"
         compile "com.badlogicgames.gdx:gdx-platform:$gdxVersion:natives-desktop"
+        compile "de.tomgrill.gdxdialogs:gdx-dialogs-desktop:1.1.1"
     }
 }
 
@@ -56,6 +57,7 @@ project(":android") {
         natives "com.badlogicgames.gdx:gdx-platform:$gdxVersion:natives-arm64-v8a"
         natives "com.badlogicgames.gdx:gdx-platform:$gdxVersion:natives-x86"
         natives "com.badlogicgames.gdx:gdx-platform:$gdxVersion:natives-x86_64"
+        compile "de.tomgrill.gdxdialogs:gdx-dialogs-android:1.1.1"
     }
 }
 
@@ -70,6 +72,7 @@ project(":ios") {
         compile "com.mobidevelop.robovm:robovm-cocoatouch:$roboVMVersion"
         compile "com.badlogicgames.gdx:gdx-backend-robovm:$gdxVersion"
         compile "com.badlogicgames.gdx:gdx-platform:$gdxVersion:natives-ios"
+        compile "de.tomgrill.gdxdialogs:gdx-dialogs-ios:1.1.1"
     }
 }
 
@@ -79,6 +82,7 @@ project(":core") {
 
     dependencies {
         compile "com.badlogicgames.gdx:gdx:$gdxVersion"
+        compile "de.tomgrill.gdxdialogs:gdx-dialogs-core:1.1.1"
     }
 }
 

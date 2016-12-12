@@ -354,6 +354,11 @@ public class Mapa {
 
     public void dispose() {
         mapa.dispose();
+        if(enemigos!=null){
+            for(Enemigo enemigo:enemigos){
+                enemigo.dispose();
+            }
+        }
     }
 
     public void reiniciar(InfoJuego gameInfo) {

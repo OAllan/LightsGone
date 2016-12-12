@@ -27,9 +27,11 @@ public class Splash implements Screen{
     private float timer, timerC;
     private Music lampara;
     private Estado estadoSplash;
+    private String version;
 
-    public Splash(Juego juego){
+    public Splash(Juego juego, String version){
         this.juego = juego;
+        this.version = version;
     }
 
     @Override

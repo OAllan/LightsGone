@@ -82,6 +82,10 @@ public abstract class Enemigo {
         manager.dispose();
     }
 
+    public static void reiniciarManager() {
+        manager = new AssetManager();
+    }
+
     public enum Estado {
         NEUTRAL,
         ATAQUE,
@@ -102,7 +106,7 @@ public abstract class Enemigo {
         private Rectangle rec;
 
 
-        static {
+        public static void cargar() {
             cargarTexturas();
             cargarAnimacion();
         }
@@ -252,7 +256,6 @@ public abstract class Enemigo {
             manager.load("SopaLow.png", Texture.class);
             manager.load("SopaMid.png", Texture.class);
             manager.finishLoading();
-
             ataque1 = manager.get("SopaAtaque1.png");
             ataque2 = manager.get("SopaAtaque2.png");
             neutral1 = manager.get("SopaNeutral1.png");
@@ -266,7 +269,6 @@ public abstract class Enemigo {
         public String toString() {
             return "Sopa";
         }
-
 
         public Rectangle getRectangle() {
             return new Rectangle(sprite.getX() + 71, sprite.getY(), 262, 153);
@@ -285,7 +287,7 @@ public abstract class Enemigo {
         private Mapa mapa;
 
 
-        static {
+        public static void cargar() {
             cargarTexturas();
             cargarAnimacion();
         }
@@ -480,7 +482,6 @@ public abstract class Enemigo {
     }
 
     static class Tostadora extends Enemigo {
-        private SpriteBatch batch;
         private static Texture neutraltost, ataquetost1, ataquetost2, ataquetost3, pan;
         private Proyectil proy;
         private Estado estado;
@@ -489,7 +490,7 @@ public abstract class Enemigo {
         private Abner abner;
         private Mapa mapa;
 
-        static {
+        public static void cargar() {
             cargarTexturas();
             cargarAnimacion();
         }
@@ -499,7 +500,6 @@ public abstract class Enemigo {
             estado = Estado.NEUTRAL;
             timer = timerA = 0;
             this.abner = abner;
-            batch = new SpriteBatch();
             this.mapa = mapa;
 
         }
@@ -594,23 +594,18 @@ public abstract class Enemigo {
 
     static class PanTostadora extends Enemigo {
         private static Texture pan;
-        private final float velocidad = 2f;
         private Abner abner;
-        private Mapa mapa;
         private String direccion = "arriba";
         private float posicionInicial;
 
-        static {
+        public static void cargar() {
             cargarTexturas();
         }
 
         public PanTostadora(float x, float y, Abner abner, Mapa mapa) {
             super(pan, x, y);
             this.abner = abner;
-            this.mapa = mapa;
             posicionInicial = sprite.getY();
-
-
         }
 
         @Override
@@ -701,7 +696,7 @@ public abstract class Enemigo {
         private float time;
 
 
-        static {
+        public static void cargar() {
             cargarTexturas();
             cargarAnimacion();
         }
@@ -892,7 +887,7 @@ public abstract class Enemigo {
         int direccion;
 
 
-        static {
+        public static void cargar() {
             cargarTexturas();
             cargarAnimacion();
         }
@@ -919,20 +914,6 @@ public abstract class Enemigo {
             //sprite.setSize(250,400);
 
         }
-
-       /* Timer timerFuego = new Timer (2000, new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                   if(contador%2==0) {
-                       estado = Estado.NEUTRAL;
-                       contador++;
-                   }
-                    else {
-                       estado = Estado.ATAQUE;
-                       contador++;
-                   }
-            }
-        });*/
-
 
         @Override
         public void attack() {
@@ -1042,7 +1023,7 @@ public abstract class Enemigo {
         private Mapa mapa;
         private Music rodando;
 
-        static {
+        public static void cargar() {
             cargarTexturas();
         }
 
@@ -1189,7 +1170,7 @@ public abstract class Enemigo {
         private Rectangle rec;
 
 
-        static {
+        public static void cargar() {
             cargarTexturas();
             cargarAnimacion();
         }
@@ -1397,7 +1378,7 @@ public abstract class Enemigo {
         private Mapa mapa;
         private Rectangle rec;
 
-        static {
+        public static void cargar() {
             cargarTexturas();
             cargarAnimacion();
         }
@@ -1545,7 +1526,7 @@ public abstract class Enemigo {
         private boolean disparado = false;
 
 
-        static {
+        public static void cargar() {
             cargarTexturas();
         }
 
@@ -1684,7 +1665,7 @@ public abstract class Enemigo {
         private int vida = 1;
         private boolean lanzado = false;
 
-        static {
+        public static void cargar() {
             cargarTexturas();
             cargarAnimacion();
         }
@@ -1851,7 +1832,7 @@ public abstract class Enemigo {
         private int vida = 1;
         private boolean lanzado = false;
 
-        static {
+        public static void cargar() {
             cargarTexturas();
             cargarAnimacion();
         }
@@ -2024,7 +2005,7 @@ public abstract class Enemigo {
         private float time;
 
 
-        static {
+        public static void cargar() {
             cargarTexturas();
             cargarAnimacion();
         }
@@ -2204,7 +2185,7 @@ public abstract class Enemigo {
         int direccion;
 
 
-        static {
+        public static void cargar() {
             cargarTexturas();
 
         }
@@ -2354,7 +2335,7 @@ public abstract class Enemigo {
         private long contador = 0;
 
 
-        static {
+        public static void cargar() {
             cargarTexturas();
 
         }
@@ -2485,7 +2466,7 @@ public abstract class Enemigo {
         private long contador = 0;
 
 
-        static {
+        public static void cargar(){
             cargarTexturas();
 
         }
@@ -2615,7 +2596,7 @@ public abstract class Enemigo {
         private Mapa mapa;
 
 
-        static {
+        public static void cargar() {
             cargarTexturas();
             cargarAnimacion();
         }
@@ -2825,7 +2806,7 @@ public abstract class Enemigo {
         private Mapa mapa;
 
 
-        static {
+        public static void cargar() {
             cargarTexturas();
             cargarAnimacion();
         }
@@ -2995,7 +2976,7 @@ public abstract class Enemigo {
         private static Animation cajaMovil, cajaAtaque, cajaPayaso;
         private static TextureRegion[] cajaMovilTex, cajaAtaqueTex, cajaPayasoTex;
 
-        static {
+        public static void cargar() {
             cargarTexturas();
             cargarAnimaciones();
         }
@@ -3211,6 +3192,10 @@ public abstract class Enemigo {
             timer = 0;
         }
 
+        public static void cargar(){
+            CajaPayaso.cargar();
+        }
+
         @Override
         public void attack() {
             if (cajaPayaso != null)
@@ -3302,7 +3287,7 @@ public abstract class Enemigo {
         private boolean right;
         private float vida;
 
-        static {
+        public static void cargar() {
             cargarTexturas();
             cargarAnimacion();
         }
@@ -3454,7 +3439,7 @@ public abstract class Enemigo {
         private boolean right;
         private static Music mordida;
 
-        static {
+        public static void cargar() {
             cargarTexturas();
             cargarAnimaciones();
         }
@@ -3624,7 +3609,7 @@ public abstract class Enemigo {
         private float rotation;
         private static Music mordida;
 
-        static {
+        public static void cargar() {
             cargarTexturas();
         }
 
@@ -3750,7 +3735,7 @@ public abstract class Enemigo {
         private float time;
 
 
-        static {
+        public static void cargar() {
             cargarTexturas();
             cargarAnimacion();
         }
@@ -3923,7 +3908,7 @@ public abstract class Enemigo {
         private boolean right;
         private Mapa mapa;
 
-        static {
+        public static void cargar() {
             cargarTexturas();
         }
 
@@ -4058,7 +4043,7 @@ public abstract class Enemigo {
         boolean primera = true;
 
 
-        static {
+        public static void cargar() {
             cargarTexturas();
             cargarAnimacion();
 
@@ -4217,7 +4202,7 @@ public abstract class Enemigo {
         private Random rnd = new Random();
 
 
-        static {
+        public static void cargar() {
             cargarTexturas();
             cargarAnimacion();
         }
@@ -4338,7 +4323,7 @@ public abstract class Enemigo {
         private float timer, timerSalto, alturaMax;
         private final float SALTOMAX = 285;
 
-        static {
+        public static void cargar() {
             cargarTexturas();
         }
 
@@ -4495,7 +4480,7 @@ public abstract class Enemigo {
         int direccion;
 
 
-        static {
+        public static void cargar() {
             cargarTexturas();
 
         }
@@ -4597,7 +4582,7 @@ public abstract class Enemigo {
         private final Abner abner;
         private float timer;
 
-        static {
+        public static void cargar(){
             cargarTexturas();
         }
 
@@ -4678,7 +4663,7 @@ public abstract class Enemigo {
         private static Texture coco;
         private Abner abner;
 
-        static{
+        public static void cargar(){
             cargarTexturas();
         }
 
@@ -4757,9 +4742,11 @@ public abstract class Enemigo {
         private EstadoCoco estadoTemp;
         private float alpha;
 
-
-        static {
+        public static void cargar() {
             cargarTexturas();
+            OndaCoco.cargar();
+            Cocos.cargar();
+            Garra.cargar();
         }
 
         private float timerA;

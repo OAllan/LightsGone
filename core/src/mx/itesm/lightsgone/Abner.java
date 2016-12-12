@@ -61,78 +61,49 @@ public class Abner {
 
     {
         assetManager = new AssetManager();
-        cargarAssets();
     }
 
-
-    private void cargarAssets() {
-        assetManager.load("PCapa.png",Texture.class);
-        assetManager.load("PLampara.png",Texture.class);
-        assetManager.load("PLanzaPapa.png",Texture.class);
-        assetManager.load("PNeutralDanioCorrer.png",Texture.class);
+    private void cargarAssetsPogo(){
         assetManager.load("PPogo.png",Texture.class);
-        assetManager.load("PResortera.png",Texture.class);
-        assetManager.load("PSalto.png",Texture.class);
-        assetManager.load("OscuridadConLampara.png", Texture.class);
-        assetManager.load("LuzConLampara.png",Texture.class);
-        assetManager.load("Oscuridad.png", Texture.class);
-        assetManager.load("globocapita.png", Texture.class);
-        assetManager.load("globolampara.png", Texture.class);
-        assetManager.load("globolanzappas.png", Texture.class);
-        assetManager.load("globopogo.png", Texture.class);
-        assetManager.load("Locked Door.mp3", Music.class);
-        assetManager.load("Run Grass.mp3", Music.class);
-        assetManager.load("Lanza Papas.mp3", Music.class);
-        assetManager.load("leche.mp3", Music.class);
-        assetManager.load("PCapaPogo.png", Texture.class);
         assetManager.finishLoading();
-        saltoCapaPogo = new TextureRegion((Texture)assetManager.get("PCapaPogo.png"));
-        capaTex = new TextureRegion((Texture)assetManager.get("PCapa.png"));
-        caminarLamparaTex = new TextureRegion((Texture) assetManager.get("PLampara.png"));
-        lanzapapasTex = new TextureRegion((Texture)assetManager.get("PLanzaPapa.png"));
-        caminarTex = new TextureRegion((Texture)assetManager.get("PNeutralDanioCorrer.png"));
         pogoTex = new TextureRegion((Texture)assetManager.get("PPogo.png"));
-        resorteraTex = new TextureRegion((Texture)assetManager.get("PResortera.png"));
-        saltoTex = new TextureRegion((Texture)assetManager.get("PSalto.png"));
-        encendida = assetManager.get("LuzConLampara.png");
-        encendidaOscuridad = assetManager.get("OscuridadConLampara.png");
-        oscuridad = assetManager.get("Oscuridad.png");
-        globoCapita = assetManager.get("globocapita.png");
-        globoLampara = assetManager.get("globolampara.png");
-        globoLanzapapas = assetManager.get("globolanzappas.png");
-        globoPogo = assetManager.get("globopogo.png");
-        puerta = assetManager.get("Locked Door.mp3");
-        pasos = assetManager.get("Run Grass.mp3");
-        lanzapapa = assetManager.get("Lanza Papas.mp3");
-        leche  = assetManager.get("leche.mp3");
-        pasos.setLooping(true);
-
+        TextureRegion[][] textureRegions = pogoTex.split(ANCHO, ALTO);
+        saltarPogo1 = textureRegions[0][0];
+        saltarPogo2 = textureRegions[0][1];
     }
 
-    public Abner(OrthographicCamera camara, Mapa mapa, InfoJuego gameInfo){
-        TextureRegion[][] textureRegions = caminarTex.split(ANCHO, ALTO);
-        neutral = textureRegions[0][0];
-        dano = textureRegions[0][1];
-        this.caminar = new Animation(0.15f,textureRegions[0][2],textureRegions[0][3],textureRegions[0][4],textureRegions[0][5]);
-        textureRegions = caminarLamparaTex.split(ANCHO, ALTO);
+    private void cargarAssetsLanzapapas(){
+        assetManager.load("PLanzaPapa.png",Texture.class);
+        assetManager.load("Lanza Papas.mp3", Music.class);
+        assetManager.finishLoading();
+        lanzapapa = assetManager.get("Lanza Papas.mp3");
+        lanzapapasTex = new TextureRegion((Texture)assetManager.get("PLanzaPapa.png"));
+        TextureRegion[][] textureRegions = lanzapapasTex.split(ANCHO, ALTO);
+        this.atacarLanzaPapas = new Animation(0.2f, textureRegions[0][0],textureRegions[0][1]);
+    }
+
+    private void cargarAssetsLampara(){
+        assetManager.load("PLampara.png",Texture.class);
+        assetManager.load("OscuridadConLampara.png", Texture.class);
+        assetManager.finishLoading();
+        caminarLamparaTex = new TextureRegion((Texture) assetManager.get("PLampara.png"));
+        encendidaOscuridad = assetManager.get("OscuridadConLampara.png");
+        TextureRegion[][] textureRegions = caminarLamparaTex.split(ANCHO, ALTO);
         neutralLampara = textureRegions[0][0];
         this.caminarLampara = new Animation(0.15f,textureRegions[0][1],textureRegions[0][2],textureRegions[0][3],textureRegions[0][4]);
         caminar.setPlayMode(Animation.PlayMode.LOOP);
         caminarLampara.setPlayMode(Animation.PlayMode.LOOP);
         saltarLampara1 = textureRegions[0][5];
         saltarLampara2 = textureRegions[0][6];
-        textureRegions = resorteraTex.split(ANCHO, ALTO);
-        this.atacar = new Animation(0.2f, textureRegions[0][0],textureRegions[0][1],textureRegions[0][2]);
-        this.atacar.setPlayMode(Animation.PlayMode.NORMAL);
-        textureRegions = lanzapapasTex.split(ANCHO, ALTO);
-        this.atacarLanzaPapas = new Animation(0.2f, textureRegions[0][0],textureRegions[0][1]);
-        textureRegions = saltoTex.split(ANCHO, ALTO);
-        saltar1 = textureRegions[0][0];
-        saltar2 = textureRegions[0][1];
-        textureRegions = pogoTex.split(ANCHO, ALTO);
-        saltarPogo1 = textureRegions[0][0];
-        saltarPogo2 = textureRegions[0][1];
-        textureRegions = capaTex.split(ANCHO,ALTO);
+    }
+
+    private void cargarAssetsCapa(){
+        assetManager.load("PCapa.png",Texture.class);
+        assetManager.load("PCapaPogo.png", Texture.class);
+        assetManager.finishLoading();
+        saltoCapaPogo = new TextureRegion((Texture)assetManager.get("PCapaPogo.png"));
+        capaTex = new TextureRegion((Texture)assetManager.get("PCapa.png"));
+        TextureRegion[][] textureRegions = capaTex.split(ANCHO,ALTO);
         neutralCapa = textureRegions[0][0];
         caminarCapa = new Animation(0.15f, textureRegions[0][1], textureRegions[0][2]);
         caminarCapa.setPlayMode(Animation.PlayMode.LOOP);
@@ -141,6 +112,62 @@ public class Abner {
         textureRegions = saltoCapaPogo.split(ANCHO, ALTO);
         saltoCapaPogo1 = textureRegions[0][0];
         saltoCapaPogo2 = textureRegions[0][1];
+    }
+
+    private void cargarAssetsInicial() {
+        assetManager.load("PNeutralDanioCorrer.png",Texture.class);
+        assetManager.load("PResortera.png",Texture.class);
+        assetManager.load("PSalto.png",Texture.class);
+        assetManager.load("Oscuridad.png", Texture.class);
+        assetManager.load("globocapita.png", Texture.class);
+        assetManager.load("globolampara.png", Texture.class);
+        assetManager.load("globolanzappas.png", Texture.class);
+        assetManager.load("globopogo.png", Texture.class);
+        assetManager.load("LuzConLampara.png",Texture.class);
+        assetManager.load("Locked Door.mp3", Music.class);
+        assetManager.load("Run Grass.mp3", Music.class);
+        assetManager.load("leche.mp3", Music.class);
+        assetManager.finishLoading();
+        encendida = assetManager.get("LuzConLampara.png");
+        caminarTex = new TextureRegion((Texture)assetManager.get("PNeutralDanioCorrer.png"));
+        resorteraTex = new TextureRegion((Texture)assetManager.get("PResortera.png"));
+        saltoTex = new TextureRegion((Texture)assetManager.get("PSalto.png"));
+        oscuridad = assetManager.get("Oscuridad.png");
+        globoCapita = assetManager.get("globocapita.png");
+        globoLampara = assetManager.get("globolampara.png");
+        globoLanzapapas = assetManager.get("globolanzappas.png");
+        globoPogo = assetManager.get("globopogo.png");
+        puerta = assetManager.get("Locked Door.mp3");
+        pasos = assetManager.get("Run Grass.mp3");
+        leche  = assetManager.get("leche.mp3");
+        pasos.setLooping(true);
+        TextureRegion[][] textureRegions = caminarTex.split(ANCHO, ALTO);
+        neutral = textureRegions[0][0];
+        dano = textureRegions[0][1];
+        this.caminar = new Animation(0.15f,textureRegions[0][2],textureRegions[0][3],textureRegions[0][4],textureRegions[0][5]);
+        this.caminar.setPlayMode(Animation.PlayMode.LOOP);
+        textureRegions = resorteraTex.split(ANCHO, ALTO);
+        this.atacar = new Animation(0.2f, textureRegions[0][0],textureRegions[0][1],textureRegions[0][2]);
+        this.atacar.setPlayMode(Animation.PlayMode.NORMAL);
+        textureRegions = saltoTex.split(ANCHO, ALTO);
+        saltar1 = textureRegions[0][0];
+        saltar2 = textureRegions[0][1];
+    }
+
+    public Abner(OrthographicCamera camara, Mapa mapa, InfoJuego gameInfo){
+        cargarAssetsInicial();
+        if(gameInfo.isPogo()){
+            cargarAssetsPogo();
+        }
+        if(gameInfo.isCapita()){
+            cargarAssetsCapa();
+        }
+        if(gameInfo.isLanzapapas()){
+            cargarAssetsLanzapapas();
+        }
+        if(gameInfo.isLampara()){
+            cargarAssetsLampara();
+        }
         sprite = new Sprite(neutral);
         sprite.setPosition(gameInfo.getX(), gameInfo.getY());
         timerAnimation = 0;
@@ -366,12 +393,14 @@ public class Abner {
         if(mapa.colisionItem(sprite.getX()+(3*sprite.getWidth()/4), sprite.getY()+20,"Pogo")) {
             mapa.remove("Pogo");
             pogo = true;
+            cargarAssetsPogo();
             gameInfo.actualizarDatosTemp();
         }
 
         if(mapa.colisionItem(sprite.getX()+(3*sprite.getWidth()/4), sprite.getY()+20,"Capita")) {
             mapa.remove("Capita");
             capita = true;
+            cargarAssetsCapa();
             gameInfo.actualizarDatosTemp();
         }
 
@@ -392,12 +421,14 @@ public class Abner {
         if(mapa.colisionItem(sprite.getX()+(3*sprite.getWidth()/4), sprite.getY()+20,"LanzaPapa")){
             mapa.remove("LanzaPapa");
             lanzapapas = true;
+            cargarAssetsLanzapapas();
             gameInfo.actualizarDatosTemp();
         }
 
         if(mapa.colisionItem(sprite.getX(), sprite.getY()+20,"Lampara")||mapa.colisionItem(getBoundingRectangle().x, sprite.getY()+20,"Lampara")){
             mapa.remove("Lampara");
             lampara = true;
+            cargarAssetsLampara();
             gameInfo.actualizarDatosTemp();
         }
 
@@ -1003,23 +1034,32 @@ public class Abner {
     public void dispose(){
         caminarTex.getTexture().dispose();
         saltoTex.getTexture().dispose();
-        pogoTex.getTexture().dispose();
-        caminarLamparaTex.getTexture().dispose();
-        lanzapapasTex.getTexture().dispose();
+        if(pogo){
+            saltarPogo1.getTexture().dispose();
+            saltarPogo2.getTexture().dispose();
+            pogoTex.getTexture().dispose();
+        }
+        if(lampara){
+            caminarLamparaTex.getTexture().dispose();
+            neutralLampara.getTexture().dispose();
+            saltarLampara1.getTexture().dispose();
+            saltarLampara2.getTexture().dispose();
+            encendida.dispose();
+            encendidaOscuridad.dispose();
+        }
+
+        if(lanzapapas){
+            lanzapapasTex.getTexture().dispose();
+        }
+        if(capita){
+            capaTex.getTexture().dispose();
+            neutralCapa.getTexture().dispose();
+        }
         resorteraTex.getTexture().dispose();
-        capaTex.getTexture().dispose();
         neutral.getTexture().dispose();
         dano.getTexture().dispose();
-        neutralLampara.getTexture().dispose();
-        neutralCapa.getTexture().dispose();
         saltar1.getTexture().dispose();
         saltar2.getTexture().dispose();
-        saltarLampara1.getTexture().dispose();
-        saltarLampara2.getTexture().dispose();
-        saltarPogo1.getTexture().dispose();
-        saltarPogo2.getTexture().dispose();
-        encendida.dispose();
-        encendidaOscuridad.dispose();
     }
 
 

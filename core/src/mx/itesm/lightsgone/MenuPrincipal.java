@@ -3,13 +3,14 @@ package mx.itesm.lightsgone;
 import com.badlogic.gdx.Application;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
-import com.badlogic.gdx.Preferences;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.audio.Music;
+import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
@@ -17,6 +18,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.ui.ImageButton;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
+
 import com.badlogic.gdx.utils.Timer;
 import com.badlogic.gdx.utils.viewport.StretchViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
@@ -44,16 +46,18 @@ public class MenuPrincipal implements Screen {
 	private Music rugido;
 	private Texture texTransicion;
 	private GDXButtonDialog buttonDialog;
-
-
+	private SpriteBatch batch;
+	private Texto version;
 
 	public MenuPrincipal(Juego juego, boolean flag) {
 		this.juego = juego;
 		this.flag = flag;
+		batch = new SpriteBatch();
 	}
 	public MenuPrincipal(Juego juego){
 		this.juego = juego;
 		this.flag = true;
+		batch = new SpriteBatch();
 	}
 
 	@Override
@@ -68,13 +72,13 @@ public class MenuPrincipal implements Screen {
 		camara = new OrthographicCamera(ANCHO_MUNDO, ALTO_MUNDO);
 		camara.position.set(ANCHO_MUNDO / 2, ALTO_MUNDO / 2, 0);
 		camara.update();
+		version = new Texto("version.fnt", ANCHO_MUNDO-80,50);
 		vista = new StretchViewport(ANCHO_MUNDO, ALTO_MUNDO, camara);
 		//Agregando fondo
 		Image fondo = new Image(texFondo);
 		escena.addActor(fondo);
-		final Preferences preferences = Gdx.app.getPreferences("LightsGoneSettings");
-		Gdx.app.log("ejecuciones", preferences.getInteger("ejecuciones")+"");
-		if(preferences.getInteger("ejecuciones")==0){
+		final FileHandle preferences = Gdx.files.local("LightsGoneSettings.txt");
+		if(Integer.parseInt(preferences.readString())==0){
 			GDXDialogs dialogs = GDXDialogsSystem.install();
 			buttonDialog = dialogs.newDialog(GDXButtonDialog.class);
 			buttonDialog.setTitle("Rate this app");
@@ -94,10 +98,10 @@ public class MenuPrincipal implements Screen {
 						}
 					}
 					else if(button==1){
-						preferences.putInteger("ejecuciones", 15);
+						preferences.writeString("15", false);
 					}
 					else {
-						preferences.putInteger("ejecuciones", -1);
+						preferences.writeString("-1", false);
 					}
 				}
 			});
@@ -185,7 +189,11 @@ public class MenuPrincipal implements Screen {
 		if(Gdx.input.isKeyJustPressed(Input.Keys.BACK)){
 			Gdx.app.exit();
 		}
+		batch.setProjectionMatrix(camara.combined);
+		batch.begin();
+		version.mostrarMensaje(batch, "ver. "+ juego.getVersion());
 
+		batch.end();
 	}
 
 

@@ -52,9 +52,16 @@ public class AdministradorMapa {
 
     public static void setExtras(Mapa mapa, int mapaActual, Abner abner) {
         enemigos = new Array<Enemigo>();
+        Enemigo.reiniciarManager();
         switch (mapaActual){
-
             case 3:
+                //CargarEnemigos
+                Enemigo.Mosca.cargar();
+                Enemigo.Fuego.cargar();
+                Enemigo.PanTostadora.cargar();
+                Enemigo.Tostadora.cargar();
+                Enemigo.Brocoli.cargar();
+                Enemigo.Sandwich.cargar();
                 //Moscas
                 //enemigos.add(new Enemigo.Cucarachon(2295,293,abner,mapa));
                //enemigos.add(new Enemigo.Sopa(2295,293,abner,mapa));
@@ -93,6 +100,9 @@ public class AdministradorMapa {
                 break;
             case 4:
                 //Enemigos cocina 2
+                Enemigo.Sopa.cargar();
+                Enemigo.Sandwich.cargar();
+                Enemigo.Lata.cargar();
                 //Sopas
                 enemigos.add(new Enemigo.Sopa(5265,180,abner,mapa));
                 enemigos.add(new Enemigo.Sopa(3875,225,abner,mapa));
@@ -112,6 +122,10 @@ public class AdministradorMapa {
                 break;
             case 5:
                 //Enemigos cocina 3
+                Enemigo.Mosca.cargar();
+                Enemigo.Sopa.cargar();
+                Enemigo.PanTostadora.cargar();
+                Enemigo.Tostadora.cargar();
                 //Moscas
                 enemigos.add(new Enemigo.Mosca(3330,700,abner,mapa));
                 enemigos.add(new Enemigo.Mosca(5355,1050,abner,mapa));
@@ -132,6 +146,13 @@ public class AdministradorMapa {
                 mapa.setEnemigos(enemigos);
                 break;
             case 6:
+                Enemigo.Scarecrow.cargar();
+                Enemigo.ProyectilHongo.cargar();
+                Enemigo.Hongo.cargar();
+                Enemigo.PlantaCarnivora.cargar();
+                Enemigo.Serpiente.cargar();
+                Enemigo.Espinas.cargar();
+                Enemigo.GnomoL.cargar();
                 //Jardin 1
                 mapa.setCajas(new CajaMovil(14850, 1700, mapa, true));
                 enemigos.add(new Enemigo.Scarecrow(2745,1300,abner,mapa));
@@ -151,6 +172,12 @@ public class AdministradorMapa {
                 break;
             case 7:
                 //Jardin 2
+                Enemigo.Cucarachon.cargar();
+                Enemigo.EspinasD.cargar();
+                Enemigo.Serpiente.cargar();
+                Enemigo.PlantaCarnivora.cargar();
+                Enemigo.ProyectilHongo.cargar();
+                Enemigo.Hongo.cargar();
                 mapa.setCajas(new CajaMovil(13815, 315, mapa, true));
                 enemigos.add(new Enemigo.Cucarachon(90,315,abner,mapa));
                 enemigos.add(new Enemigo.EspinasD(5670,540,abner,mapa));
@@ -170,6 +197,8 @@ public class AdministradorMapa {
                 break;
             case 8:
                 //Jardin 3
+                Enemigo.Scarecrow.cargar();
+                Enemigo.Gnomo.cargar();
                 enemigos.add(new Enemigo.Scarecrow(855,1350,abner,mapa));
                 enemigos.add(new Enemigo.Gnomo(2925,1350,abner,mapa));
                 enemigos.add(new Enemigo.Gnomo(3645,1350,abner,mapa));
@@ -180,6 +209,8 @@ public class AdministradorMapa {
                 break;
             case 9:
                 //Armario 1
+                Enemigo.GeneradorCajasPayaso.cargar();
+                Enemigo.MonstruoRopa.cargar();
                 enemigos.add(new Enemigo.GeneradorCajasPayaso(2385,315,mapa, abner));
                 enemigos.add(new Enemigo.GeneradorCajasPayaso(6075, 315, mapa, abner));
                 enemigos.add(new Enemigo.MonstruoRopa(4185,270,abner));
@@ -191,6 +222,9 @@ public class AdministradorMapa {
                 break;
             case 10:
                 //Armario2
+                Enemigo.GeneradorCajasPayaso.cargar();
+                Enemigo.Robot.cargar();
+                Enemigo.Oso.cargar();
                 enemigos.add(new Enemigo.GeneradorCajasPayaso(12465,540,mapa,abner));
                 enemigos.add(new Enemigo.GeneradorCajasPayaso(7920,1170,mapa,abner));
                 enemigos.add(new Enemigo.GeneradorCajasPayaso(7470,585,mapa,abner));
@@ -205,6 +239,9 @@ public class AdministradorMapa {
                 break;
             case 11:
                 //Armario3
+                Enemigo.GeneradorCajasPayaso.cargar();
+                Enemigo.Robot.cargar();
+                Enemigo.Oso.cargar();
                 enemigos.add(new Enemigo.GeneradorCajasPayaso(7470,900,mapa,abner));
                 enemigos.add(new Enemigo.GeneradorCajasPayaso(3150,225,mapa,abner));
                 enemigos.add(new Enemigo.Robot(990, 900,abner));
@@ -215,6 +252,8 @@ public class AdministradorMapa {
                 break;
             case 13:
                 //Sotano 1
+                Enemigo.Fantasma.cargar();
+                Enemigo.Mosca.cargar();
                 enemigos.add(new Enemigo.Fantasma(8910,630,abner,mapa));
                 enemigos.add(new Enemigo.Fantasma(8900,495,abner,mapa));
                 enemigos.add(new Enemigo.Fantasma(7785,900,abner,mapa));
@@ -230,6 +269,10 @@ public class AdministradorMapa {
                 break;
             case 14:
                 //Sotano 2
+                Enemigo.Fantasma.cargar();
+                Enemigo.Telarana.cargar();
+                Enemigo.Cucarachon.cargar();
+                Enemigo.Alfombra.cargar();
                 enemigos.add(new Enemigo.Fantasma(225,3825,abner,mapa));
                 enemigos.add(new Enemigo.Fantasma(945,3420,abner,mapa));
                 enemigos.add(new Enemigo.Fantasma(315,2430,abner,mapa));
@@ -247,6 +290,12 @@ public class AdministradorMapa {
                 break;
             case 15:
                 //Sotano 3
+                Enemigo.ParedPicos.cargar();
+                Enemigo.Fantasma.cargar();
+                Enemigo.Telarana.cargar();
+                Enemigo.Alfombra.cargar();
+                Enemigo.Cucarachon.cargar();
+                Enemigo.Mosca.cargar();
                 enemigos.add(new Enemigo.ParedPicos(7545,3555,abner,mapa));
                 enemigos.add(new Enemigo.Fantasma(6345,5400,abner,mapa));
                 enemigos.add(new Enemigo.Fantasma(4545,5400,abner,mapa));
@@ -286,6 +335,7 @@ public class AdministradorMapa {
                 mapa.setEnemigos(enemigos);
                 break;
             case 16:
+                Enemigo.OndaCoco.cargar();
                 enemigos.add(new Enemigo.OndaCoco(300,mapa.getHeight(), abner));
                 mapa.setEnemigos(enemigos);
                 break;

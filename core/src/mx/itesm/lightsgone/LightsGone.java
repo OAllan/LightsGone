@@ -116,6 +116,13 @@ public class LightsGone implements Screen, InputProcessor{
         gameInfo = new InfoJuego(nombre);
     }
 
+    public LightsGone(Juego juego, InfoJuego gameInfo){
+        this.juego = juego;
+        right = true;
+        saveB = false;
+        this.gameInfo = gameInfo;
+    }
+
     public static boolean getLampara() {
         return abner.getLampara();
     }
@@ -157,7 +164,6 @@ public class LightsGone implements Screen, InputProcessor{
         mapaActual = gameInfo.getMapa();
         mapa = mapManager.getNewMapa(mapas.get(mapaActual),mapaActual,abner, gameInfo);
         abner.setMapa(mapa);
-        transicion = Transicion.DISMINUYENDO;
         enemigos = mapa.getEnemigos();
         musica = true;
         switchAtaque = false;
@@ -205,7 +211,8 @@ public class LightsGone implements Screen, InputProcessor{
         transicionNivel.setSize(LightsGone.ANCHO_MUNDO, LightsGone.ALTO_MUNDO);
         enemigos = mapa.getEnemigos();
         gameInfo.setAbner(abner);
-        estado = Estado.JUGANDO;
+        estado = Estado.CAMBIO;
+        transicion = Transicion.AUMENTANDO;
         botonHabilidad = new Boton(habilidadDes, ANCHO_MUNDO-habilidadDes.getWidth()-10,YBOTON,false);
         flechasHabilidad.setPosition(botonHabilidad.getX()+10, botonHabilidad.getY()+ALTOBOTON-flechasHabilidad.getHeight()+10);
         flechasSalto.setPosition(botonSaltar.getX()+10, botonSaltar.getY()+ALTOBOTON-flechasSalto.getHeight()-10);
@@ -371,9 +378,9 @@ public class LightsGone implements Screen, InputProcessor{
             cinematica.play(batch);
             batch.end();
             if(cinematica.finished()){
-                estado = Estado.CAMBIO;
-                transicion = Transicion.AUMENTANDO;
                 cinematica.dispose();
+                gameInfo.actualizarDatos();
+                juego.setScreen(new LightsGone(juego, gameInfo));
             }
             if(cinematicaPelea){
                 Array<Enemigo> enemigos = new Array<Enemigo>();
@@ -669,6 +676,7 @@ public class LightsGone implements Screen, InputProcessor{
                 pad.getRight().setEstado(Boton.Estado.NOPRESIONADO);
                 abner.setEstadoHorizontal(Abner.Horizontal.DESACTIVADO);
                 stop();
+                dispose();
             }
 
             if(mapaActual==mapas.size-1&&abner.getX()<=1500&&!cinematicaPelea){
@@ -679,6 +687,7 @@ public class LightsGone implements Screen, InputProcessor{
                 pad.getRight().setEstado(Boton.Estado.NOPRESIONADO);
                 abner.setEstadoHorizontal(Abner.Horizontal.DESACTIVADO);
                 stop();
+                dispose();
             }
 
             if(mapaActual==mapas.size-1&&cinematicaPelea&&enemigos!=null){
@@ -698,7 +707,7 @@ public class LightsGone implements Screen, InputProcessor{
                     abner.stop();
                 }
                 barraCoco.setSize(anchBarra*porcentaje,barraCoco.getHeight());
-
+                dispose();
             }
 
             int cambio= abner.cambioNivel();
@@ -994,9 +1003,10 @@ public class LightsGone implements Screen, InputProcessor{
 
     @Override
     public void dispose() {
-        batch.dispose();
-        abner.dispose();
-
+        //batch.dispose();
+        //abner.dispose();
+        mapa.dispose();
+        assetManager.dispose();
     }
 
     static void agregarItem(float x, float y){

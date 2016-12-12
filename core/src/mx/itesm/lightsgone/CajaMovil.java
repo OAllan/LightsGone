@@ -60,4 +60,6 @@ public class CajaMovil {
     private void caer() {
         caja.translate(0,-18f);
     }
+
+
 }

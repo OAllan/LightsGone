@@ -200,7 +200,7 @@ public class InfoJuego {
 
     }
 
-    private void actualizarDatos() {
+    public void actualizarDatos() {
         mapa = LightsGone.mapaActual;
         vida = abner.getcantVida();
         pogo = abner.getPogo();
@@ -230,7 +230,7 @@ public class InfoJuego {
             while(iterator.hasNext()){
                 FileHandle file = iterator.next();
                 String extension = file.extension();
-                if(!"txt".equalsIgnoreCase(extension))
+                if(!"txt".equalsIgnoreCase(extension)||file.name().equals("LightsGoneSettings.txt"))
                     iterator.remove();
             }
 

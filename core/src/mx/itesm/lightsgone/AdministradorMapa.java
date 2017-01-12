@@ -339,7 +339,6 @@ public class AdministradorMapa {
                 enemigos.add(new Enemigo.OndaCoco(300,mapa.getHeight(), abner));
                 mapa.setEnemigos(enemigos);
                 break;
-
         }
     }
 

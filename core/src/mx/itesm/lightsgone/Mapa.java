@@ -221,6 +221,7 @@ public class Mapa {
 
         if(enemigos!=null&&!LightsGone.sotano()){
             for(Enemigo enemigo: enemigos) {
+                LightsGone.abner.colisionEnemigo(enemigo);
                 if(enemigo.toString().equalsIgnoreCase("CajaPayaso")){
                     Enemigo.GeneradorCajasPayaso cajasPayaso = (Enemigo.GeneradorCajasPayaso)enemigo;
                     if(cajasPayaso.isAttacking()&&cajasFijas!=null){
@@ -355,9 +356,7 @@ public class Mapa {
     public void dispose() {
         mapa.dispose();
         if(enemigos!=null){
-            for(Enemigo enemigo:enemigos){
-                enemigo.dispose();
-            }
+            enemigos.get(0).dispose();
         }
     }
 

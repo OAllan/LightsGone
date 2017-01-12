@@ -17,7 +17,7 @@ import java.util.Iterator;
  */
 public class InfoJuego {
     private int vida, vidas;
-    private boolean pogo, capita, lanzapapas, lampara, armario, cinematicaInicio;
+    private boolean pogo, capita, lanzapapas, lampara, armario, cinematicaInicio, cinematicaPelea;
     private boolean pogoTemp, capitaTemp, lanzapapasTemp, lamparaTemp, armarioTemp;
     private int mapa;
     private boolean vida1, vida2, vida3, vida4;
@@ -45,6 +45,7 @@ public class InfoJuego {
         armario = armarioTemp = false;
         cinematicaInicio = false;
         timer = 0;
+        cinematicaPelea = false;
         cargar();
     }
 
@@ -157,6 +158,7 @@ public class InfoJuego {
             vida2 = Boolean.parseBoolean(lineas[15].trim());
             vida3 = Boolean.parseBoolean(lineas[16].trim());
             vida4 = Boolean.parseBoolean(lineas[17].trim());
+            cinematicaPelea = Boolean.parseBoolean(lineas[18].trim());
 
         }
         catch (Exception e){
@@ -188,6 +190,7 @@ public class InfoJuego {
             save.writeString(vida2+"\n", true);
             save.writeString(vida3+"\n", true);
             save.writeString(vida4+"\n", true);
+            save.writeString(cinematicaPelea+"\n", true);
 
         }
         catch (Exception e){
@@ -214,6 +217,7 @@ public class InfoJuego {
         lampara = abner.getLampara();
         armario = abner.getArmario();
         cinematicaInicio = LightsGone.cinematicaInicio;
+        cinematicaPelea = LightsGone.cinematicaPelea;
     }
 
     private String nombre(){
@@ -358,5 +362,9 @@ public class InfoJuego {
 
     public boolean isVida4(){
         return vida4;
+    }
+
+    public boolean isCinematicaPelea(){
+        return cinematicaPelea;
     }
 }

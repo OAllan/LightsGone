@@ -13,13 +13,16 @@ import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.viewport.StretchViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 
 import java.util.ArrayList;
+import java.util.Map;
 import java.util.Random;
+import java.util.TreeMap;
 
 /**
  * Created by allanruiz on 19/09/16.
@@ -57,14 +60,14 @@ public class LightsGone implements Screen, InputProcessor{
     public static Texture plataforma;
     private Texture  capa,capa25,capa50,capa0,capa75,municion, habilidadLanzaPapas, transicionCocina,transicionJardin, transicionArmario, transicionSotano, transicionCoco, transicionNeutral,  dano, nivelVida, gameOver,habilidadDes, habilidadPogo,save,pausaTex,quitTex, opciones,  botonSalto, JFondo, botonVida, habilidad, texPausa;
     private Sprite transicionNivel, pausaActual, fondoCielo;
-    private static Abner abner;
+    static Abner abner;
     private Texto vida, municionTex;
     private Pad pad;
     private static Texture malteada,papa;
-    private Sprite imgVida, menuGameOver, imgMunicion;
+    private Sprite imgVida, menuGameOver, imgMunicion, miniMapa, indicaciones;
     private boolean right, saveB;
     public static boolean musica;
-    private Boton botonBack, botonOn, botonOff, botonTry, botonMain,botonSaltar, botonArma, pausa, botonResume, botonOpciones,botonQuit, botonYes,botonNo, botonSave, botonHabilidad;
+    private Boton botonBack, botonOn, botonOff, botonTry, botonMain,botonSaltar, botonArma, pausa, botonResume, botonOpciones,botonQuit, botonYes,botonNo, botonSave, botonHabilidad, botonMapa, botonMapaBack;
     private float alpha = 0;
     private Array<String> mapas;
     private static Mapa mapa;
@@ -80,9 +83,9 @@ public class LightsGone implements Screen, InputProcessor{
     private Array<Sprite> vidas;
     private Arma estadoArma;
     private Sprite flechasArma, flechasHabilidad, cascaronBarraCoco, barraCoco;
-    private boolean switchAtaque, switchHabilidad, switchSalto, switchedSalto,switchedAtaque, switchedHabilidad, cinematicaPelea;
+    private boolean switchAtaque, switchHabilidad, switchSalto, switchedSalto,switchedAtaque, switchedHabilidad;
     private static boolean capaActiva;
-    public static boolean cinematicaInicio;
+    public static boolean cinematicaInicio, cinematicaPelea;
     private static Array<Sprite> malteadas, papas;
     private int leftPointer, rightPointer;
     private float timer, timerR, timerG;
@@ -93,6 +96,7 @@ public class LightsGone implements Screen, InputProcessor{
     private float anchBarra;
     private Music lampara;
     private boolean sonidoInicial;
+    private Map<Integer, Rectangle> zonasMinimapas;
 
 
     Array<Enemigo> enemigos;
@@ -101,6 +105,11 @@ public class LightsGone implements Screen, InputProcessor{
     private static Lampara estadoLampara;
     private Texture lamparaOff, lamparaOn;
     private Sprite flechasSalto;
+    private float xInicial;
+    private float yInicial;
+    private float camaraInicialX;
+    private float camaraInicialY;
+    private Sprite marcardor;
 
     public LightsGone(Juego juego) {
         this.juego = juego;
@@ -140,27 +149,47 @@ public class LightsGone implements Screen, InputProcessor{
 
     private void crearMapas() {
         mapas = new Array<String>(18);
+        zonasMinimapas = new TreeMap<Integer, Rectangle>();
         mapManager = new AdministradorMapa(camara, batch);
         abner = new Abner(camara, null, gameInfo);
         mapas.add("CuartoAbner.tmx");
+        zonasMinimapas.put(0, new Rectangle(991,611,95,45));
         mapas.add("Pasillo.tmx");
+        zonasMinimapas.put(1,new Rectangle(1094,613,150,41));
         mapas.add("Sala.tmx");
+        zonasMinimapas.put(2, new Rectangle(1250,564,104,66));
         mapas.add("Cocina1.tmx");
+        zonasMinimapas.put(3, new Rectangle(1619,418,383,113));
         mapas.add("Cocina2.tmx");
+        zonasMinimapas.put(4,new Rectangle(1400,493,205,101));
         mapas.add("Cocina3.tmx");
+        zonasMinimapas.put(5, new Rectangle(1615,549,235,103));
         mapas.add("Jardin1.tmx");
+        zonasMinimapas.put(6, new Rectangle(1392,861,722,97));
         mapas.add("Jardin2.tmx");
+        zonasMinimapas.put(7,new Rectangle(2065,756,662,88));
         mapas.add("Jardin3.tmx");
+        zonasMinimapas.put(8,new Rectangle(2651,860,293,107));
         mapas.add("Armario1.tmx");
+        zonasMinimapas.put(9,new Rectangle(540,726,420,60));
         mapas.add("Armario2.tmx");
+        zonasMinimapas.put(10, new Rectangle(35,726,492,73));
         mapas.add("Armario3.tmx");
+        zonasMinimapas.put(11, new Rectangle(119,578,323,67));
         mapas.add("Armario4.tmx");
+        zonasMinimapas.put(12, new Rectangle(35,610,66,27));
         mapas.add("Sotano1.tmx");
+        zonasMinimapas.put(13, new Rectangle(310,66,860,460));
         mapas.add("Sotano2.tmx");
+        zonasMinimapas.put(14,new Rectangle(860,295,295,153));
         mapas.add("Sotano3.tmx");
+        zonasMinimapas.put(15, new Rectangle(885,86,270,200));
         mapas.add("CaminoAlCoco.tmx");
+        zonasMinimapas.put(16, new Rectangle(1146,663,45,126));
         mapas.add("Atico1.tmx");
+        zonasMinimapas.put(17, new Rectangle(1124,838,58,36));
         mapas.add("Atico2.tmx");
+        zonasMinimapas.put(18, new Rectangle(1056,881,125,45));
         mapaActual = gameInfo.getMapa();
         mapa = mapManager.getNewMapa(mapas.get(mapaActual),mapaActual,abner, gameInfo);
         abner.setMapa(mapa);
@@ -169,7 +198,19 @@ public class LightsGone implements Screen, InputProcessor{
         switchAtaque = false;
         switchHabilidad = false;
         cinematicaInicio = gameInfo.isCinematicaInicio();
-        cinematicaPelea = false;
+        cinematicaPelea = gameInfo.isCinematicaPelea();
+        if(cinematicaPelea){
+            Enemigo.reiniciarManager();
+            Enemigo.Coco.cargar();
+            Array<Enemigo> enemigos = new Array<Enemigo>();
+            enemigos.add(new Enemigo.Coco(mapa, abner));
+            mapa.setEnemigos(enemigos);
+            Enemigo.Coco coco = (Enemigo.Coco)enemigos.get(0);
+            cascaronBarraCoco = coco.getCascaron();
+            barraCoco = coco.getBarra();
+            this.enemigos = mapa.getEnemigos();
+            anchBarra = barraCoco.getWidth();
+        }
     }
 
     private void iniciarCamara() {
@@ -290,7 +331,16 @@ public class LightsGone implements Screen, InputProcessor{
         assetManager.load("recargar papas.mp3", Music.class);
         assetManager.load("Sonidos.mp3", Music.class);
         assetManager.load("lamparita.mp3", Music.class);
+        assetManager.load("Mapa Lights Gone.png", Texture.class);
+        assetManager.load("Indicaciones.png", Texture.class);
+        assetManager.load("BotonMapa.png", Texture.class);
+        assetManager.load("back.png", Texture.class);
+        assetManager.load("mapmarker.png", Texture.class);
         assetManager.finishLoading();
+        miniMapa = new Sprite(assetManager.get("Mapa Lights Gone.png", Texture.class));
+        indicaciones = new Sprite(assetManager.get("Indicaciones.png", Texture.class));
+        indicaciones.setPosition(ANCHO_MUNDO- indicaciones.getHeight(), 0);
+        marcardor = new Sprite(assetManager.get("mapmarker.png", Texture.class));
         botonSalto = assetManager.get("BotonSalto.png");
         JFondo = assetManager.get("JoystickBoton.png");
         texPausa = assetManager.get("BotonPausa.png");
@@ -334,6 +384,8 @@ public class LightsGone implements Screen, InputProcessor{
         sonidos = assetManager.get("Sonidos.mp3");
         sonidos.setVolume(0.5f);
         lampara = assetManager.get("lamparita.mp3");
+        botonMapa = new Boton(assetManager.get("BotonMapa.png", Texture.class), ANCHO_MUNDO-texPausa.getWidth()-125f-20f,ALTO_MUNDO-123f,false);
+        botonMapaBack = new Boton(assetManager.get("back.png", Texture.class), 0,0,false);
     }
 
     @Override
@@ -350,14 +402,10 @@ public class LightsGone implements Screen, InputProcessor{
         estado = abner.isDead()?Estado.MUERTE:estado;
 
         if(estado == Estado.GANO){
-            Enemigo.Coco coco = (Enemigo.Coco) enemigos.get(0);
             batch.setProjectionMatrix(camara.combined);
             mapa.draw();
-            //camara.position.set(coco.getX()-530,camara.position.y,0);
-            //camara.update();
             batch.begin();
             abner.draw(batch, right, false);
-
             batch.end();
             timerG+=Gdx.graphics.getDeltaTime();
             if(timerG>=3){
@@ -382,27 +430,8 @@ public class LightsGone implements Screen, InputProcessor{
                 gameInfo.actualizarDatos();
                 juego.setScreen(new LightsGone(juego, gameInfo));
             }
-            if(cinematicaPelea){
-                Array<Enemigo> enemigos = new Array<Enemigo>();
-                enemigos.add(new Enemigo.Coco(mapa, abner));
-                mapa.setEnemigos(enemigos);
-                Enemigo.Coco coco = (Enemigo.Coco)enemigos.get(0);
-                cascaronBarraCoco = coco.getCascaron();
-                barraCoco = coco.getBarra();
-                this.enemigos = mapa.getEnemigos();
-                anchBarra = barraCoco.getWidth();
-            }
         }
-        else if(estado != Estado.PAUSA&&estado!=Estado.MUERTE){
-
-            switch(estadoArma){
-                case LANZAPAPAS:
-                    botonArma.setTexture(habilidadLanzaPapas);
-                    break;
-                case RESORTERA:
-                    botonArma.setTexture(habilidad);
-                    break;
-            }
+        else if(estado != Estado.PAUSA&&estado!=Estado.MUERTE&&estado!=Estado.MAPA){
 
             switch (habilidadActual){
                 case LAMPARA:
@@ -557,14 +586,6 @@ public class LightsGone implements Screen, InputProcessor{
                 }
             }
 
-            switch (saltoActual){
-                case NORMAL:
-                    botonSaltar.setTexture(botonSalto);
-                    break;
-                case POGO:
-                    botonSaltar.setTexture(habilidadPogo);
-                    break;
-            }
 
             //Inicio de los controles del teclado, si quieren habilitarlos quiten el /* al inicio y el */ al final
 
@@ -667,7 +688,7 @@ public class LightsGone implements Screen, InputProcessor{
                 abner.setEstadoHorizontal(Abner.Horizontal.ACTIVADO);
             }
 
-
+            //Cinematica inicial
             if(mapaActual==1&&abner.getX()>=1300&&!cinematicaInicio){
                 estado = Estado.CINEMATICA;
                 cinematica = new Cinematica.Inicio(abner);
@@ -679,6 +700,7 @@ public class LightsGone implements Screen, InputProcessor{
                 dispose();
             }
 
+            //Cinematica antes de la pelea
             if(mapaActual==mapas.size-1&&abner.getX()<=1500&&!cinematicaPelea){
                 estado = Estado.CINEMATICA;
                 cinematica = new Cinematica.Pelea(abner);
@@ -690,6 +712,7 @@ public class LightsGone implements Screen, InputProcessor{
                 dispose();
             }
 
+            //Cinematica final y vida del coco
             if(mapaActual==mapas.size-1&&cinematicaPelea&&enemigos!=null){
                 Enemigo.Coco coco = (Enemigo.Coco)mapa.getEnemigos().get(0);
                 float vidaCoco = coco.getVida();
@@ -707,7 +730,7 @@ public class LightsGone implements Screen, InputProcessor{
                     abner.stop();
                 }
                 barraCoco.setSize(anchBarra*porcentaje,barraCoco.getHeight());
-                dispose();
+                //dispose();
             }
 
             int cambio= abner.cambioNivel();
@@ -765,12 +788,6 @@ public class LightsGone implements Screen, InputProcessor{
                 enemigos = mapa.getEnemigos();
             }
 
-            if(enemigos!=null) {
-                for (Enemigo enemigo : enemigos) {
-                    if (abner.colisionEnemigo(enemigo))
-                        break;
-                }
-            }
             proyectiles = abner.getProyectiles();
             if(jardin()){
                 batch.setProjectionMatrix(camaraHUD.combined);
@@ -873,7 +890,7 @@ public class LightsGone implements Screen, InputProcessor{
             botonHabilidad.draw(batch);
             botonSave.draw(batch);
             botonArma.draw(batch);
-
+            botonMapa.draw(batch);
             if(abner.getCapita()){
                 flechasHabilidad.draw(batch);
             }
@@ -935,6 +952,19 @@ public class LightsGone implements Screen, InputProcessor{
             batch.end();
         }
 
+        if(estado == Estado.MAPA){
+            batch.setProjectionMatrix(camara.combined);
+            batch.begin();
+            miniMapa.draw(batch);
+            marcardor.draw(batch);
+            batch.end();
+            batch.setProjectionMatrix(camaraHUD.combined);
+            batch.begin();
+            indicaciones.draw(batch);
+            botonMapaBack.draw(batch);
+            batch.end();
+        }
+
 
 
 
@@ -956,6 +986,14 @@ public class LightsGone implements Screen, InputProcessor{
             else if(saltoActual == Salto.NORMAL){
                 saltoActual = Salto.POGO;
             }
+        }
+        switch (saltoActual){
+            case NORMAL:
+                botonSaltar.setTexture(botonSalto);
+                break;
+            case POGO:
+                botonSaltar.setTexture(habilidadPogo);
+                break;
         }
     }
 
@@ -1111,6 +1149,14 @@ public class LightsGone implements Screen, InputProcessor{
             }
             if(pausa.contiene(x,y))
                 estado = Estado.PAUSA;
+            if(botonMapa.contiene(x,y)) {
+                estado = Estado.MAPA;
+                camaraInicialY = camara.position.y;
+                camaraInicialX = camara.position.x;
+                setPositionMarker();
+                camara.position.set(miniMapa.getWidth()/2, miniMapa.getHeight()/2, 0);
+                camara.update();
+            }
             if(saveB) {
                 if(botonSave.contiene(x,y)) {
                     gameInfo.guardarJuego();
@@ -1171,6 +1217,15 @@ public class LightsGone implements Screen, InputProcessor{
                 gameover.stop();
                 alphaGame = 0;
             }
+        }
+
+        if(estado == Estado.MAPA){
+            if(botonMapaBack.contiene(x,y)){
+                estado = Estado.JUGANDO;
+                camara.position.set(camaraInicialX, camaraInicialY, 0);
+            }
+            xInicial = x;
+            yInicial = y;
         }
 
         return false;
@@ -1282,7 +1337,23 @@ public class LightsGone implements Screen, InputProcessor{
             }
         }
 
+        if(estado == Estado.MAPA){
+            deslizarCamara(x,y);
+            xInicial = x;
+            yInicial = y;
+        }
+
         return false;
+    }
+
+    private void deslizarCamara(float x, float y) {
+        float incX = xInicial - x;
+        float incY = yInicial -y;
+        if(camara.position.y+incY<=miniMapa.getHeight()-400&&camara.position.y+incY>=400)
+            camara.position.y = camara.position.y+incY;
+        if(camara.position.x+incX<=miniMapa.getWidth()-640&&camara.position.x+incX>=640)
+            camara.position.x = camara.position.x+incX;
+        camara.update();
     }
 
     public static boolean getCapa(){
@@ -1298,11 +1369,27 @@ public class LightsGone implements Screen, InputProcessor{
                 estadoArma = abner.lanzapapas? Arma.LANZAPAPAS: estadoArma;
                 break;
         }
+
+        switch(estadoArma){
+            case LANZAPAPAS:
+                botonArma.setTexture(habilidadLanzaPapas);
+                break;
+            case RESORTERA:
+                botonArma.setTexture(habilidad);
+                break;
+        }
     }
 
     @Override
     public boolean mouseMoved(int screenX, int screenY) {
         return false;
+    }
+
+    private void setPositionMarker(){
+        Rectangle zona = zonasMinimapas.get(mapaActual);
+        float relacionX = zona.getWidth()/mapa.getWidth();
+        float relacionY = zona.getHeight()/mapa.getHeight();
+        marcardor.setPosition((zona.getX()+abner.getX()*relacionX)-(marcardor.getWidth()/2), zona.getY()+abner.getY()*relacionY);
     }
 
     @Override
@@ -1342,7 +1429,8 @@ public class LightsGone implements Screen, InputProcessor{
         CAMBIO,
         PAUSA,
         MUERTE,
-        GANO
+        GANO,
+        MAPA
     }
 
     public enum Transicion{

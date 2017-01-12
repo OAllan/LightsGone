@@ -676,6 +676,9 @@ public class Abner {
             camara.position.set(110+sprite.getX(),camara.position.y,0);
         }
         camara.update();
+        arrastrado = false;
+        arrastradoPiso = false;
+        pisoLata = false;
     }
 
     private void attack(boolean right){
@@ -783,7 +786,7 @@ public class Abner {
                 pisoLata = true;
             }
         }
-        else{
+        else if(!(pisoLata||arrastradoPiso||arrastrado)){
             pisoLata = false;
             arrastradoPiso = false;
             arrastrado = false;

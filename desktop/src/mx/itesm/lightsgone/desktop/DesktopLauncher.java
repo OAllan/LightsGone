@@ -4,7 +4,7 @@ import com.badlogic.gdx.backends.lwjgl.LwjglApplication;
 import com.badlogic.gdx.backends.lwjgl.LwjglApplicationConfiguration;
 
 import mx.itesm.lightsgone.Juego;
-import mx.itesm.lightsgone.MenuPrincipal;
+
 
 public class DesktopLauncher {
 	public static void main (String[] arg) {
